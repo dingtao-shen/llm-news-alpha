@@ -1,0 +1,12 @@
+# 复制到 Mac 的 ~/.ssh/config。每次新开 Pod 后只改 HostName 和 Port
+# （RunPod 控制台 → Pod → Connect → "SSH over exposed TCP"）。
+Host runpod
+  HostName 203.0.113.10
+  Port 10000
+  User root
+  IdentityFile ~/.ssh/id_ed25519
+  ServerAliveInterval 30
+  # Pod 是一次性的，每次主机密钥都会变；不记录、不校验，避免 "REMOTE HOST IDENTIFICATION HAS CHANGED"
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  LogLevel ERROR

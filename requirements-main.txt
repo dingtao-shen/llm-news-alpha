@@ -1,0 +1,25 @@
+# venv-main（Pod）。torch 来自镜像（venv 以 --system-site-packages 创建，并用 constraints 锁住），这里不列。
+# Qlib 由 bootstrap 从源码 editable 安装，也不列。
+# 首次装好后执行 make lock，把实际版本写进 requirements-main.lock 并提交。
+transformers
+accelerate
+safetensors
+sentence-transformers
+huggingface_hub
+numpy
+pandas
+polars
+duckdb
+pyarrow
+scipy
+scikit-learn
+statsmodels
+lightgbm
+optuna
+mlflow
+yfinance
+requests
+tqdm
+pyyaml
+matplotlib
+pytest

@@ -1,0 +1,10 @@
+# Mac 本地轻量环境：写代码、跑样本测试、作图。不装 torch、不装 Qlib。
+numpy
+pandas
+polars
+duckdb
+pyarrow
+pyyaml
+pytest
+matplotlib
+jupyter

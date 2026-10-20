@@ -1,0 +1,30 @@
+# 数据与大文件一律不进 git（它们在 /workspace 上）
+*.parquet
+*.csv
+*.npy
+*.npz
+*.pt
+*.safetensors
+*.bin
+*.zip
+*.gz
+dev_data/
+data/raw/
+mlruns/
+logs/
+*.log
+
+# 密钥
+.secrets/
+.env
+
+# Python / 编辑器
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv*/
+.DS_Store
+.idea/
+.vscode/

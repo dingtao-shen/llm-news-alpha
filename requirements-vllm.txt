@@ -1,0 +1,6 @@
+# venv-vllm（Pod）。独立环境：vLLM 自带并锁定自己的 torch 版本。
+vllm
+huggingface_hub
+pandas
+pyarrow
+tqdm
