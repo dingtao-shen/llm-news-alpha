@@ -7,6 +7,7 @@ export PIP_CACHE_DIR=/workspace/.pip_cache
 export PYTHONPATH=/workspace/repo
 export MLFLOW_TRACKING_URI=file:/workspace/mlruns
 export HF_HUB_DISABLE_TELEMETRY=1
+export VLLM_CACHE_ROOT=/workspace/.cache/vllm
 
 # 线程数 = cgroup CPU 硬限制（向下取整）；读不到时用 RUNPOD_CPU_COUNT，最后才用 nproc。
 # 不设的话 torch / polars / LightGBM / BLAS 会按宿主机的 128 核开线程，严重超订。

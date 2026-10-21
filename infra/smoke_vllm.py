@@ -2,7 +2,13 @@
 
 运行：make smoke-vllm（在 Pod 上，venv-vllm）
 """
+import os
 import time
+
+# FlashInfer 采样算子需要现场编译（本机没有 nvcc），改用 PyTorch 实现；贪心解码不受影响
+os.environ.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
+# vLLM 推理时 torch CPU 线程过多会和 cgroup 配额相互干扰
+os.environ["OMP_NUM_THREADS"] = "4"
 
 from vllm import LLM, SamplingParams
 

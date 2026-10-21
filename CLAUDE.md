@@ -22,6 +22,7 @@
 - CPU：线程数用环境变量 `$NCPU`（由 `/workspace/env.sh` 按 cgroup 配额计算，约 16–17）。不要用 `os.cpu_count()` 或 `nproc`（它们返回宿主机的 128 核）。joblib / LightGBM / DataLoader 的并行度都取 `int(os.environ["NCPU"])`。
 - 内存：按 94 GB 预算写代码（不同宿主机配额不同），超出会被直接 OOM kill，没有 Python 报错。大表用 polars lazy / DuckDB 流式处理。
 - 网络卷是网络文件系统：适合大文件顺序读写，不适合海量小文件。分片文件保持在 100 MB–2 GB；计算密集的随机读先把分片拷到容器盘（`/root` 或 `/tmp`，100 GB）。
+- vLLM 脚本（venv-vllm）在 `import vllm` 之前必须设 `VLLM_USE_FLASHINFER_SAMPLER=0`（本机没有 nvcc，FlashInfer 采样算子无法 JIT 编译）和 `OMP_NUM_THREADS=4`；参考 `infra/smoke_vllm.py` 开头。
 
 ## 必须遵守的规则
 
