@@ -1,5 +1,7 @@
 # llm-news-alpha · 每个 shell 启动时最先执行（由 bootstrap.sh 安装到 /workspace/env.sh，
 # 并插到 ~/.bashrc 第一行）。交互式 shell、ssh 远程命令、Claude Code 都会读到。
+# 激活 venv 时不改 PS1：否则 .bashrc 的交互判断失效，非交互 shell 会打印横幅并破坏 sftp
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 export HF_HOME=/workspace/hf_cache
 export PIP_CACHE_DIR=/workspace/.pip_cache
 export PYTHONPATH=/workspace/repo
