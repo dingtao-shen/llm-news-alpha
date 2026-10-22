@@ -6,7 +6,8 @@
  3. 标题：规范化后非空；
  4. ticker：upper(trim(Stock_symbol)) 把 '-' 视为 '.' 后在 2015–2023 时点成分股全集中（results/universe/sp500_tickers_2015_2023.txt）；
  5. 单一股票：在**过滤前的全量数据**上，同一 news_id 出现在 >1 个不同 Stock_symbol 下的整篇剔除（原文规则）；
- 6. 去重：同一 news_id 在两个源文件都出现时保留 has_body 为真、正文更长的那一行。
+ 6. 去重：同一 news_id 多行（同一 ticker 下重复）时保留 has_body 为真、正文更长的那一行。
+输入只用 nasdaq 文件：模块 2 统计证实 All_external 的 11,551,494 个 news_id 全部在 nasdaq 文件中且 ticker、行数、日期、正文标记完全相同。
 输出列：news_id, ticker（成分股表写法）, ts_utc, has_time, title, body, has_body, source_file。
 嵌入分片按行号切（第 i 片 = 行 [i*SHARD, (i+1)*SHARD)），所以文件必须按 news_id 排序且行组大小 = SHARD。
 news_id 是哈希，按它排序等于随机打乱：每个已完成分片都是候选集的随机样本。
@@ -137,7 +138,7 @@ def write_report(stats: dict, est: dict | None, res: Path) -> None:
           f"| 标题非空 | {f['after_title']:,} | {f['after_lang'] - f['after_title']:,} |",
           f"| ticker 在 2015–2023 成分股全集（{stats['n_matched_symbols']} / {stats['n_universe']} 个代码有新闻） | {f['after_ticker']:,} | {f['after_title'] - f['after_ticker']:,} |",
           f"| 单一股票（整篇剔除） | {f['after_single']:,} | {f['after_ticker'] - f['after_single']:,} 行 / {stats['single_stock_removed_total']['articles']:,} 篇 |",
-          f"| 两文件去重（保留带正文的） | {stats['n_candidates']:,} | {stats['dedup_removed']:,} |", "",
+          f"| 同一 news_id 去重（保留带正文的） | {stats['n_candidates']:,} | {stats['dedup_removed']:,} |", "",
           "## 单一股票规则剔除，按 source_file × 年份", "", "| source_file | 年 | 剔除行数 | 剔除文章数 |", "| --- | ---: | ---: | ---: |"]
     md += [f"| {r['source_file']} | {r['year']} | {r['rows_removed']:,} | {r['articles_removed']:,} |" for r in stats["single_stock_removed_by_source_year"]]
     md += ["", "## 未匹配成分股全集的 ticker（前 20，通过日期/语言/标题过滤后）", "", "| symbol | 行数 |", "| --- | ---: |"]
@@ -165,7 +166,7 @@ def main() -> None:
         raise SystemExit(f"{out} exists; delete it first (CLAUDE.md: ask the user before overwriting /workspace/data)")
     con = connect(ncpu())
     universe = load_universe(ROOT / paths["results"] / "universe" / "sp500_tickers_2015_2023.txt")
-    stats = build_candidates(con, f"{paths['news']['parquet_dir']}/*/*.parquet", universe, out)
+    stats = build_candidates(con, f"{paths['news']['parquet_dir']}/nasdaq/*.parquet", universe, out)
     est = None if args.no_token_estimate else token_estimate(out, paths["models"]["llama3_base"])
     (out.parent / (out.stem + "_meta.json")).write_text(json.dumps({"stats": stats, "token_estimate": est}, indent=2, ensure_ascii=False) + "\n")
     write_report(stats, est, ROOT / paths["results"] / "news")

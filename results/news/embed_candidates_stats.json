@@ -1,0 +1,235 @@
+{
+  "stats": {
+    "n_candidates": 505147,
+    "n_with_body": 270049,
+    "funnel": {
+      "raw_rows": 15549301,
+      "after_date": 5974861,
+      "after_lang": 5704408,
+      "after_title": 5704408,
+      "after_ticker": 1353264,
+      "after_single": 509329
+    },
+    "dedup_removed": 4182,
+    "single_stock_removed_by_source_year": [
+      {
+        "source_file": "nasdaq",
+        "year": 2014,
+        "rows_removed": 243,
+        "articles_removed": 143
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2015,
+        "rows_removed": 88769,
+        "articles_removed": 48686
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2016,
+        "rows_removed": 90580,
+        "articles_removed": 45817
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2017,
+        "rows_removed": 104038,
+        "articles_removed": 55261
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2018,
+        "rows_removed": 131419,
+        "articles_removed": 63954
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2019,
+        "rows_removed": 122191,
+        "articles_removed": 54538
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2020,
+        "rows_removed": 86785,
+        "articles_removed": 37520
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2021,
+        "rows_removed": 39493,
+        "articles_removed": 21791
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2022,
+        "rows_removed": 76809,
+        "articles_removed": 41636
+      },
+      {
+        "source_file": "nasdaq",
+        "year": 2023,
+        "rows_removed": 103608,
+        "articles_removed": 52778
+      }
+    ],
+    "single_stock_removed_total": {
+      "rows": 843935,
+      "articles": 422101
+    },
+    "unmatched_tickers_top20": [
+      {
+        "symbol": "",
+        "rows": 1152981
+      },
+      {
+        "symbol": "BABA",
+        "rows": 11547
+      },
+      {
+        "symbol": "BROGW",
+        "rows": 10456
+      },
+      {
+        "symbol": "BPYPO",
+        "rows": 9979
+      },
+      {
+        "symbol": "BHFAL",
+        "rows": 9614
+      },
+      {
+        "symbol": "PMAY",
+        "rows": 9108
+      },
+      {
+        "symbol": "ACGLO",
+        "rows": 9014
+      },
+      {
+        "symbol": "DNOV",
+        "rows": 8990
+      },
+      {
+        "symbol": "GSEE",
+        "rows": 8966
+      },
+      {
+        "symbol": "CLSN",
+        "rows": 8895
+      },
+      {
+        "symbol": "FDEV",
+        "rows": 8891
+      },
+      {
+        "symbol": "OCFCP",
+        "rows": 8832
+      },
+      {
+        "symbol": "PFFL",
+        "rows": 8822
+      },
+      {
+        "symbol": "BRK",
+        "rows": 8769
+      },
+      {
+        "symbol": "HCRB",
+        "rows": 8722
+      },
+      {
+        "symbol": "FFEB",
+        "rows": 8718
+      },
+      {
+        "symbol": "UEVM",
+        "rows": 8715
+      },
+      {
+        "symbol": "BSMR",
+        "rows": 8708
+      },
+      {
+        "symbol": "UCIB",
+        "rows": 8699
+      },
+      {
+        "symbol": "WLDR",
+        "rows": 8698
+      }
+    ],
+    "n_matched_symbols": 646,
+    "n_universe": 716,
+    "by_year": [
+      {
+        "year": 2014,
+        "n": 86,
+        "n_body": 37
+      },
+      {
+        "year": 2015,
+        "n": 52937,
+        "n_body": 15713
+      },
+      {
+        "year": 2016,
+        "n": 56164,
+        "n_body": 18410
+      },
+      {
+        "year": 2017,
+        "n": 50881,
+        "n_body": 22200
+      },
+      {
+        "year": 2018,
+        "n": 69077,
+        "n_body": 22969
+      },
+      {
+        "year": 2019,
+        "n": 80155,
+        "n_body": 22477
+      },
+      {
+        "year": 2020,
+        "n": 53443,
+        "n_body": 25839
+      },
+      {
+        "year": 2021,
+        "n": 31317,
+        "n_body": 31317
+      },
+      {
+        "year": 2022,
+        "n": 44820,
+        "n_body": 44820
+      },
+      {
+        "year": 2023,
+        "n": 66197,
+        "n_body": 66197
+      },
+      {
+        "year": 2024,
+        "n": 70,
+        "n_body": 70
+      }
+    ],
+    "shard": 50000,
+    "min_date": "2014-12-31",
+    "out": "/workspace/data/news/embed_candidates.parquet"
+  },
+  "token_estimate": {
+    "sample": 20000,
+    "title_tokens_mean": 17.6,
+    "title_tokens_max": 86,
+    "body_tokens_mean_capped512": 460.8,
+    "body_share_hitting_512": 0.718,
+    "title_gpu_hours": 0.24,
+    "body_gpu_hours": 3.41,
+    "tokens_per_sec_assumed": 11144
+  }
+}

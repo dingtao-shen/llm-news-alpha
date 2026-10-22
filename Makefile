@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats news-candidates
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -52,6 +52,9 @@ news-parse:  ## [Pod] 后台把 CSV 解析为全字符串 parquet（含 news_id�
 
 news-stats:  ## [Pod] 来源 × 年份 × 时刻/正文可用率 → results/news/
 	$(PY) -m news.source_stats
+
+news-candidates:  ## [Pod] 后台生成嵌入候选集 embed_candidates.parquet + GPU 时间估算
+	$(BG) news-candidates $(PY) -m news.candidates
 
 # ---------------------------------------------------------------- 后续模块（实现时补上）
 # 模块 1：prices qlib-dump qlib-baseline market-cap

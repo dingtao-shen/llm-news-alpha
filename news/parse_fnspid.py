@@ -101,7 +101,7 @@ def parse_one(con: duckdb.DuckDBPyConnection, csv_path: Path, out_dir: Path, sou
         COPY ({select_sql(read_csv_sql(str(csv_path)), source)})
         TO '{out_dir}' (FORMAT parquet, COMPRESSION zstd, FILE_SIZE_BYTES '1GB', ROW_GROUP_SIZE 200000)
     """)
-    n_rej = con.execute("SELECT count(DISTINCT (scan_id, line)) FROM reject_errors").fetchone()[0]
+    n_rej = con.execute("SELECT count(DISTINCT line) FROM reject_errors").fetchone()[0]
     rej_sample = con.execute(
         "SELECT line, column_name, error_type, left(error_message, 200) AS msg FROM reject_errors LIMIT 20"
     ).fetchall()
