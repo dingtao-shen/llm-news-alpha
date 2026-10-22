@@ -1,7 +1,7 @@
 # CLAUDE.md · llm-news-alpha
 
 复现 Chen, Kelly & Xiu《Expected Returns and Large Language Models》：LLM 新闻嵌入 → 年度滚动 Ridge → 次日截面收益预测 → 五分位多空回测，并在 Qlib 中与 Alpha158 做增量检验。
-完整计划见 claude.ai 项目文档《Expected Returns and Large Language Models Qlib 复现计划》；本文件只写工作约定。
+完整计划见 `docs/plan.md`：各模块的目标、任务、输入输出与验收标准都在那里，开始任何模块前先读对应的小节。本文件只写工作约定。
 
 ## 两个环境
 
