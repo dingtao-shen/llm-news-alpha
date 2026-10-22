@@ -1,0 +1,13 @@
+{
+  "source": "shardul0701/SP500-Survivorship-bias-data-2004-2026 @ 40a9ddc31bb421b93186e321333d05c07e5d1dd3",
+  "range": [
+    "2015-01-01",
+    "2023-12-31"
+  ],
+  "n_tickers": 716,
+  "n_intervals": 723,
+  "n_tickers_multi_interval": 7,
+  "members_start": 499,
+  "members_end": 503,
+  "continuity_issues": []
+}

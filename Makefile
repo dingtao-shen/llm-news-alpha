@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -39,8 +39,12 @@ lock:  ## [Pod] 把两个 venv 的实际版本写入 *.lock（随后提交）
 test:  ## [Mac/Pod] 单元测试
 	python -m pytest -q
 
+# ---------------------------------------------------------------- 模块 1：价格与股票池
+universe:  ## [Pod] 时点成分股 → qlib instruments/sp500.txt + results/universe/
+	$(PY) -m data.build_universe
+
 # ---------------------------------------------------------------- 后续模块（实现时补上）
-# 模块 1：universe prices qlib-dump qlib-baseline market-cap
+# 模块 1：prices qlib-dump qlib-baseline market-cap
 # 模块 2：news-download news-sample news-stats news-tz news-clean
 # 模块 3：benchmark embed summarize bow ridge pca
 # 模块 4–6：qlib-news qlib-fusion analyze
