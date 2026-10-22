@@ -23,6 +23,9 @@
 3. `ssh runpod 'bash /workspace/bootstrap.sh'`（必须在连接 Claude Desktop 之前）。
 4. Claude Desktop → Code → 环境选 SSH `runpod` → 项目文件夹 `/workspace/repo`。
 
+Desktop SSH 会话第一次连接时，要从 Mac 上传助手程序，本地上行网速慢时可能要等很久。
+部署结果保存在 `/workspace/.claude/remote`，换 Pod 后可以复用；但 Desktop 更新后可能需要重新部署。
+
 ## 收工
 
 Terminate Pod（不要 Stop）。网络卷上的数据、venv、模型权重都保留。

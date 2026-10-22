@@ -5,16 +5,25 @@
 
 ## 两个环境
 
+两边都可以开发代码，按工作性质分工：
+
 | | Mac（本地会话） | RunPod Pod（SSH 会话） |
 | --- | --- | --- |
-| 用途 | 写代码、重构、用 `dev_data/` 样本跑 pytest、作图、写文档 | 全量数据、GPU、Qlib、训练、回测 |
+| 适合的工作 | 纯逻辑、单元测试、文档、规划 | 需要真实数据、GPU 或 Qlib 才能验证的代码（解析、对齐、嵌入、Handler、回测）优先在这里写和调试 |
 | 仓库 | 本地克隆 | `/workspace/repo` |
 | Python | 轻量 env（`requirements-dev.txt`），没有 torch / Qlib | `venv-main`（默认激活）、`venv-vllm`（只用于 vLLM 摘要） |
 | 数据 | 只有 `dev_data/` 小样本 | `/workspace/data` 等，路径一律从 `paths.yaml` 读 |
 
-判断当前环境：`test -d /workspace && echo pod || echo mac`。在 Mac 上不要尝试跑需要 GPU、全量数据或 Qlib 的命令。
+判断当前环境：`test -d /workspace && echo pod || echo mac`。在 Mac 上不要尝试直接跑需要 GPU、全量数据或 Qlib 的命令；需要时可以用 `ssh runpod '...'` 在 Pod 上执行。
 
 代码的唯一真相源是 GitHub 仓库；数据的唯一真相源是网络卷 `/workspace`；Pod 是一次性的。两边会话历史不共享，交接靠 git 提交和 `docs/worklog.md`。
+
+### 协作规则
+
+1. 同一时间只在一边改代码。
+2. 开始工作前先 `git pull`；告一段落就 commit 并 push，WIP 提交也可以。
+3. `tests/` 下的单元测试必须能在 Mac 上用 `dev_data/` 样本或手写小例子跑通，不能依赖 `/workspace`。
+4. Terminate Pod 之前确认 `git status` 干净并且已经 push。
 
 ## Pod 上的资源约束
 
@@ -67,4 +76,8 @@ make check-env     # [Pod] 配额、GPU、import 耗时
 make smoke         # [Pod] 模块 0 验收
 make test          # 单元测试
 bash infra/run_bg.sh <job> <cmd...>   # [Pod] 后台长任务
+
+# 从 Mac 在 Pod 上后台启动任务，以及查看日志
+ssh runpod 'cd /workspace/repo && bash infra/run_bg.sh embed-2015 python -m src.embed --year 2015'
+ssh runpod 'tail -n 50 $(ls -t /workspace/logs/embed-2015_*.log | head -n 1)'   # 日志名带时间戳，取最新一个
 ```
