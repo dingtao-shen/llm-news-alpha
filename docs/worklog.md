@@ -15,7 +15,7 @@
     有时刻的只剩 2,511 行；FNSPID 按 ticker 的时间覆盖很不均匀（AAPL 只从 2020-03 起、MSFT 只从 2022-04 起、无 META）；`BRK` 写法未匹配 `BRK.B`。
   - `text/embed.py`：按 news_id 排序的输入表、行组 = 分片（5 万）、token 预算分批 + padding 比上限 1.25、float16 parquet 分片、断点续跑、三种读回校验。
     试跑：标题 8.3k tok/s / 17.7 GB，原文 9.9k tok/s / 23.5 GB（32k 预算；16k–64k 吞吐持平，96k 变慢）。
-  - 正式嵌入已用 run_bg 启动（`make embed`，job `embed-llama3_base`，日志 `/workspace/logs/embed-llama3_base_20261022_161651.log`）：先标题全集（11 片，约 18 分钟），再原文子集（6 片，约 3.5 小时）。首片 5 万条实测 9,933 tok/s、padding 比 1.03、峰值 23.5 GB，每片约 1.5–2.3 分钟（含约 9 秒写 410 MB 分片到网络卷）。
+  - 正式嵌入已用 run_bg 启动（`make embed`，job `embed-llama3_base`，日志 `/workspace/logs/embed-llama3_base_20261022_161651.log`）：先标题全集（11 片，约 18 分钟），再原文子集（6 片，约 3.5 小时）。首片 5 万条实测 9,933 tok/s、padding 比 1.03、峰值 23.5 GB；之后 GPU 热降频（88–89 °C，SM 840–1170 MHz，throttle reason SW thermal slowdown），稳定在约 6.2–6.5k tok/s。标题全集 16:41 UTC 完成：11 片、8,853,188 token、6,543 tok/s、24 分钟。原文首片 62.7 分钟（6,159 tok/s），6 片预计约 23:00 UTC 完成；**在此之前不要 Terminate Pod**。
 - 产出在哪：
   - `/workspace/qlib_data/us_sp500/instruments/sp500.txt`、`/workspace/data/raw/universe/sp500_membership.parquet`、`results/universe/`
   - `/workspace/data/raw/fnspid/{nasdaq_exteral_data.csv,All_external.csv,MANIFEST.json}`、`/workspace/data/news/fnspid_parquet/{nasdaq,all_external}/`
@@ -32,6 +32,8 @@
   - FNSPID 按 ticker 的时间覆盖不均匀，股票-日面板会稀疏且非随机缺失；是以后考虑 Alpaca 等补充来源的理由。
   - 70 只成分股没有任何候选新闻；`BRK` 未映射。
   - 模型加载从网络卷冷启动 37 秒（热 7.5 秒）。
+  - 这台宿主机的 L40S 持续热降频，吞吐只有试跑峰值的 65%；下次开 Pod 若仍如此，可换机房或 RTX 6000 Ada。plan.md 5.5 节的耗时估算应按约 6.5k tok/s 修正（原文每 100 万篇约 20 小时）。
+  - 分片写盘约 9 秒/片（zstd 压 float16 几乎无效），以后新模型可改 compression=none。
 
 ## 2026-10-22 · 模块 0 完成
 
