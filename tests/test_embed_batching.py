@@ -14,6 +14,18 @@ def test_make_batches_covers_all_once_and_respects_budget():
     assert padded_tokens(lengths, batches) >= sum(max(x, 1) for x in lengths)
 
 
+def test_pad_ratio_limits_waste():
+    lengths = [80] * 10 + [12] * 990          # 10 条长标题 + 990 条短标题
+    batches = make_batches(lengths, batch_tokens=200_000, max_batch=1024, max_pad_ratio=1.25)
+    real = sum(lengths)
+    assert padded_tokens(lengths, batches) <= 1.05 * real
+    # 10 条长标题都在第一批里，第一批只会多带很少几条短标题（比例约束 80n <= 1.25*(800+12(n-10)) → n <= 13）
+    assert len(batches) == 2 and len(batches[0]) <= 13 and all(lengths[i] == 80 for i in batches[0][:10])
+    # 不设比例限制时会凑成一个批，padding 浪费 6 倍
+    one = make_batches(lengths, batch_tokens=200_000, max_batch=1024, max_pad_ratio=100)
+    assert len(one) == 1 and padded_tokens(lengths, one) == 1000 * 80
+
+
 def test_make_batches_single_long_item_and_empty():
     assert make_batches([5000], batch_tokens=1024, max_batch=8) == [[0]]
     assert make_batches([], batch_tokens=1024, max_batch=8) == []

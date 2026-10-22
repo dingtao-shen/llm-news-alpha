@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats news-candidates
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats news-candidates embed-trial embed
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -56,9 +56,18 @@ news-stats:  ## [Pod] 来源 × 年份 × 时刻/正文可用率 → results/new
 news-candidates:  ## [Pod] 后台生成嵌入候选集 embed_candidates.parquet + GPU 时间估算
 	$(BG) news-candidates $(PY) -m news.candidates
 
+# ---------------------------------------------------------------- 模块 3：嵌入
+MODEL ?= llama3_base
+embed-trial:  ## [Pod] 2,000 条试跑（标题 + 原文），输出到 /tmp，打印吞吐、显存与三种读回校验
+	$(PY) -m text.embed --model $(MODEL) --text-type title --limit 2000 --shard-size 1000 --out /tmp/embed_trial --verify-readback
+	$(PY) -m text.embed --model $(MODEL) --text-type body  --limit 2000 --shard-size 1000 --out /tmp/embed_trial --verify-readback
+
+embed:  ## [Pod] 后台：先标题全集，再原文子集；已完成分片自动跳过
+	$(BG) embed-$(MODEL) bash -c '$(PY) -m text.embed --model $(MODEL) --text-type title && $(PY) -m text.embed --model $(MODEL) --text-type body'
+
 # ---------------------------------------------------------------- 后续模块（实现时补上）
 # 模块 1：prices qlib-dump qlib-baseline market-cap
 # 模块 2：news-sample news-tz news-clean
-# 模块 3：benchmark embed summarize bow ridge pca
+# 模块 3：benchmark summarize bow ridge pca
 # 模块 4–6：qlib-news qlib-fusion analyze
 # 模块 8：backup

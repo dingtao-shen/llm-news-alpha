@@ -1,0 +1,247 @@
+"""模块 3 任务 3：LLaMA3-8B（任意 HF AutoModel）均值池化嵌入，按 news_id 分片写出，支持断点续跑。
+
+输入：paths.news.embed_candidates（按 news_id 排序）。某种文本第一次运行时先生成输入表
+  <emb_dir>/_inputs/<text_type>.parquet：news_id, text（title；或 title + "\\n" + body，正文先截到前 BODY_CHARS 字符），
+  按 news_id 排序，行组 = shard_size；第 i 片 = 第 i 个行组（news_id 是哈希，所以每片都是随机样本）。
+输出：<emb_dir>/<model>/<text_type>/part-NNNNN.parquet：news_id string, emb fixed_size_list<float16, H>（接口文件 2）；
+  目录下 _meta.json 记录模型 commit、分词与池化设置。已存在的分片跳过；先写 .tmp 再 os.replace，不会留下半截分片。
+分批：按 token 长度降序，批内 padding 到最长，len(batch) * max_len <= batch_tokens 且 len(batch) <= max_batch。
+池化：最后一层隐状态按 attention_mask 做掩码平均（text/pooling.py，与 infra/smoke_embed.py 一致）；bf16 推理，float16 落盘。
+下一片的分词在后台线程里与当前片的 GPU 计算重叠。
+
+试跑：python -m text.embed --model llama3_base --text-type title --limit 2000 --out <dir> --verify-readback
+放量：bash infra/run_bg.sh embed-llama3 bash -c 'python -m text.embed --model llama3_base --text-type title && python -m text.embed --model llama3_base --text-type body'
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import os
+import subprocess
+import time
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")   # 权重加载进度条不要刷日志
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "true")
+
+import numpy as np
+import polars as pl
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+from common import ROOT, load_paths, ncpu
+from text.batching import make_batches, padded_tokens, shard_name
+
+BODY_CHARS = 8000          # 512 token 约 2,000–2,500 字符；多留余量后再交给分词器截断
+DEFAULT_MAX_LEN = {"title": 128, "body": 512}
+SEED = 0
+
+
+# ------------------------------------------------------------------ 输入表
+def build_inputs(candidates: Path, text_type: str, out: Path, shard_size: int, limit: int | None) -> int:
+    """从候选集生成 (news_id, text) 输入表，按 news_id 排序、行组 = shard_size。返回行数。"""
+    lf = pl.scan_parquet(str(candidates))
+    if text_type == "title":
+        lf = lf.select("news_id", pl.col("title").alias("text"))
+    elif text_type == "body":
+        lf = (lf.filter(pl.col("has_body"))
+                .select("news_id", pl.concat_str([pl.col("title"), pl.lit("\n"), pl.col("body").str.slice(0, BODY_CHARS)]).alias("text")))
+    else:
+        raise ValueError(text_type)
+    if limit:
+        lf = lf.head(limit)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out.with_suffix(".tmp.parquet")
+    lf.sink_parquet(str(tmp), row_group_size=shard_size, maintain_order=True)
+    ids = pl.scan_parquet(str(tmp)).select("news_id").collect()["news_id"]
+    assert ids.is_sorted() and ids.n_unique() == len(ids), "input news_id must be sorted and unique"
+    os.replace(tmp, out)
+    return len(ids)
+
+
+# ------------------------------------------------------------------ 模型
+def local_commit(model_id: str) -> str | None:
+    """HF 缓存里该模型 refs/main 指向的 commit（权重来自卷上的缓存，不联网）。"""
+    from huggingface_hub.constants import HF_HUB_CACHE
+    ref = Path(HF_HUB_CACHE) / f"models--{model_id.replace('/', '--')}" / "refs" / "main"
+    return ref.read_text().strip() if ref.exists() else None
+
+
+def load_model(model_id: str):
+    import torch
+    import transformers
+    from transformers import AutoModel, AutoTokenizer
+    transformers.logging.set_verbosity_error()
+    assert torch.cuda.is_available(), "CUDA not available"
+    torch.manual_seed(SEED)
+    t0 = time.time()
+    tok = AutoTokenizer.from_pretrained(model_id)
+    if tok.pad_token is None:
+        tok.pad_token = tok.eos_token          # LLaMA 3 没有 pad token（与 smoke 一致）
+    tok.padding_side = "right"
+    model = AutoModel.from_pretrained(model_id, dtype=torch.bfloat16).to("cuda").eval()
+    print(f"model {model_id} loaded in {time.time() - t0:.1f}s, gpu mem {torch.cuda.memory_allocated() / 1e9:.1f} GB, "
+          f"hidden {model.config.hidden_size}, commit {local_commit(model_id)}", flush=True)
+    return tok, model
+
+
+def tokenize(tok, texts: list[str], max_len: int) -> list[list[int]]:
+    return tok(texts, add_special_tokens=True, truncation=True, max_length=max_len, padding=False,
+               return_attention_mask=False)["input_ids"]
+
+
+def embed_shard(model, ids: list[list[int]], pad_id: int, batch_tokens: int, max_batch: int,
+                max_pad_ratio: float = 1.25) -> tuple[np.ndarray, dict]:
+    import torch
+    from text.pooling import masked_mean
+    H = model.config.hidden_size
+    lengths = [len(x) for x in ids]
+    batches = make_batches(lengths, batch_tokens, max_batch, max_pad_ratio)
+    out = np.empty((len(ids), H), dtype=np.float16)
+    for b in batches:
+        L = max(lengths[i] for i in b)
+        arr = np.full((len(b), L), pad_id, dtype=np.int64)
+        mask = np.zeros((len(b), L), dtype=np.int64)
+        for r, i in enumerate(b):
+            arr[r, :lengths[i]] = ids[i]
+            mask[r, :lengths[i]] = 1
+        input_ids = torch.from_numpy(arr).pin_memory().to("cuda", non_blocking=True)
+        attn = torch.from_numpy(mask).pin_memory().to("cuda", non_blocking=True)
+        with torch.inference_mode():
+            h = model(input_ids=input_ids, attention_mask=attn).last_hidden_state
+            pooled = masked_mean(h, attn).to(torch.float16)
+        out[b] = pooled.cpu().numpy()
+    torch.cuda.synchronize()
+    return out, {"tokens": int(sum(lengths)), "padded_tokens": padded_tokens(lengths, batches), "batches": len(batches)}
+
+
+def write_shard(path: Path, news_ids: list[str], emb: np.ndarray) -> None:
+    flat = pa.array(emb.reshape(-1))                     # float16 -> halffloat
+    col = pa.FixedSizeListArray.from_arrays(flat, emb.shape[1])
+    table = pa.table({"news_id": pa.array(news_ids, pa.string()), "emb": col})
+    tmp = path.with_suffix(".parquet.tmp")
+    pq.write_table(table, tmp, compression="zstd")
+    os.replace(tmp, path)
+
+
+def verify_readback(path: Path, news_ids: list[str], emb: np.ndarray) -> dict:
+    """用 pyarrow、polars、DuckDB 各读一遍，核对形状、dtype、数值。"""
+    import duckdb
+    res = {}
+    t = pq.read_table(path)
+    a = np.stack(t["emb"].to_numpy(zero_copy_only=False))
+    res["pyarrow"] = {"dtype": str(a.dtype), "shape": list(a.shape), "ids_equal": t["news_id"].to_pylist() == news_ids,
+                      "values_equal": bool(np.array_equal(a, emb))}
+    d = pl.read_parquet(path)
+    b = d["emb"].to_numpy()
+    res["polars"] = {"dtype": str(d.schema["emb"]), "shape": list(b.shape), "ids_equal": d["news_id"].to_list() == news_ids,
+                     "values_equal": bool(np.array_equal(b.astype(np.float16), emb))}
+    rows = duckdb.connect().execute(f"SELECT news_id, emb FROM read_parquet('{path}')").fetchall()
+    c = np.array([r[1] for r in rows], dtype=np.float32)
+    res["duckdb"] = {"dtype": "FLOAT[] (halffloat 无损上转)", "shape": list(c.shape), "ids_equal": [r[0] for r in rows] == news_ids,
+                     "values_equal": bool(np.array_equal(c, emb.astype(np.float32)))}
+    res["all_ok"] = all(v["ids_equal"] and v["values_equal"] for v in res.values() if isinstance(v, dict))
+    return res
+
+
+def git_commit() -> str | None:
+    try:
+        return subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], text=True).strip()
+    except Exception:
+        return None
+
+
+# ------------------------------------------------------------------ 主流程
+def main() -> None:
+    import torch
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default="llama3_base", help="paths.yaml models 里的键")
+    ap.add_argument("--text-type", choices=["title", "body"], required=True)
+    ap.add_argument("--limit", type=int, default=None, help="只取前 N 条（试跑）")
+    ap.add_argument("--out", default=None, help="输出根目录（默认 paths.emb_dir）；试跑时指向临时目录")
+    ap.add_argument("--shard-size", type=int, default=50_000)
+    ap.add_argument("--max-len", type=int, default=None)
+    ap.add_argument("--batch-tokens", type=int, default=32_768, help="批内 padded token 预算；试跑 16k–64k 吞吐相同（约 9.9k tok/s），96k 反而变慢，32k 峰值显存 23.5 GB")
+    ap.add_argument("--max-batch", type=int, default=1024)
+    ap.add_argument("--max-pad-ratio", type=float, default=1.25, help="批内 padded/real token 上限")
+    ap.add_argument("--verify-readback", action="store_true")
+    args = ap.parse_args()
+
+    if args.limit and not args.out:
+        raise SystemExit("--limit 只用于试跑，必须同时指定 --out（否则会把截断的输入表写进正式 emb_dir）")
+    paths = load_paths()
+    model_id = paths["models"][args.model]
+    max_len = args.max_len or DEFAULT_MAX_LEN[args.text_type]
+    emb_root = Path(args.out or paths["emb_dir"])
+    out_dir = emb_root / args.model / args.text_type
+    out_dir.mkdir(parents=True, exist_ok=True)
+    torch.set_num_threads(ncpu())
+
+    inputs = emb_root / "_inputs" / f"{args.text_type}.parquet"
+    if not inputs.exists():
+        t0 = time.time()
+        n = build_inputs(Path(paths["news"]["embed_candidates"]), args.text_type, inputs, args.shard_size, args.limit)
+        print(f"inputs {inputs}: {n:,} rows in {time.time() - t0:.1f}s", flush=True)
+    pf = pq.ParquetFile(inputs)
+    n_shards, n_rows = pf.metadata.num_row_groups, pf.metadata.num_rows
+    todo = [i for i in range(n_shards) if not (out_dir / shard_name(i)).exists()]
+    print(f"{args.text_type}: {n_rows:,} rows, {n_shards} shards, {n_shards - len(todo)} done, {len(todo)} to do; "
+          f"max_len={max_len} batch_tokens={args.batch_tokens} max_batch={args.max_batch}", flush=True)
+    if not todo:
+        return
+
+    tok, model = load_model(model_id)
+    meta = {
+        "model_key": args.model, "model_id": model_id, "model_commit": local_commit(model_id),
+        "hidden_size": model.config.hidden_size, "dtype_infer": "bfloat16", "dtype_store": "float16",
+        "pooling": "masked mean of last_hidden_state", "add_special_tokens": True, "padding_side": "right",
+        "pad_token": tok.pad_token, "max_len": max_len, "text_type": args.text_type, "body_chars": BODY_CHARS,
+        "shard_size": args.shard_size, "batch_tokens": args.batch_tokens, "max_batch": args.max_batch, "max_pad_ratio": args.max_pad_ratio,
+        "inputs": str(inputs), "n_rows": n_rows, "n_shards": n_shards, "seed": SEED, "limit": args.limit,
+        "transformers": __import__("transformers").__version__, "torch": torch.__version__,
+        "code_commit": git_commit(), "started_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+    }
+    (out_dir / "_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
+
+    def load_and_tokenize(i: int):
+        rg = pf.read_row_group(i, columns=["news_id", "text"])
+        news_ids = rg["news_id"].to_pylist()
+        texts = [t if t is not None else "" for t in rg["text"].to_pylist()]
+        return news_ids, tokenize(tok, texts, max_len)
+
+    pool = ThreadPoolExecutor(max_workers=1)
+    fut = pool.submit(load_and_tokenize, todo[0])
+    t_start, done_tokens, done_secs = time.time(), 0, 0.0
+    for k, i in enumerate(todo):
+        t0 = time.time()
+        news_ids, ids = fut.result()
+        t_tok = time.time() - t0
+        if k + 1 < len(todo):
+            fut = pool.submit(load_and_tokenize, todo[k + 1])
+        torch.cuda.reset_peak_memory_stats()
+        t1 = time.time()
+        emb, st = embed_shard(model, ids, tok.pad_token_id, args.batch_tokens, args.max_batch, args.max_pad_ratio)
+        t_gpu = time.time() - t1
+        assert np.isfinite(emb.astype(np.float32)).all(), f"non-finite embeddings in shard {i}"
+        write_shard(out_dir / shard_name(i), news_ids, emb)
+        secs = time.time() - t0
+        done_tokens += st["tokens"]; done_secs += t_gpu
+        tps = st["tokens"] / t_gpu
+        eta = (len(todo) - k - 1) * (done_secs / (k + 1)) / 60
+        print(f"shard {i + 1}/{n_shards}  rows={len(ids):,}  tokens={st['tokens']:,}  padded={st['padded_tokens']:,}  "
+              f"batches={st['batches']}  tok_wait={t_tok:.1f}s  gpu={t_gpu:.1f}s  total={secs:.1f}s  "
+              f"{tps:,.0f} tok/s  peak_mem={torch.cuda.max_memory_allocated() / 1e9:.1f} GB  eta={eta:.1f} min", flush=True)
+        if args.verify_readback and k == 0:
+            print("readback:", json.dumps(verify_readback(out_dir / shard_name(i), news_ids, emb), ensure_ascii=False), flush=True)
+    pool.shutdown()
+    meta.update(finished_at=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+                tokens_per_sec_overall=round(done_tokens / max(done_secs, 1e-9)), wall_secs=round(time.time() - t_start, 1))
+    (out_dir / "_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
+    print(f"done {args.text_type}: {len(todo)} shards, {done_tokens:,} tokens, {meta['tokens_per_sec_overall']:,} tok/s overall, "
+          f"{meta['wall_secs']} s wall", flush=True)
+
+
+if __name__ == "__main__":
+    main()
