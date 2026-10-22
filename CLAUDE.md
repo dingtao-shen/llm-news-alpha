@@ -54,7 +54,7 @@
 
 | 文件 | 键 | 说明 |
 | --- | --- | --- |
-| `news_clean.parquet` | `news_id` | ticker、美东时间戳、`time_precision`（second/day）、标题、正文、两种口径的特征日 |
+| `news_clean.parquet` | `news_id` | ticker、美东时间戳、`time_precision`（second/day）、标题、正文、两种口径的特征日。`news_id` = sha256(规范化 URL + 换行 + 规范化标题) 前 24 位十六进制，定义固定在 `news/news_id.py`，不再改动 |
 | 嵌入分片（`emb_dir/<model>/<text_type>/part-*.parquet` 或 `.npy` + 索引） | `news_id` | float16 |
 | `pred.parquet` | `(datetime, instrument)` | `score`；每个 模型 × 文本类型 × 口径 一个文件 |
 

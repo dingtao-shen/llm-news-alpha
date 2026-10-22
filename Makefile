@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -43,9 +43,19 @@ test:  ## [Mac/Pod] 单元测试
 universe:  ## [Pod] 时点成分股 → qlib instruments/sp500.txt + results/universe/
 	$(PY) -m data.build_universe
 
+# ---------------------------------------------------------------- 模块 2：新闻
+news-download:  ## [Pod] 后台下载 FNSPID 两个 CSV 到 /workspace/data/raw/fnspid
+	$(BG) fnspid-download $(PY) -m news.download_fnspid
+
+news-parse:  ## [Pod] 后台把 CSV 解析为全字符串 parquet（含 news_id、质量指标）
+	$(BG) fnspid-parse $(PY) -m news.parse_fnspid
+
+news-stats:  ## [Pod] 来源 × 年份 × 时刻/正文可用率 → results/news/
+	$(PY) -m news.source_stats
+
 # ---------------------------------------------------------------- 后续模块（实现时补上）
 # 模块 1：prices qlib-dump qlib-baseline market-cap
-# 模块 2：news-download news-sample news-stats news-tz news-clean
+# 模块 2：news-sample news-tz news-clean
 # 模块 3：benchmark embed summarize bow ridge pca
 # 模块 4–6：qlib-news qlib-fusion analyze
 # 模块 8：backup

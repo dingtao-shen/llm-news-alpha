@@ -140,6 +140,7 @@
 - 正文缺失：Benzinga 来源的记录 `Article` 为空，只有标题和 URL。正文集中在 nasdaq.com 抓取部分，其中不少是 Zacks、Motley Fool 等转载的评论性文章，性质与原文的路透新闻有差异。
 - 时区未经验证：数据卡标注 UTC，但部分记录的时刻在 UTC 和美东两种解读下都不合理，必须抽样校验。
 - 文件质量：CSV 列类型不一致（数值列里出现俄语字符串，Hugging Face 数据查看器因此解析失败）；正文字段含换行与引号；含俄语 Lenta 记录。
+- **news_id 定义（固定，不再改动；实现见 `news/news_id.py` 与 `news/parse_fnspid.py`）**：`norm_url` = 小写、去首尾空白的 URL，去掉开头的 `http://`/`https://` 与 `www.`，去掉第一个 `#` 或 `?` 及其后内容，去掉结尾 `/`；`norm_title` = 小写、去首尾空白、连续空白折叠为一个空格的标题；`news_id = sha256(norm_url + "\n" + norm_title)` 十六进制前 24 位。空 URL 或空标题按空串参与。同一篇新闻在多个 ticker 下得到同一 news_id。
 - 许可：Hugging Face 数据卡标 CC BY-NC 4.0，GitHub README 写明可自由使用；本项目按研究用途使用，报告中两者都写明；仓库不重新分发原始新闻与摘要全文。
 
 **预期信号强度**
@@ -211,7 +212,7 @@ S&P 500 成分股基本都在 NYSE 市值中位数之上，相当于原文"市�
 - 目标：得到无前视偏差的新闻表（以 news_id 为键，带时间戳精度标记），以及 (trade_date, ticker) 粒度的新闻面板。
 - 开发方式：用 `curl -L <文件地址> | head -n 300000 > dev_data/sample.csv` 流式截取前几十万行作为开发样本（截断处可能落在某篇正文中间，丢弃最后一条即可），解析、过滤、对齐的纯逻辑与 pytest 在 Mac 上写。原始文件直接下载到卷上，涉及全量数据的统计、时区校验与性能调试在 Pod 会话里做。
 - 任务：
-  1. 读取：全部列按字符串读取（DuckDB `read_csv(..., all_varchar=true)` 或 polars `infer_schema=False`），再逐列转换；必须用正规 CSV 解析器处理正文中的换行与引号。按 URL + 标题生成 news_id。
+  1. 读取：全部列按字符串读取（DuckDB `read_csv(..., all_varchar=true)` 或 polars `infer_schema=False`），再逐列转换；必须用正规 CSV 解析器处理正文中的换行与引号。按规范化 URL + 规范化标题的 sha256 前 24 位生成 news_id（定义见 3.1 节，固定不改）。
   2. 来源与精度统计：按 Publisher / URL 域名统计条数、时刻可用率（时间是否为 `00:00:00`）、正文可用率、每年条数。这张表决定后面所有口径，放在最前面做。
   3. 语言过滤：剔除俄语（Lenta）记录；只保留 2015 年以后、标题非空的记录。
   4. 时区校验：从有时刻的记录中随机抽 100 条带 URL 的 Benzinga / nasdaq 记录，抓原文页面上的发布时间与 FNSPID 时间戳比较，确定偏移（0 小时为 UTC，4–5 小时为美东）；若样本内不一致，则这一来源的时刻全部作废，按仅日期处理。再从仅日期的记录中抽 100 条，确认页面日期不晚于 FNSPID 日期。校验结果写进 README。
