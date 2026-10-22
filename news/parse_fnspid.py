@@ -2,10 +2,10 @@
 
 - DuckDB 流式读取，`all_varchar=true`（列类型不一致、数值列里有俄语字符串），正规 CSV 解析器处理正文中的换行与 "" 引号；
   `max_line_size` 10 MB；`store_rejects=true` 把坏行记入 reject_errors 而不是静默丢弃，拒绝数写进报告。
-- 输出每个源文件一个目录：paths.news.parquet_dir/<source>/part-*.parquet（zstd，单文件约 1 GB），完成后写 _SUCCESS；已有 _SUCCESS 跳过。
+- 输出每个源文件一个目录：paths.news.parquet_dir/<source>/data_*.parquet（zstd，单文件约 1 GB），完成后写 _SUCCESS；已有 _SUCCESS 跳过。
 - 保留全部原始列（字符串），丢掉 nasdaq 文件多出来的索引列 `Unnamed: 0`；派生列：
   source_file, news_id（定义见 news/news_id.py）, ts_utc, has_time（时刻 != 00:00:00）, has_body（Article 非空）, url_host。
-- 每个文件报告解析质量：Stock_symbol 匹配 ^[A-Z][A-Z0-9.\\-]{0,6}$ 的比例、Url 以 http 开头的比例、Date 可解析的比例、拒绝行数。
+- 每个文件报告解析质量：Stock_symbol 匹配 ^[A-Z][A-Z0-9.\\-]{0,6}$ 的比例（只在非空 symbol 上算；第三方来源约 980 万行 symbol 为空，单独报 symbol_null_rate）、Url 以 http 开头的比例、Date 可解析的比例、拒绝行数。
   任一比例 < 99.5% 或拒绝行 > 0.1% 时退出码 3，由人决定是否换解析方式。
 
 长任务：bash infra/run_bg.sh fnspid-parse python -m news.parse_fnspid [--source nasdaq_exteral_data.csv]
@@ -50,6 +50,7 @@ def connect(threads: int, mem_gb: int = 60, tmp: str = "/root/duckdb_tmp") -> du
     Path(tmp).mkdir(parents=True, exist_ok=True)
     con.execute(f"SET temp_directory='{tmp}'")
     con.execute("SET preserve_insertion_order=false")
+    con.execute("SET enable_progress_bar=false")   # 否则进度条会刷满 run_bg 日志
     return con
 
 
@@ -77,7 +78,8 @@ def quality(con: duckdb.DuckDBPyConnection, out_dir: Path) -> dict:
     row = con.execute(f"""
         SELECT count(*) AS n_rows,
                count(DISTINCT news_id) AS n_news_id,
-               avg((regexp_matches(coalesce(Stock_symbol, ''), '{SYMBOL_RE}'))::INT) AS symbol_ok_rate,
+               avg((Stock_symbol IS NULL OR Stock_symbol = '')::INT) AS symbol_null_rate,
+               avg((regexp_matches(Stock_symbol, '{SYMBOL_RE}'))::INT) FILTER (WHERE Stock_symbol IS NOT NULL AND Stock_symbol <> '') AS symbol_ok_rate,
                avg((coalesce(Url, '') LIKE 'http%')::INT) AS url_http_rate,
                avg((ts_utc IS NOT NULL)::INT) AS date_parse_rate,
                avg(has_time::INT) AS time_rate,
@@ -85,7 +87,7 @@ def quality(con: duckdb.DuckDBPyConnection, out_dir: Path) -> dict:
                min(ts_utc) AS ts_min, max(ts_utc) AS ts_max
         FROM read_parquet('{out_dir}/*.parquet')
     """).fetchone()
-    keys = ["n_rows", "n_news_id", "symbol_ok_rate", "url_http_rate", "date_parse_rate", "time_rate",
+    keys = ["n_rows", "n_news_id", "symbol_null_rate", "symbol_ok_rate", "url_http_rate", "date_parse_rate", "time_rate",
             "body_rate", "ts_min", "ts_max"]
     q = {k: (float(v) if isinstance(v, float) else (str(v) if v is not None and k.startswith("ts_") else v))
          for k, v in zip(keys, row)}
@@ -99,7 +101,7 @@ def parse_one(con: duckdb.DuckDBPyConnection, csv_path: Path, out_dir: Path, sou
         COPY ({select_sql(read_csv_sql(str(csv_path)), source)})
         TO '{out_dir}' (FORMAT parquet, COMPRESSION zstd, FILE_SIZE_BYTES '1GB', ROW_GROUP_SIZE 200000)
     """)
-    n_rej = con.execute("SELECT count(*) FROM reject_errors").fetchone()[0]
+    n_rej = con.execute("SELECT count(DISTINCT (scan_id, line)) FROM reject_errors").fetchone()[0]
     rej_sample = con.execute(
         "SELECT line, column_name, error_type, left(error_message, 200) AS msg FROM reject_errors LIMIT 20"
     ).fetchall()
@@ -121,6 +123,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--source", choices=list(SOURCES), default=None, help="只处理一个文件")
     ap.add_argument("--force", action="store_true", help="忽略已有 _SUCCESS（会覆盖；按 CLAUDE.md 先问用户）")
+    ap.add_argument("--requality", action="store_true", help="只在已有 parquet 上重算质量指标并更新 _quality.json")
     args = ap.parse_args()
     paths = load_paths()
     raw_dir = Path(paths["raw"]["fnspid_news"])
@@ -133,6 +136,15 @@ def main() -> int:
         if args.source and fname != args.source:
             continue
         out_dir = pq_root / source
+        if args.requality and (out_dir / "_quality.json").exists():
+            old_q = json.loads((out_dir / "_quality.json").read_text())
+            q = {**old_q, **quality(con, out_dir)}
+            q["ok"] = (min(q["symbol_ok_rate"], q["url_http_rate"], q["date_parse_rate"]) >= THRESH_RATE
+                       and q["reject_rate"] <= THRESH_REJECT)
+            (out_dir / "_quality.json").write_text(json.dumps(q, indent=2, ensure_ascii=False) + "\n")
+            print(json.dumps({k: v for k, v in q.items() if k != "reject_sample"}, indent=2, ensure_ascii=False), flush=True)
+            all_ok &= q["ok"]
+            continue
         if (out_dir / "_SUCCESS").exists() and not args.force:
             print(f"skip {source}: _SUCCESS exists", flush=True)
             continue

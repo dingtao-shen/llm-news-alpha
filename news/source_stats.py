@@ -34,7 +34,8 @@ def main() -> None:
         COPY (SELECT source_file, year(ts_utc) AS year, count(*) AS n_rows, count(DISTINCT news_id) AS n_news_id,
                      count(DISTINCT Stock_symbol) AS n_symbols,
                      round(avg(has_time::INT), 4) AS time_rate, round(avg(has_body::INT), 4) AS body_rate,
-                     round(avg((regexp_matches(coalesce(Stock_symbol, ''), '{SYMBOL_RE}'))::INT), 4) AS symbol_ok_rate,
+                     round(avg((Stock_symbol IS NULL OR Stock_symbol = '')::INT), 4) AS symbol_null_rate,
+                     round(avg((regexp_matches(Stock_symbol, '{SYMBOL_RE}'))::INT) FILTER (WHERE Stock_symbol IS NOT NULL AND Stock_symbol <> ''), 4) AS symbol_ok_rate,
                      round(avg((coalesce(Url, '') LIKE 'http%')::INT), 4) AS url_http_rate,
                      round(avg((ts_utc IS NOT NULL)::INT), 4) AS date_parse_rate
               FROM n GROUP BY 1, 2 ORDER BY 1, 2)
@@ -49,8 +50,9 @@ def main() -> None:
         SELECT source_file, count(*), count(DISTINCT news_id), round(avg(has_time::INT), 4), round(avg(has_body::INT), 4)
         FROM n GROUP BY 1 ORDER BY 1""").fetchall()
     top_hosts = con.execute("""
-        SELECT source_file, url_host, count(*) AS n, round(avg(has_time::INT), 3), round(avg(has_body::INT), 3)
-        FROM n GROUP BY 1, 2 QUALIFY row_number() OVER (PARTITION BY source_file ORDER BY n DESC) <= 8 ORDER BY 1, 3 DESC""").fetchall()
+        SELECT source_file, url_host, count(*) AS cnt, round(avg(has_time::INT), 3), round(avg(has_body::INT), 3),
+               round(avg((Stock_symbol IS NULL OR Stock_symbol = '')::INT), 3) AS symbol_null_rate
+        FROM n GROUP BY 1, 2 QUALIFY row_number() OVER (PARTITION BY source_file ORDER BY cnt DESC) <= 10 ORDER BY 1, 3 DESC""").fetchall()
     quals = {d.name: json.loads((d / "_quality.json").read_text()) for d in sorted(pq.iterdir()) if (d / "_quality.json").exists()}
 
     md = ["# FNSPID 解析与来源统计", "",
@@ -62,8 +64,16 @@ def main() -> None:
         q = quals.get(s, {})
         md.append(f"| {s} | {n:,} | {nid:,} | {tr:.1%} | {br:.1%} | {q.get('n_rejected', '?')} | "
                   f"{q.get('symbol_ok_rate', 0):.4%} | {q.get('url_http_rate', 0):.4%} | {q.get('date_parse_rate', 0):.4%} | {q.get('seconds', '?')} |")
-    md += ["", "## 各文件行数最多的域名", "", "| source_file | url_host | 行数 | 时刻可用率 | 正文可用率 |", "| --- | --- | ---: | ---: | ---: |"]
-    md += [f"| {s} | {h} | {n:,} | {tr:.1%} | {br:.1%} |" for s, h, n, tr, br in top_hosts]
+    md += ["", "## 各文件行数最多的域名", "", "| source_file | url_host | 行数 | 时刻可用率 | 正文可用率 | symbol 为空 |", "| --- | --- | ---: | ---: | ---: | ---: |"]
+    md += [f"| {s} | {h} | {n:,} | {tr:.1%} | {br:.1%} | {sn:.1%} |" for s, h, n, tr, br, sn in top_hosts]
+    sym = con.execute("""
+        SELECT source_file, sum((Stock_symbol IS NOT NULL AND Stock_symbol <> '')::INT) AS n_sym,
+               sum((Stock_symbol IS NOT NULL AND Stock_symbol <> '' AND has_time)::INT) AS n_sym_time,
+               sum((Stock_symbol IS NOT NULL AND Stock_symbol <> '' AND has_body)::INT) AS n_sym_body,
+               sum((Stock_symbol IS NOT NULL AND Stock_symbol <> '' AND ts_utc >= TIMESTAMP '2015-01-01')::INT) AS n_sym_2015
+        FROM n GROUP BY 1 ORDER BY 1""").fetchall()
+    md += ["", "## 带 ticker 的行（能用于个股预测的部分）", "", "| source_file | 带 ticker | 其中有时刻 | 其中有正文 | 其中 2015 年起 |", "| --- | ---: | ---: | ---: | ---: |"]
+    md += [f"| {s} | {a:,} | {b:,} ({b / a:.1%}) | {c:,} ({c / a:.1%}) | {d:,} |" for s, a, b, c, d in sym]
     md += ["", "明细见 `fnspid_source_stats.csv`（source × host × year）与 `fnspid_source_stats_by_year.csv`。",
            "news_id 定义见 `news/news_id.py`。"]
     (res / "fnspid_parse_report.md").write_text("\n".join(md) + "\n")

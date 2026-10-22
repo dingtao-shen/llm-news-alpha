@@ -11,7 +11,8 @@ raw:
 qlib_dir: /workspace/qlib_data/us_sp500
 
 news:
-  parquet_dir: /workspace/data/news/fnspid_parquet   # 模块 2 任务 1：原始 CSV 的全字符串 parquet（<source>/part-*.parquet）
+  parquet_dir: /workspace/data/news/fnspid_parquet   # 模块 2 任务 1：原始 CSV 的全字符串 parquet（<source>/data_*.parquet）
+  embed_candidates: /workspace/data/news/embed_candidates.parquet   # 嵌入候选集（按 news_id 排序，行组 5 万 = 分片）
   clean: /workspace/data/news/news_clean.parquet   # 接口文件 1
   panel: /workspace/data/news/news_panel.parquet
 
