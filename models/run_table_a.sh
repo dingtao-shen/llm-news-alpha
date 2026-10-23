@@ -9,7 +9,7 @@ run() {  # run <model> <text_type> [test years...]
   local key="${model}__${text}__main"
   if [ -f "results/ridge/${key}.json" ]; then echo "skip ${key}: done"; return; fi
   echo "== ${key} $(date -u +%H:%M:%S)"
-  [ -f "/workspace/data/agg/${model}/${text}/main/_meta.json" ] || $PY -m models.aggregate --model "$model" --text-type "$text" --cutoff main | tail -n 3
+  [ -f "/workspace/data/fnspid/agg/${model}/${text}/main/_meta.json" ] || $PY -m models.aggregate --model "$model" --text-type "$text" --cutoff main | tail -n 3
   $PY -m models.ridge_suffstats --model "$model" --text-type "$text" --cutoff main ${1:+--test-years "$@"} | grep -E "^test|^- 全测试期"
 }
 run llama3_base title; run llama3_base body
