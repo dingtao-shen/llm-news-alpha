@@ -2,6 +2,28 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 6）· Phase A 收口（进行中）：日期校验、市值、DM 检验、信号拆分、λ 口径
+
+- 做了什么：
+  - 日期/时区校验（模块 2 任务 4）：benzinga.com 与 nasdaq.com 对数据中心 IP 返回 Cloudflare 403，改用 Wayback 快照（`news/validate_timezone.py`，400 条样本，
+    单线程 + 2.5 秒间隔 + 429 退避，运行超过 1.5 小时，结果待写）。不依赖抓取的全量检查：nasdaq.com 2015–2021 有 900,006 行 URL 末尾带日期，
+    与 FNSPID 日期相同 99.1%，0.9%（仅 2019–2021）URL 日期晚一天；Benzinga URL 年月与 FNSPID 一致 99.99%，5% 的仅日期行 FNSPID 日期晚于 URL 月份（滞后，安全）。
+  - 市值（模块 1 任务 6，`data/market_cap.py`）：SEC companyfacts 股数 × 调整后收盘价。三个坑都处理了：companyfacts 不含维度事实，多类别公司（GOOGL、FOX、BRK）
+    的 dei 股数缺失或零碎 → 回退到合并口径 us-gaap 元素；披露股数已反映申报日前的拆股，拆股换算按 filed 而不是 end（否则 GOOG 2022 多算 20 倍）；
+    量级错误（PKG 按千股填报）在换算后按 8 倍阈值剔除；伯克希尔按 A 类等价股披露，B 股乘 1500。631 只中 553 只有股数，90% 股票-日有市值，其余 adv20 代理。
+    抽查 2019/2023 年末前六名与真实市值一致。SEC 现用代码表没有 2024 年后退市/改名的公司（MMC→MRSH、BK→BNY 已加别名）。
+  - DM 型检验（`analysis/dm_test.py`，日度 Rank IC 配对差，NW 滞后 5）：只有 ChronoBERT 原文显著异于 0（t 2.13）；28 对里只有 2 对显著（ChronoBERT 原文 > ChronoBERT 标题、> FinBERT 原文）。
+  - 信号拆分（`analysis/signal_decomposition.py`）：主口径分数对隔夜收益（t 收盘→t+1 开盘）的 Rank IC：ChronoBERT 原文 +0.0166（t 3.4）、LLaMA3 原文 +0.0215（t 3.9），
+    对 t+1 日内收益 ≈ 0，对主标签 +0.009 / +0.0065。**信号在隔夜兑现，次日开盘后几乎不剩。** 2020–2023 测试样本几乎全是 nasdaq.com 全文，来源拆分对原文模型无信息；
+    单条新闻的股票-日携带 ChronoBERT 的信号（+0.0115，t 2.44）。
+  - λ 口径（`--lambda-rel`，`results/ridge/lambda_sensitivity.md`）：固定 λ_rel=10 在 8 个组合里 6 个全期 Rank IC 更高（LLaMA3 标题 0.0010→0.0054），验证年选 λ 是噪声。
+    注意事后选固定值本身有轻微前视，正式口径应预先固定或用多年验证平均。
+- 产出在哪：`/workspace/data/market_cap/market_cap.parquet`、`/workspace/data/raw/sec/`；`results/prices/market_cap_coverage.{md,csv}`；
+  `results/ridge/{dm_test,signal_decomposition,lambda_sensitivity}.md`、`*__lam10.*`；`results/news/tz_check.*`（待 400 条结果）。
+- 下一步：Wayback 结果出来后定日期规则（候选：nasdaq.com 取 max(FNSPID 日期, URL 日期)）；评估"16:00 截止 + 收盘成交"口径能否吃到隔夜收益
+  （取决于 nasdaq.com 文章发布时刻分布）；Alpaca 需要用户注册拿 API key；BRK.B 增量嵌入；Phase B（摘要、词袋基线、PCA）。
+- 遗留问题：Wayback 校验脚本原来只在结束时输出，无法看进度（已改为每 10 条打印一次）；SEC 没有 160 只退市公司的 CIK，市值缺口 10% 用 adv20 代理。
+
 ## 2026-10-23（续 5）· 模块 6 任务 1–2：五分位多空（等权）、成本、EWCT
 
 - 做了什么：`analysis/longshort.py`（`make longshort`，8 秒）：每日按 score 在有新闻的股票里做多前 20%、做空后 20%，等权美元中性，

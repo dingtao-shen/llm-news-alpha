@@ -156,8 +156,13 @@ def main() -> None:
     if args.limit:
         rows = rows[: args.limit]
     t0 = time.time()
+    out = []
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
-        out = list(ex.map(check_row, rows))
+        for i, r in enumerate(ex.map(check_row, rows), 1):
+            out.append(r)
+            if i % 10 == 0 or i == len(rows):     # 逐批打进度，run_bg 日志里能看到（之前只在结束时输出，跑 1.5 小时看不到任何进展）
+                print(f"{i}/{len(rows)} rows, {time.time() - t0:.0f}s, snapshots so far {sum(x['wayback_ts'] is not None for x in out)}, "
+                      f"parsed {sum(x['page_published_et'] is not None for x in out)}", flush=True)
     df = pl.DataFrame(out)
     res = ROOT / load_paths()["results"] / "news"
     df.write_csv(res / "tz_check.csv")
