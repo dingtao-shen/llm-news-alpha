@@ -1,0 +1,87 @@
+# 模块 1 任务 7：Alpha158（无 VWAP，157 个特征）+ LightGBM 基线，单次切分：训练 2015–2018、验证 2019、测试 2020–2023。
+# 年度滚动版本（4 年训练 + 1 年验证 + 1 年测试）在模块 4 用 RollingGen 生成。运行：make qlib-baseline（qrun）。
+qlib_init:
+    provider_uri: "/workspace/qlib_data/us_sp500"
+    region: us
+    exp_manager:
+        class: MLflowExpManager
+        module_path: qlib.workflow.expm
+        kwargs:
+            uri: "file:/workspace/mlruns"
+            default_exp_name: "Experiment"
+sys:
+    rel_path: [".."]              # 仓库根目录，供 qlib_ext.handler 导入
+market: &market sp500
+benchmark: &benchmark SPY
+experiment_name: baseline_alpha158_lgb
+data_handler_config: &data_handler_config
+    start_time: 2015-01-01
+    end_time: 2024-01-31          # 标签 t+2 开盘需要 2024 年 1 月的数据
+    fit_start_time: 2015-01-01    # 标准化等拟合只用训练期
+    fit_end_time: 2018-12-31
+    instruments: *market
+port_analysis_config: &port_analysis_config
+    strategy:
+        class: TopkDropoutStrategy
+        module_path: qlib.contrib.strategy
+        kwargs:
+            signal: <PRED>
+            topk: 50
+            n_drop: 5
+    backtest:
+        start_time: 2020-01-01
+        end_time: 2023-12-31
+        account: 100000000
+        benchmark: *benchmark
+        exchange_kwargs:
+            limit_threshold: null     # 美股无涨跌停
+            deal_price: open          # 与开盘到开盘标签一致
+            open_cost: 0.0005         # 单边 5 bps，买卖一轮 10 bps
+            close_cost: 0.0005
+            min_cost: 0
+task:
+    model:
+        class: LGBModel
+        module_path: qlib.contrib.model.gbdt
+        kwargs:
+            loss: mse
+            learning_rate: 0.03
+            num_leaves: 63
+            max_depth: -1
+            feature_fraction: 0.8
+            bagging_fraction: 0.8
+            bagging_freq: 1
+            lambda_l1: 10.0
+            lambda_l2: 100.0
+            min_data_in_leaf: 200
+            num_threads: 17           # = $NCPU（Pod cgroup 配额）
+            early_stopping_rounds: 50
+            num_boost_round: 1000
+            seed: 0
+    dataset:
+        class: DatasetH
+        module_path: qlib.data.dataset
+        kwargs:
+            handler:
+                class: Alpha158NoVwap
+                module_path: qlib_ext.handler
+                kwargs: *data_handler_config
+            segments:
+                train: [2015-01-01, 2018-12-31]
+                valid: [2019-01-01, 2019-12-31]
+                test: [2020-01-01, 2023-12-31]
+    record:
+        - class: SignalRecord
+          module_path: qlib.workflow.record_temp
+          kwargs:
+            model: <MODEL>
+            dataset: <DATASET>
+        - class: SigAnaRecord
+          module_path: qlib.workflow.record_temp
+          kwargs:
+            ana_long_short: False
+            ann_scaler: 252
+        - class: PortAnaRecord
+          module_path: qlib.workflow.record_temp
+          kwargs:
+            config: *port_analysis_config

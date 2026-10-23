@@ -1,0 +1,66 @@
+{
+  "recorder": "085a90c7cd6b4f35919982d0429c8993",
+  "metrics": {
+    "1day.pos": 0.0,
+    "1day.pa": 0.0,
+    "1day.ffr": 1.0,
+    "1day.excess_return_with_cost.max_drawdown": -0.3747913468420724,
+    "1day.excess_return_with_cost.information_ratio": -0.039470650676114154,
+    "1day.excess_return_with_cost.annualized_return": -0.006473119618802168,
+    "1day.excess_return_with_cost.std": 0.010630430884802465,
+    "1day.excess_return_with_cost.mean": -2.7197981591605748e-05,
+    "1day.excess_return_without_cost.max_drawdown": -0.3696042865053416,
+    "1day.excess_return_without_cost.information_ratio": 0.0256800773173234,
+    "1day.excess_return_without_cost.annualized_return": 0.00421144139858793,
+    "1day.excess_return_without_cost.std": 0.010630310658157168,
+    "1day.excess_return_without_cost.mean": 1.769513192684004e-05,
+    "Rank ICIR": 0.05390176466483327,
+    "Rank IC": 0.005828611301168372,
+    "ICIR": 0.05488556537445757,
+    "IC": 0.006621839245263934,
+    "l2.valid": 0.9983539062821783,
+    "l2.train": 0.9886664987436422
+  },
+  "port_analysis": {
+    "excess_return_without_cost/mean": 0.0,
+    "excess_return_without_cost/std": 0.0106,
+    "excess_return_without_cost/annualized_return": 0.0042,
+    "excess_return_without_cost/information_ratio": 0.0257,
+    "excess_return_without_cost/max_drawdown": -0.3696,
+    "excess_return_with_cost/mean": -0.0,
+    "excess_return_with_cost/std": 0.0106,
+    "excess_return_with_cost/annualized_return": -0.0065,
+    "excess_return_with_cost/information_ratio": -0.0395,
+    "excess_return_with_cost/max_drawdown": -0.3748
+  },
+  "by_year": [
+    {
+      "datetime": 2020,
+      "excess_after_cost": -0.0114,
+      "turnover": 0.1231,
+      "portfolio": 0.2107,
+      "SPY": 0.20659999549388885
+    },
+    {
+      "datetime": 2021,
+      "excess_after_cost": 0.0708,
+      "turnover": 0.0805,
+      "portfolio": 0.3289,
+      "SPY": 0.24799999594688416
+    },
+    {
+      "datetime": 2022,
+      "excess_after_cost": 0.0274,
+      "turnover": 0.0777,
+      "portfolio": -0.1502,
+      "SPY": -0.1873999983072281
+    },
+    {
+      "datetime": 2023,
+      "excess_after_cost": -0.1142,
+      "turnover": 0.0775,
+      "portfolio": 0.1216,
+      "SPY": 0.22609999775886536
+    }
+  ]
+}

@@ -2,6 +2,20 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 2）· Alpha158 + LightGBM 基线（模块 1 任务 7）
+
+- 做了什么：`qlib_ext/handler.py` 加 `Alpha158NoVwap`（去掉 VWAP0，我们没有 vwap 数据；默认标签改为开盘到开盘）；
+  `configs/baseline_alpha158.yaml`（训练 2015–2018、验证 2019、测试 2020–2023；TopkDropout 50/5、deal_price open、单边 5 bps、基准 SPY）；
+  `make qlib-baseline` 用 qrun 跑通（数据加载 47 秒，全程约 2 分钟），MLflow 实验 `baseline_alpha158_lgb`，recorder 085a90c7…；
+  `analysis/baseline_report.py` 从 recorder 取 IC 与回测指标，写 `results/baseline/`。
+- 结果：IC 0.0066、ICIR 0.055、Rank IC 0.0058；Top-50 多头超额收益扣费前 +0.4%/年、扣费后 −0.6%/年，信息比率 ≈ 0；LightGBM 第 5 轮早停。
+  链路检验（`results/baseline/baseline_sanity_checks.md`）：特征 NaN 0.003%、训练 45.6 万行；昨日收益反转因子 Rank IC −0.018（ICIR −0.08），
+  说明数据没问题、是模型在当前超参下几乎没学到东西。
+- 产出在哪：`/workspace/mlruns/`（实验、pred.pkl、port_analysis、report_normal）；`results/baseline/baseline_alpha158_lgb.{md,json}`、`_cum_return.png`、`baseline_sanity_checks.md`。
+- 下一步：模块 3 任务 5–6（股票-日聚合、充分统计量 Ridge）→ 第一张文本 IC 表；模块 5 再用 Optuna 以验证年 Rank IC 重调 LightGBM，并加入"昨日收益反转"单因子基线。
+- 遗留问题：基线本身很弱，作为对照组时要同时报告反转单因子；回测日志有 "$open field data contains nan"（个别缺价格日），
+  Qlib 提示没有 future calendar（仅警告）。
+
 ## 2026-10-23（续）· 价格缺口补齐、Qlib dump
 
 - 做了什么：

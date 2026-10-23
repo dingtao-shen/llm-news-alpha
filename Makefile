@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small dev-sample
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small dev-sample
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -56,6 +56,9 @@ qlib-dump:  ## [Pod] 价格 CSV → Qlib 二进制（calendars、features、inst
 	$(PY) /workspace/src/qlib/scripts/dump_bin.py dump_all --data_path /workspace/data/prices --qlib_dir /workspace/qlib_data/us_sp500 \
 	  --include_fields open,high,low,close,volume,factor,adj_close --date_field_name date --symbol_field_name symbol --max_workers $$NCPU
 
+qlib-baseline:  ## [Pod] 后台 qrun Alpha158(无 VWAP) + LightGBM 基线，结果在 /workspace/mlruns
+	$(BG) qlib-baseline /workspace/venv-main/bin/qrun configs/baseline_alpha158.yaml
+
 # ---------------------------------------------------------------- 模块 2：新闻
 news-download:  ## [Pod] 后台下载 FNSPID 两个 CSV 到 /workspace/data/raw/fnspid
 	$(BG) fnspid-download $(PY) -m news.download_fnspid
@@ -94,7 +97,7 @@ embed-small:  ## [Pod] 后台：FinBERT、MiniLM、ChronoBERT ×4 的标题与�
 	  $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type body $(SMALL)'
 
 # ---------------------------------------------------------------- 后续模块（实现时补上）
-# 模块 1：qlib-baseline market-cap
+# 模块 1：market-cap
 # 模块 2：news-sample news-tz
 # 模块 3：benchmark summarize bow ridge pca
 # 模块 4–6：qlib-news qlib-fusion analyze
