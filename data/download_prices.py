@@ -8,7 +8,7 @@
 - Yahoo 的 Close 已按拆股调整，Adj Close 再按分红调整，所以 factor 只含分红调整（与 Qlib 官方 Yahoo collector 的口径相同）。
 - 结束时按成分股区间统计覆盖率（results/prices/price_coverage.md）：失败的基本是 2024 年前后已被收购 / 私有化 / 改名、Yahoo 不再提供历史的代码。
 - 字段：date, symbol, open, high, low, close, volume, adj_close, factor = adj_close / close（Qlib 的复权因子）。
-- 断点续跑：已有且非空的 CSV 跳过。结束时写 _manifest.json（成功/失败数、每只行数与日期范围）与 _failed.csv。
+- 断点续跑：已有且非空的 CSV 跳过。结束时写 _meta/manifest.json（成功/失败数、每只行数与日期范围）与 _meta/failed.csv。
 - 时间范围：2014-06-01 起（Alpha158 需要约 60 个交易日回看）到 2024-01-31（标签要 t+2 开盘）。
 
 试跑：python -m data.download_prices --tickers AAPL,BRK.B,FB,SPY --out <dir>
@@ -116,8 +116,9 @@ def download(tickers: list[str], out_dir: Path, start: str = START, end: str = E
     manifest = {"start": start, "end": end, "n_tickers": len(tickers), "n_cached": len(tickers) - len(todo),
                 "n_downloaded": len(rows), "n_failed": len(failed), "failed": [t for t, _ in failed],
                 "downloaded_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "per_ticker": rows}
-    (out_dir / "_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    pd.DataFrame(failed, columns=["ticker", "yf_symbol"]).to_csv(out_dir / "_failed.csv", index=False)
+    meta_dir = out_dir / "_meta"; meta_dir.mkdir(exist_ok=True)   # 元数据不放在 CSV 同级：Qlib dump_bin 会把 *.csv 都当成股票
+    (meta_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    pd.DataFrame(failed, columns=["ticker", "yf_symbol"]).to_csv(meta_dir / "failed.csv", index=False)
     print(f"downloaded {len(rows)}, failed {len(failed)}: {[t for t, _ in failed][:40]}", flush=True)
     return manifest
 
@@ -126,7 +127,7 @@ def coverage_report(out_dir: Path, membership_parquet: Path, res: Path) -> dict:
     """按成分股区间统计价格覆盖：每只是否有 CSV、CSV 是否覆盖其在池区间；按区间结束年份分布。"""
     import polars as pl
     mem = pl.read_parquet(membership_parquet)
-    have = {p.stem for p in out_dir.glob("*.csv") if not p.stem.startswith("_")}
+    have = {p.stem for p in out_dir.glob("*.csv")}
     spans = []
     for t in sorted(set(mem["ticker"])):
         if t in have:
