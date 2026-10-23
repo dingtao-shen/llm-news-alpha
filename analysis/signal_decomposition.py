@@ -8,7 +8,8 @@
 子样本（主标签）：
   按来源：该股票-日新闻中 Benzinga（只有标题）的占比 = 0 / (0,1) / 1；
   按新闻条数：1 / 2–3 / ≥4；
-  按当天收益幅度 |same_day| 的日内三分位（反应大的新闻日是否还有残余）。
+  按当天收益幅度 |same_day| 的日内三分位（反应大的新闻日是否还有残余）；
+  按市值日内三分位（原文的核心机制：信号在小盘股更强；S&P 500 内部按 SEC 市值分组，缺市值的股票不入分组）。
 运行：python -m analysis.signal_decomposition → results/ridge/signal_decomposition.md
 """
 from __future__ import annotations
@@ -68,13 +69,16 @@ def main() -> None:
     paths = load_paths()
     rets = returns_table(paths["qlib_dir"])
     src = source_share(paths)
+    mcap = pl.read_parquet(paths["market_cap"], columns=["datetime", "instrument", "mcap"]).to_pandas()
+    mcap["datetime"] = pd.to_datetime(mcap["datetime"]).dt.date
     preds = load_preds(Path(paths["pred_dir"]))
     md = ["# 信号去向拆分（主口径 Ridge 分数，2020–2023，日度 Rank IC 与 Newey–West t）", ""]
     for key in [k for k in FOCUS if k in preds]:
         label = f"{NAMES[key.split('__')[0]]} / {TEXT[key.split('__')[1]]}"
         s = preds[key].stack().rename("score").reset_index()
         s["datetime"] = pd.to_datetime(s["datetime"]).dt.date
-        df = s.merge(rets, on=["datetime", "instrument"], how="inner").merge(src, on=["datetime", "instrument"], how="left")
+        df = (s.merge(rets, on=["datetime", "instrument"], how="inner").merge(src, on=["datetime", "instrument"], how="left")
+                .merge(mcap, on=["datetime", "instrument"], how="left"))
         md += [f"## {label}", "", "### 按收益窗口", "", "| 窗口 | Rank IC | t | 交易日 |", "| --- | ---: | ---: | ---: |"]
         for w in WINDOWS:
             r = ic_by_group(df.dropna(subset=[w]), "score", w).iloc[0]
@@ -83,7 +87,8 @@ def main() -> None:
         df["cnt_group"] = pd.cut(df["news_cnt"].fillna(1), [0, 1, 3, 1e9], labels=["1 条", "2–3 条", "≥4 条"])
         df["abs_same"] = df["same_day"].abs()
         df["move_group"] = df.groupby("datetime")["abs_same"].transform(lambda x: pd.qcut(x.rank(method="first"), 3, labels=["小", "中", "大"]) if len(x) >= 6 else pd.Series(index=x.index, dtype=object))
-        for gname, gcol in [("按来源", "src_group"), ("按新闻条数", "cnt_group"), ("按当天 |收益| 三分位（日内）", "move_group")]:
+        df["size_group"] = df.groupby("datetime")["mcap"].transform(lambda x: pd.qcut(x.rank(method="first"), 3, labels=["小", "中", "大"]) if x.notna().sum() >= 6 else pd.Series(index=x.index, dtype=object))
+        for gname, gcol in [("按来源", "src_group"), ("按新闻条数", "cnt_group"), ("按当天 |收益| 三分位（日内）", "move_group"), ("按市值三分位（日内，S&P 500 内部）", "size_group")]:
             md += ["", f"### {gname}（主标签）", "", "| 子样本 | 股票-日 | 交易日 | Rank IC | t |", "| --- | ---: | ---: | ---: | ---: |"]
             for _, r in ic_by_group(df.dropna(subset=[gcol, "main_oo"]), "score", "main_oo", gcol).iterrows():
                 md.append(f"| {r.group} | {r.n_obs:,} | {r.days} | {r.rank_ic:+.4f} | {r.t:+.2f} |")
