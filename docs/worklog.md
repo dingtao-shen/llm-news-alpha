@@ -20,11 +20,11 @@
 - 产出在哪：
   - `/workspace/data/emb/{finbert,minilm,chronobert-2019123,…}/{title,body}/part-*.parquet`；`_inputs/` 下按窗口的输入表
   - `/workspace/data/prices/*.csv`、`_manifest.json`、`_failed.csv`；`results/prices/price_coverage.{md,csv}`
-  - 修正版 news_clean / news_panel 暂在 Pod 容器盘 scratch（`/tmp/claude-0/.../scratchpad/clean_v2/`），`/workspace/data/news/` 下仍是第一版，等用户同意后替换；
-    `results/news/news_clean_report.md` 已是修正版数字
+  - `/workspace/data/news/news_clean.parquet`（476,895 条，接口文件 1）、`news_panel.parquet`（272,885 个股票-日）、`news_clean_meta.json`：
+    用户确认后已用修正版替换第一版；`results/news/news_clean_report.md` 为对应数字
   - `infra/make_dev_sample.py` → `/workspace/data/dev_sample.tgz`（70 MB，Mac 的 dev_data/）
 - 下一步：
-  - 替换 news_clean 为修正版（待确认）；候选集重建时带 BRK 别名并做增量嵌入（embed.py 需要支持追加分片）。
+  - 候选集重建时带 BRK 别名并做增量嵌入（embed.py 需要支持追加分片）。
   - 价格缺口：用 FNSPID `Stock_price/full_history.zip`（2023 年抓取，含当时的退市股）补 164 只；再 Qlib dump、Alpha158 基线（模块 1 任务 3–7）。
   - 模块 2 任务 4：时区/日期校验（重点是仅日期记录的日期可靠性）；任务 9 其余统计。模块 3 任务 5–6：股票-日聚合、充分统计量 Ridge。
 - 遗留问题：
