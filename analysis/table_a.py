@@ -39,7 +39,7 @@ def main() -> None:
     rows = collect(res)
     md = ["# 表 A 初表：文本表示 × 文本类型，全维年度滚动 Ridge，主口径（9:00 ET，开盘到开盘标签）", "",
           "测试期 2020–2023，每年 4 年训练 + 1 年验证 + 1 年测试，λ 在验证年按日均 Rank IC 选。全期列为各年按交易日数加权。",
-          "ChronoBERT 测试第 Y 年用知识截止 (Y−1)-12-31 的版本，只嵌入该窗口 6 年。摘要列待模块 3 任务 4。", "",
+          "ChronoBERT 测试第 Y 年用知识截止 (Y−1)-12-31 的版本，只嵌入该窗口 6 年。摘要 = LLaMA3-8B-Instruct 对原文（前 800 token）生成的 2–3 句摘要（v2 提示词），再用各模型嵌入，故 n_test 与原文列相同。", "",
           "| 模型 | 文本 | " + " | ".join(f"{y} Rank IC" for y in YEARS) + " | 全期 Rank IC | 全期 IC | 平均 Rank ICIR | n_test（合计） |",
           "| --- | --- |" + " ---: |" * (len(YEARS) + 4)]
     for model in ORDER:

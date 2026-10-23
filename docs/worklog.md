@@ -2,6 +2,25 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 10）· 阶段 B 收尾：摘要全量完成、抽查、摘要嵌入与表 A 摘要列
+
+- 做了什么：
+  - 摘要放量跑完：246,588 篇 / 13 片，`/workspace/data/fnspid/summaries/llama3_instruct/part-*.parquet`（news_id, summary, summary_raw, flag, n_out_tokens）。
+    吞吐 6.6–8.2 篇/s，瓶颈是 GPU 热降频（88 °C、SM 700–1,100 MHz，`sw_thermal_slowdown`，功耗只有 250/350 W），
+    把前端换成预分词 `llm.generate` 后主进程 CPU 从 110% 降到 10% 但速度不变，证明前端不是瓶颈。合计约 9.5 小时 GPU。
+  - 坏分片：旧进程被杀时引擎已死，part-00002 写出 19,067 条空输出；用户确认后删除、续跑补齐。脚本加了空输出比例 > 5% 不落盘的防护（`shard_ok`）。
+  - 抽查（`results/ridge/text_form_comparison.md` 第一节）：正常 95.4%、去元句 1.5%、拒答→标题 3.2%；数字加料的自动代理 2.5% 经核对几乎全是误报；60 条人工样本无编造。
+    新发现 2% 的拒答以 "X is not mentioned in the article" 开头未被抓到：`clean_summary` 扩展为只看首句的第二个正则，加测试。
+    分片里的 summary 列是写出当时的后处理结果；`text/embed.py --text-type summary` 改为用 summary_raw + 最新 `clean_summary` 重算，不重写分片。
+  - 摘要嵌入 + 聚合 + Ridge（`models/run_summary.sh`，`make summary-downstream`，约 50 分钟含 LLaMA3 嵌入）：表 A 加摘要列，DM 检验与多空表加摘要行。
+  - 修了两个 bug：polars join 不保序导致摘要输入表没按 news_id 排序（断言拦住）；Ridge 在空聚合目录上会写出零行预测（现在直接报错）。`run_table_a.sh` 里过期的 agg 路径也改成 `{dataset}` 版。
+- 结果（全期 Rank IC 标题 / 原文 / 摘要）：LLaMA3 −0.0005 / +0.0080 / +0.0045；ChronoBERT −0.0001 / +0.0045 / +0.0004；FinBERT +0.0030 / +0.0042 / +0.0049；MiniLM −0.0011 / +0.0028 / −0.0010。
+  摘要 − 原文的 DM t 在 −0.9 到 +0.2 之间，摘要 − 标题 ≤ 1.1：**摘要没有增量，所有文本形式的差异都在噪声内**；多空净夏普仍全部为负。
+- 产出在哪：`/workspace/data/fnspid/emb/*/summary/`、`/workspace/data/fnspid/agg/*/summary/`、preds 里的 `*__summary__main`；
+  `results/ridge/{table_a,dm_test,text_form_comparison}.md`、`results/ridge/*__summary__main.{json,md}`、`results/longshort/sharpe_table.md`。
+- 下一步：阶段 D 收尾（时间一致性 ChronoBERT vs LLaMA3 成稿）、阶段 E/F（README 报告、make 目标检查、dev sample 刷新、备份到对象存储、Terminate）。
+- 遗留：GPU 热降频无法在 Pod 内干预；摘要在本数据上不值得留在主流程，换源后再评估；FNSPID ticker 错配（文章与所挂 ticker 无关）是拒答与"挂错公司"两类问题的共同来源，无法在摘要环节修复。
+
 ## 2026-10-23（续 9）· 阶段 C：表 B 与增量检验（摘要仍在后台生成）
 
 - 做了什么：`qlib_ext/run_rolling.py`（81 分钟，CPU）：5 个特征集 × 4 个滚动窗口 × {Ridge（验证选 α）, LightGBM ×3 种子, MLP 2×256 ×3 种子}，
