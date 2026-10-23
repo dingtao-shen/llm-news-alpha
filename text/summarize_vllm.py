@@ -1,10 +1,11 @@
 """模块 3 任务 4：LLaMA3-8B-Instruct + vLLM 批量生成新闻摘要（第三种文本）。venv-vllm 运行。
 
 - 输入：news_clean（接口文件 1）里有正文的记录；正文按分词器截到前 BODY_TOKENS 个 token 再喂模型（模板 + 输出留余量，max_model_len 4096）。
-- 输出：paths.summaries_dir/<model>/part-NNNNN.parquet（news_id, summary, n_out_tokens），按 news_id 排序、每片 SHARD 条，已存在的分片跳过，
+- 输出：paths.summaries_dir/<model>/part-NNNNN.parquet（news_id, summary, summary_raw, flag, n_out_tokens），按 news_id 排序、每片 SHARD 条，已存在的分片跳过，
   先写 .tmp 再改名；_meta.json 记录提示词版本、解码参数、模型 commit。
 - 提示词：模块 0 的旧版（PROMPT_V0）10 条里 3 条"加料"（补后果、补动机、写"未披露"）。新版（PROMPT_V1）明确禁止推断原因 / 后果 / 动机与评价，
-  禁止写"未提及 / 未披露"，限 1–2 句，附 2 个示范。放量前用 --compare N 在真实新闻上并排输出两版供人工判断加料率。
+  禁止写"未提及 / 未披露"，限 1–2 句，附 2 个示范；v2 再加 ticker 与文章不符时的处理与禁止元句开头。放量前用 --compare N 在真实新闻上并排输出供人工判断加料率。
+- 后处理 clean_summary：去掉 "Here is a summary…:" 元句；拒答（多为 FNSPID 挂错 ticker）用标题代替并记 flag=fallback_title。
 - 解码：temperature 0（贪心）、max_tokens 128、seed 0。
 
 试跑对比：bash infra/run_bg.sh summ-compare /workspace/venv-vllm/bin/python -m text.summarize_vllm --compare 50
@@ -90,6 +91,25 @@ def generate(llm, convs: list[list[dict]]) -> list[tuple[str, int]]:
     return [(o.outputs[0].text.strip(), len(o.outputs[0].token_ids)) for o in outs]
 
 
+# ------------------------------------------------------------------ 后处理：去元句、识别拒答
+_PREAMBLE = re.compile(r"^(?:here is|here's)[^\n:]{0,80}:\s*", re.I)
+_REFUSAL = re.compile(r"^(?:no summary|there is no|the (?:provided )?(?:article|text) (?:does not|doesn't|is not)|unfortunately|i cannot|i can't)", re.I)
+
+
+def clean_summary(text: str, title: str) -> tuple[str, str]:
+    """返回 (summary, flag)。flag ∈ {ok, stripped_preamble, fallback_title}。
+    - 以 "Here is a summary…:" 开头 → 去掉该元句；
+    - 拒答（"No summary…"、"There is no article about X…"，多为 FNSPID 把文章挂错 ticker）→ 用标题代替，保证每条都有可嵌入的文本。"""
+    t = text.strip()
+    flag = "ok"
+    m = _PREAMBLE.match(t)
+    if m:
+        t = t[m.end():].strip(); flag = "stripped_preamble"
+    if not t or _REFUSAL.match(t):
+        return title.strip(), "fallback_title"
+    return t, flag
+
+
 # ------------------------------------------------------------------ 加料的粗略自动线索（只是提示，最终以人工判断为准）
 _NUM = re.compile(r"\$?\d[\d,\.]*%?")
 _CAP = re.compile(r"\b[A-Z][a-zA-Z]{2,}\b")
@@ -161,13 +181,18 @@ def run_full(paths: dict, prompt_version: str, limit: int | None) -> None:
         t0 = time.time()
         bodies = [truncate_tokens(tok, b, BODY_TOKENS) for b in part["body"]]
         outs = generate(llm, [make_conv(PROMPTS[prompt_version], t, h, b) for t, h, b in zip(part["ticker"], part["title"], bodies)])
-        table = pa.table({"news_id": pa.array(part["news_id"].to_list(), pa.string()), "summary": pa.array([o[0] for o in outs], pa.string()),
+        cleaned = [clean_summary(o[0], h) for o, h in zip(outs, part["title"])]
+        table = pa.table({"news_id": pa.array(part["news_id"].to_list(), pa.string()),
+                          "summary": pa.array([c[0] for c in cleaned], pa.string()),
+                          "summary_raw": pa.array([o[0] for o in outs], pa.string()),
+                          "flag": pa.array([c[1] for c in cleaned], pa.string()),
                           "n_out_tokens": pa.array([o[1] for o in outs], pa.int32())})
         tmp = out_dir / f"part-{i:05d}.parquet.tmp"
         pq.write_table(table, tmp, compression="zstd"); os.replace(tmp, out_dir / f"part-{i:05d}.parquet")
-        secs = time.time() - t0; n_out = sum(o[1] for o in outs)
+        secs = time.time() - t0; n_out = sum(o[1] for o in outs); n_fb = sum(c[1] == "fallback_title" for c in cleaned); n_st = sum(c[1] == "stripped_preamble" for c in cleaned)
         eta = (len(todo) - k - 1) * (time.time() - t_start) / (k + 1) / 60
-        print(f"shard {i + 1}/{n_shards}: {len(part):,} articles, {n_out:,} out tokens, {secs:.0f}s ({len(part) / secs:.1f} art/s), eta {eta:.0f} min", flush=True)
+        print(f"shard {i + 1}/{n_shards}: {len(part):,} articles, {n_out:,} out tokens, {secs:.0f}s ({len(part) / secs:.1f} art/s), "
+              f"fallback {n_fb} stripped {n_st}, eta {eta:.0f} min", flush=True)
     meta["finished_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"); meta["wall_secs"] = round(time.time() - t_start)
     (out_dir / "_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
     print("done", flush=True)
