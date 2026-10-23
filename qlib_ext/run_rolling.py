@@ -46,7 +46,7 @@ def make_dataset(qlib_news_dir: str, fs: str, ty: int):
     return DatasetH(handler=h, segments={"train": (f"{tr0}-01-01", f"{tr1}-12-31"), "valid": (f"{va}-01-01", f"{va}-12-31"), "test": (f"{te}-01-01", f"{te}-12-31")})
 
 
-def make_model(name: str, seed: int, gpu: int):
+def make_model(name: str, seed: int, gpu: int, input_dim: int = 0):
     if name == "ridge":
         from qlib_ext.models import RidgeModel
         return RidgeModel()
@@ -56,7 +56,7 @@ def make_model(name: str, seed: int, gpu: int):
     if name == "mlp":
         from qlib.contrib.model.pytorch_nn import DNNModelPytorch
         return DNNModelPytorch(lr=0.001, max_steps=3000, batch_size=4096, early_stop_rounds=50, eval_steps=20, optimizer="adam", loss="mse",
-                               GPU=gpu, seed=seed, weight_decay=1e-4, pt_model_kwargs={"layers": (256, 256)})
+                               GPU=gpu, seed=seed, weight_decay=1e-4, pt_model_kwargs={"input_dim": input_dim, "layers": (256, 256)})
     raise ValueError(name)
 
 
@@ -88,7 +88,7 @@ def main() -> None:
             for mname in args.models:
                 for seed in (args.seeds if mname != "ridge" else [0]):
                     t1 = time.time()
-                    m = make_model(mname, seed, args.gpu)
+                    m = make_model(mname, seed, args.gpu, input_dim=te["feature"].shape[1])
                     m.fit(ds)
                     pred = m.predict(ds, "test")
                     st = ic_stats(pred, y_te)
