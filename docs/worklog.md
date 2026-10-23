@@ -2,6 +2,25 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 8）· 阶段 B 进行中：摘要放量、词袋基线、PCA、16:00 口径
+
+- 做了什么：
+  - 摘要（模块 3 任务 4）：`text/summarize_vllm.py`，vLLM + LLaMA3-8B-Instruct，temperature 0。50 条真实新闻上对比三版提示词
+    （`results/news/summary_prompt_compare_v0_v1.md`、`_v1_v2.md`）：v0 有 13 条以元句开头、含作者观点与因果补充；v1/v2 更短更忠实；
+    v2 加了 ticker 与文章不符时的处理与禁元句，剩余拒答（FNSPID 挂错 ticker）由后处理 `clean_summary` 兜底（去元句、拒答回退标题并打 flag）。
+    用户确认后放量：246,588 篇有正文的 news_clean 记录，输入截 1,500 token，输出 ≤128 token，2 万篇一片，后台约 5 小时。
+  - 词袋基线（模块 3 任务 8，`text/bow_baseline.py`）：LM 词典情绪分（词表取自 pysentiment2 0.1.1 随包的 LM.csv，放在卷上）直接作 score；
+    TF-IDF 5,000 维只在 2015–2018 拟合，股票-日均值后走同一套滚动 Ridge。全期 Rank IC：LM 标题 −0.0051 / 原文 +0.0027；TF-IDF 标题 +0.0004 / 原文 +0.0036。
+    **与 LLM 嵌入（0.000–0.009）同量级，DM 检验下无显著差异**：在这份数据上 LLM 相对词袋法没有可辨识的增量，这是报告要正面写的结论。
+  - PCA（模块 3 任务 7，`models/pca_export.py`）：只在 2015–2018 拟合。LLaMA3 原文 64 维解释 79.9%、256 维 91.8%；标题 63.5% / 78.9%。
+    PC1 与嵌入范数相关 0.86、与 news_cnt 0.07：第一主成分是向量范数方向（各向异性），不是新闻条数。导出到 `/workspace/data/fnspid/pca/`。
+  - 16:00 口径：`models/run_cutoff_1600.sh` 后台跑全部模型（结果键 `*__1600`），进行中。
+  - 接口：`--text-type summary` 已接入 embed / aggregate / ridge；表 A、多空、DM 加入 TF-IDF、LM 两行与摘要列。
+- 产出在哪：`/workspace/data/fnspid/summaries/llama3_instruct/`（生成中）、`/workspace/data/fnspid/pca/`、`/workspace/data/fnspid/agg/tfidf/`、preds 里的 `tfidf__*`、`lm_dict__*`；
+  `results/ridge/{table_a,dm_test,pca_summary}.md`、`results/news/summary_prompt_compare_*.md`。
+- 下一步：摘要跑完 → 抽查 100 条加料比例 → 4 个模型嵌入摘要 → 聚合 + Ridge → 表 A 的摘要列；16:00 口径汇总；然后阶段 C（Qlib 融合）。
+- 遗留：LM 词典副本来自第三方包（2018 版词表），报告中注明来源与版本；TF-IDF 词表在 2015–2018 拟合、不随窗口滚动（与 PCA 同样的"早于验证期"口径）。
+
 ## 2026-10-23（续 7）· 阶段 0 完成：日期修正重跑 + 数据源无关接口
 
 - 做了什么（代码）：`{dataset}` 路径模板（`/workspace/data/fnspid/{news,emb,agg,preds}`，环境变量 DATASET 可换）；标准新闻表 schema（`news/schema.py`，

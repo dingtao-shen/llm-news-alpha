@@ -31,6 +31,22 @@
     "minilm__body": {
       "mean": 0.0027951983375198914,
       "t": 0.597201563678018
+    },
+    "tfidf__title": {
+      "mean": 0.0004035793559831624,
+      "t": 0.10472447218718134
+    },
+    "tfidf__body": {
+      "mean": 0.003624813905357703,
+      "t": 0.7914142835749965
+    },
+    "lm_dict__title": {
+      "mean": -0.005083555680909863,
+      "t": -1.3545768732495227
+    },
+    "lm_dict__body": {
+      "mean": 0.002676853606593635,
+      "t": 0.656275641906379
     }
   },
   "pairwise_t": {
@@ -42,7 +58,11 @@
       "finbert__title": 0.755,
       "finbert__body": 0.956,
       "minilm__title": -0.138,
-      "minilm__body": 0.685
+      "minilm__body": 0.685,
+      "tfidf__title": 0.208,
+      "tfidf__body": 0.908,
+      "lm_dict__title": -0.84,
+      "lm_dict__body": 0.62
     },
     "llama3_base__body": {
       "llama3_base__title": -1.702,
@@ -52,7 +72,11 @@
       "finbert__title": -1.035,
       "finbert__body": -1.137,
       "minilm__title": -1.642,
-      "minilm__body": -1.096
+      "minilm__body": -1.096,
+      "tfidf__title": -1.525,
+      "tfidf__body": -1.018,
+      "lm_dict__title": -2.104,
+      "lm_dict__body": -0.87
     },
     "chronobert__title": {
       "llama3_base__title": -0.105,
@@ -62,7 +86,11 @@
       "finbert__title": 0.73,
       "finbert__body": 0.938,
       "minilm__title": -0.247,
-      "minilm__body": 0.616
+      "minilm__body": 0.616,
+      "tfidf__title": 0.114,
+      "tfidf__body": 0.849,
+      "lm_dict__title": -0.953,
+      "lm_dict__body": 0.5
     },
     "chronobert__body": {
       "llama3_base__title": -1.064,
@@ -72,7 +100,11 @@
       "finbert__title": -0.333,
       "finbert__body": -0.085,
       "minilm__title": -1.11,
-      "minilm__body": -0.381
+      "minilm__body": -0.381,
+      "tfidf__title": -0.9,
+      "tfidf__body": -0.24,
+      "lm_dict__title": -1.626,
+      "lm_dict__body": -0.313
     },
     "finbert__title": {
       "llama3_base__title": -0.755,
@@ -82,7 +114,11 @@
       "finbert__title": NaN,
       "finbert__body": 0.291,
       "minilm__title": -0.893,
-      "minilm__body": -0.033
+      "minilm__body": -0.033,
+      "tfidf__title": -0.609,
+      "tfidf__body": 0.135,
+      "lm_dict__title": -1.357,
+      "lm_dict__body": -0.046
     },
     "finbert__body": {
       "llama3_base__title": -0.956,
@@ -92,7 +128,11 @@
       "finbert__title": -0.291,
       "finbert__body": NaN,
       "minilm__title": -1.053,
-      "minilm__body": -0.327
+      "minilm__body": -0.327,
+      "tfidf__title": -0.837,
+      "tfidf__body": -0.161,
+      "lm_dict__title": -1.564,
+      "lm_dict__body": -0.265
     },
     "minilm__title": {
       "llama3_base__title": 0.138,
@@ -102,7 +142,11 @@
       "finbert__title": 0.893,
       "finbert__body": 1.053,
       "minilm__title": NaN,
-      "minilm__body": 0.834
+      "minilm__body": 0.834,
+      "tfidf__title": 0.366,
+      "tfidf__body": 0.949,
+      "lm_dict__title": -0.683,
+      "lm_dict__body": 0.656
     },
     "minilm__body": {
       "llama3_base__title": -0.685,
@@ -112,7 +156,67 @@
       "finbert__title": 0.033,
       "finbert__body": 0.327,
       "minilm__title": -0.834,
-      "minilm__body": NaN
+      "minilm__body": NaN,
+      "tfidf__title": -0.502,
+      "tfidf__body": 0.198,
+      "lm_dict__title": -1.275,
+      "lm_dict__body": -0.02
+    },
+    "tfidf__title": {
+      "llama3_base__title": -0.208,
+      "llama3_base__body": 1.525,
+      "chronobert__title": -0.114,
+      "chronobert__body": 0.9,
+      "finbert__title": 0.609,
+      "finbert__body": 0.837,
+      "minilm__title": -0.366,
+      "minilm__body": 0.502,
+      "tfidf__title": NaN,
+      "tfidf__body": 0.766,
+      "lm_dict__title": -1.024,
+      "lm_dict__body": 0.43
+    },
+    "tfidf__body": {
+      "llama3_base__title": -0.908,
+      "llama3_base__body": 1.018,
+      "chronobert__title": -0.849,
+      "chronobert__body": 0.24,
+      "finbert__title": -0.135,
+      "finbert__body": 0.161,
+      "minilm__title": -0.949,
+      "minilm__body": -0.198,
+      "tfidf__title": -0.766,
+      "tfidf__body": NaN,
+      "lm_dict__title": -1.461,
+      "lm_dict__body": -0.165
+    },
+    "lm_dict__title": {
+      "llama3_base__title": 0.84,
+      "llama3_base__body": 2.104,
+      "chronobert__title": 0.953,
+      "chronobert__body": 1.626,
+      "finbert__title": 1.357,
+      "finbert__body": 1.564,
+      "minilm__title": 0.683,
+      "minilm__body": 1.275,
+      "tfidf__title": 1.024,
+      "tfidf__body": 1.461,
+      "lm_dict__title": NaN,
+      "lm_dict__body": 1.755
+    },
+    "lm_dict__body": {
+      "llama3_base__title": -0.62,
+      "llama3_base__body": 0.87,
+      "chronobert__title": -0.5,
+      "chronobert__body": 0.313,
+      "finbert__title": 0.046,
+      "finbert__body": 0.265,
+      "minilm__title": -0.656,
+      "minilm__body": 0.02,
+      "tfidf__title": -0.43,
+      "tfidf__body": 0.165,
+      "lm_dict__title": -1.755,
+      "lm_dict__body": NaN
     }
   }
 }
