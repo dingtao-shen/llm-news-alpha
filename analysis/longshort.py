@@ -27,18 +27,26 @@ COSTS_BPS = [0, 5, 10, 20]
 ANN = 252
 
 
-def quintile_weights(scores: pd.DataFrame, min_names: int = MIN_NAMES) -> pd.DataFrame:
-    """scores: 行 = 日期，列 = 股票，NaN = 当天无预测。返回等权美元中性的目标权重矩阵（同形状，0 填充）。"""
+def quintile_weights(scores: pd.DataFrame, min_names: int = MIN_NAMES, n_groups: int = 5, size: pd.DataFrame | None = None) -> pd.DataFrame:
+    """scores: 行 = 日期，列 = 股票，NaN = 当天无预测。返回美元中性的目标权重矩阵（同形状，0 填充）：
+    做多最高 1/n_groups、做空最低 1/n_groups；size 为 None 时等权，否则按 size（市值）加权，size 缺失的股票不进组合。"""
     W = pd.DataFrame(0.0, index=scores.index, columns=scores.columns)
     for d, row in scores.iterrows():
         s = row.dropna()
+        if size is not None and d in size.index:
+            sz = size.loc[d].reindex(s.index)
+            s = s[sz.notna() & (sz > 0)]
         n = len(s)
         if n < min_names:
             continue
-        k = max(int(np.floor(n * 0.2)), 1)
+        k = max(int(np.floor(n / n_groups)), 1)
         order = s.sort_values(kind="mergesort")
-        W.loc[d, order.index[-k:]] = 1.0 / k
-        W.loc[d, order.index[:k]] = -1.0 / k
+        long, short = order.index[-k:], order.index[:k]
+        if size is None:
+            W.loc[d, long] = 1.0 / k; W.loc[d, short] = -1.0 / k
+        else:
+            wl, ws = size.loc[d, long], size.loc[d, short]
+            W.loc[d, long] = (wl / wl.sum()).values; W.loc[d, short] = -(ws / ws.sum()).values
     return W
 
 
@@ -76,9 +84,15 @@ def summarize(ps: pd.DataFrame, cost_bps: float) -> dict:
             "active_days": int(active.sum()), "days": int(len(ps))}
 
 
-def load_returns(labels_path: str, start: str, end: str) -> pd.DataFrame:
-    lab = pl.read_parquet(labels_path, columns=["datetime", "instrument", MAIN_LABEL]).filter(pl.col("datetime").is_between(pl.lit(start).str.to_date(), pl.lit(end).str.to_date()))
-    return lab.to_pandas().pivot(index="datetime", columns="instrument", values=MAIN_LABEL)
+def load_returns(labels_path: str, start: str, end: str, label: str = MAIN_LABEL) -> pd.DataFrame:
+    lab = pl.read_parquet(labels_path, columns=["datetime", "instrument", label]).filter(pl.col("datetime").is_between(pl.lit(start).str.to_date(), pl.lit(end).str.to_date()))
+    return lab.to_pandas().pivot(index="datetime", columns="instrument", values=label)
+
+
+def load_size(mcap_path: str, start: str, end: str) -> pd.DataFrame:
+    """市值矩阵（SEC 股数 × 收盘价；缺失为 NaN，加权时跳过）。"""
+    m = pl.read_parquet(mcap_path, columns=["datetime", "instrument", "mcap"]).filter(pl.col("datetime").is_between(pl.lit(start).str.to_date(), pl.lit(end).str.to_date()))
+    return m.to_pandas().pivot(index="datetime", columns="instrument", values="mcap")
 
 
 def load_preds(pred_dir: Path) -> dict[str, pd.DataFrame]:
@@ -95,11 +109,11 @@ def load_preds(pred_dir: Path) -> dict[str, pd.DataFrame]:
     return out
 
 
-def run_all(preds: dict[str, pd.DataFrame], R: pd.DataFrame) -> tuple[dict, pd.DataFrame]:
+def run_all(preds: dict[str, pd.DataFrame], R: pd.DataFrame, n_groups: int = 5, size: pd.DataFrame | None = None) -> tuple[dict, pd.DataFrame]:
     results, daily = {}, {}
     for key, S in preds.items():
         S = S.reindex(index=R.index)                       # 没预测的日子 → 空仓
-        Wt = quintile_weights(S.reindex(columns=R.columns))
+        Wt = quintile_weights(S.reindex(columns=R.columns), n_groups=n_groups, size=size.reindex(index=R.index, columns=R.columns) if size is not None else None)
         results[key] = {"omegas": {}, "by_year_gross_sharpe": {}}
         for om in OMEGAS:
             ps = portfolio_series(ewct(Wt, om), R)
@@ -117,11 +131,11 @@ TEXT = {"title": "标题", "body": "原文", "summary": "摘要"}
 ORDER = ["llama3_base", "chronobert", "finbert", "minilm", "tfidf", "lm_dict"]
 
 
-def write_report(results: dict, daily: pd.DataFrame, res: Path) -> None:
+def write_report(results: dict, daily: pd.DataFrame, res: Path, variant: str = "", title: str = "五分位多空（等权）") -> None:
     res.mkdir(parents=True, exist_ok=True)
     keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body", "summary") if f"{m}__{t}" in results]
     label = lambda k: f"{NAMES[k.split('__')[0]]} / {TEXT[k.split('__')[1]]}"
-    md = ["# 五分位多空（等权）：夏普、换手与成本", "",
+    md = [f"# {title}：夏普、换手与成本", "",
           f"测试期 2020–2023，每日按 score 做多前 20%、做空后 20%（有新闻的股票中），t+1 开盘建仓、t+2 开盘换仓；不足 {MIN_NAMES} 只的日子空仓。"
           "成本 = 费率 × Σ|Δw|（每 100% 交易额）。市值加权待历史市值（模块 1 任务 6）。", "",
           "## 每日完全换仓（ω = 1）", "",
@@ -143,33 +157,62 @@ def write_report(results: dict, daily: pd.DataFrame, res: Path) -> None:
     for k in keys:
         by = results[k]["by_year_gross_sharpe"]
         md.append(f"| {label(k)} | " + " | ".join(f"{by.get(y, float('nan')):+.2f}" for y in (2020, 2021, 2022, 2023)) + " |")
-    md += ["", "![cum](longshort_cum_gross.png)"]
-    (res / "sharpe_table.md").write_text("\n".join(md) + "\n")
-    (res / "sharpe_table.json").write_text(json.dumps(results, indent=2) + "\n")
-    daily.to_csv(res / "daily_longshort_gross_omega1.csv", float_format="%.6f")
+    md += ["", f"![cum](longshort_cum_gross{variant}.png)"]
+    (res / f"sharpe_table{variant}.md").write_text("\n".join(md) + "\n")
+    (res / f"sharpe_table{variant}.json").write_text(json.dumps(results, indent=2) + "\n")
+    daily.to_csv(res / f"daily_longshort_gross_omega1{variant}.csv", float_format="%.6f")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(9, 4.8))
-    en = {"llama3_base": "LLaMA3-8B", "chronobert": "ChronoBERT (rolling)", "finbert": "FinBERT", "minilm": "MiniLM"}
+    en = {"llama3_base": "LLaMA3-8B", "chronobert": "ChronoBERT (rolling)", "finbert": "FinBERT", "minilm": "MiniLM", "tfidf": "TF-IDF+Ridge", "lm_dict": "LM dictionary"}
     for k in keys:   # 图例用英文：服务器字体没有中文字形
         m, t = k.split("__")
         ax.plot(daily.index, daily[k].cumsum(), label=f"{en[m]} / {t}", lw=1.2)
     ax.axhline(0, color="k", lw=0.5); ax.set_ylabel("cumulative gross long-short return (ω=1, equal-weight)"); ax.grid(alpha=0.3); ax.legend(fontsize=7, ncol=2)
-    fig.tight_layout(); fig.savefig(res / "longshort_cum_gross.png", dpi=130); plt.close(fig)
+    fig.tight_layout(); fig.savefig(res / f"longshort_cum_gross{variant}.png", dpi=130); plt.close(fig)
     print("\n".join(md))
+
+
+def delay_table(preds: dict[str, pd.DataFrame], paths: dict, start: str, end: str, res: Path) -> None:
+    """新闻动量衰减（原文表 18）：建仓推迟 k 天（k=0..4）的等权五分位多空毛夏普与年化收益。"""
+    keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body", "summary") if f"{m}__{t}" in preds]
+    label = lambda k: f"{NAMES[k.split('__')[0]]} / {TEXT[k.split('__')[1]]}"
+    labels = [MAIN_LABEL] + [f"ret_oo_d{k}" for k in range(1, 5)]
+    rows = {}
+    for lab in labels:
+        R = load_returns(paths["labels"], start, end, lab)
+        for key in keys:
+            S = preds[key].reindex(index=R.index)
+            ps = portfolio_series(quintile_weights(S.reindex(columns=R.columns)), R)
+            st = summarize(ps, 0)
+            rows.setdefault(key, {})[lab] = (st["sharpe_gross"], st["ann_return_gross"])
+    md = ["# 建仓推迟 k 天的等权五分位多空（毛夏普 / 年化收益）", "", "k=0 为主口径（t+1 开盘建仓、t+2 开盘换仓）；k 天后再建仓，持有一天。", "",
+          "| 模型 / 文本 | " + " | ".join(f"k={k}" for k in range(5)) + " |", "| --- |" + " ---: |" * 5]
+    for key in keys:
+        md.append(f"| {label(key)} | " + " | ".join(f"{rows[key][l][0]:+.2f} / {rows[key][l][1]:+.1%}" for l in labels) + " |")
+    (res / "delay_table.md").write_text("\n".join(md) + "\n"); print("\n".join(md))
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", default="2020-01-01"); ap.add_argument("--end", default="2023-12-31")
+    ap.add_argument("--variants", nargs="+", default=["ew", "vw", "decile", "delay"], help="ew 等权五分位 | vw 市值加权五分位 | decile 等权十分组 | delay 建仓推迟表")
     args = ap.parse_args()
     paths = load_paths()
+    res = ROOT / paths["results"] / "longshort"
     R = load_returns(paths["labels"], args.start, args.end)
     preds = load_preds(Path(paths["pred_dir"]))
     print(f"returns {R.shape}; preds: {', '.join(f'{k} {v.shape}' for k, v in preds.items())}", flush=True)
-    results, daily = run_all(preds, R)
-    write_report(results, daily, ROOT / paths["results"] / "longshort")
+    if "ew" in args.variants:
+        results, daily = run_all(preds, R); write_report(results, daily, res)
+    if "vw" in args.variants:
+        size = load_size(paths["market_cap"], args.start, args.end)
+        results, daily = run_all(preds, R, size=size); write_report(results, daily, res, "_vw", "五分位多空（市值加权，缺市值的股票不入组合）")
+    if "decile" in args.variants:
+        results, daily = run_all(preds, R, n_groups=10); write_report(results, daily, res, "_decile", "十分组多空（等权）")
+    if "delay" in args.variants:
+        delay_table(preds, paths, args.start, args.end, res)
 
 
 if __name__ == "__main__":

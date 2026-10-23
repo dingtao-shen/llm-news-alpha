@@ -1,0 +1,3986 @@
+{
+  "chronobert__body": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.17126224662515638,
+          "ann_vol": 0.19550143961317984,
+          "sharpe_gross": 0.8760152711101092,
+          "ann_return_net": 0.17126224662515638,
+          "sharpe_net": 0.8760152711101092,
+          "turnover_daily": 3.7169615852708473,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.17126224662515638,
+          "ann_vol": 0.19550143961317984,
+          "sharpe_gross": 0.8760152711101092,
+          "ann_return_net": -0.2970749131189705,
+          "sharpe_net": -1.5190135511743719,
+          "turnover_daily": 3.7169615852708473,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.17126224662515638,
+          "ann_vol": 0.19550143961317984,
+          "sharpe_gross": 0.8760152711101092,
+          "ann_return_net": -0.7654120728630972,
+          "sharpe_net": -3.9101763741606366,
+          "turnover_daily": 3.7169615852708473,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.17126224662515638,
+          "ann_vol": 0.19550143961317984,
+          "sharpe_gross": 0.8760152711101092,
+          "ann_return_net": -1.702086392351351,
+          "sharpe_net": -8.665200332020827,
+          "turnover_daily": 3.7169615852708473,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.15914051340365273,
+          "ann_vol": 0.1775500839719844,
+          "sharpe_gross": 0.8963133660289538,
+          "ann_return_net": 0.15914051340365273,
+          "sharpe_net": 0.8963133660289538,
+          "turnover_daily": 3.3307123519902504,
+          "exposure_daily": 1.9491889440366623,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.15914051340365273,
+          "ann_vol": 0.1775500839719844,
+          "sharpe_gross": 0.8963133660289538,
+          "ann_return_net": -0.26052924294711893,
+          "sharpe_net": -1.4669888104627282,
+          "turnover_daily": 3.3307123519902504,
+          "exposure_daily": 1.9491889440366623,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.15914051340365273,
+          "ann_vol": 0.1775500839719844,
+          "sharpe_gross": 0.8963133660289538,
+          "ann_return_net": -0.6801989992978904,
+          "sharpe_net": -3.827076432044573,
+          "turnover_daily": 3.3307123519902504,
+          "exposure_daily": 1.9491889440366623,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.15914051340365273,
+          "ann_vol": 0.1775500839719844,
+          "sharpe_gross": 0.8963133660289538,
+          "ann_return_net": -1.5195385119994338,
+          "sharpe_net": -8.522723258380575,
+          "turnover_daily": 3.3307123519902504,
+          "exposure_daily": 1.9491889440366623,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.1252735535804972,
+          "ann_vol": 0.1469926929864761,
+          "sharpe_gross": 0.8522434077183881,
+          "ann_return_net": 0.1252735535804972,
+          "sharpe_net": 0.8522434077183881,
+          "turnover_daily": 2.5691437791946403,
+          "exposure_daily": 1.9238247064108713,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.1252735535804972,
+          "ann_vol": 0.1469926929864761,
+          "sharpe_gross": 0.8522434077183881,
+          "ann_return_net": -0.19843856259802747,
+          "sharpe_net": -1.3499018050788905,
+          "turnover_daily": 2.5691437791946403,
+          "exposure_daily": 1.9238247064108713,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.1252735535804972,
+          "ann_vol": 0.1469926929864761,
+          "sharpe_gross": 0.8522434077183881,
+          "ann_return_net": -0.5221506787765522,
+          "sharpe_net": -3.5501799478166265,
+          "turnover_daily": 2.5691437791946403,
+          "exposure_daily": 1.9238247064108713,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.1252735535804972,
+          "ann_vol": 0.1469926929864761,
+          "sharpe_gross": 0.8522434077183881,
+          "ann_return_net": -1.1695749111336016,
+          "sharpe_net": -7.93344753665005,
+          "turnover_daily": 2.5691437791946403,
+          "exposure_daily": 1.9238247064108713,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.08380393099888037,
+          "ann_vol": 0.12099428099851059,
+          "sharpe_gross": 0.6926272077265535,
+          "ann_return_net": 0.08380393099888037,
+          "sharpe_net": 0.6926272077265535,
+          "turnover_daily": 1.816302829487454,
+          "exposure_daily": 1.8807276748303463,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.08380393099888037,
+          "ann_vol": 0.12099428099851059,
+          "sharpe_gross": 0.6926272077265535,
+          "ann_return_net": -0.14505022551653884,
+          "sharpe_net": -1.1988612853279437,
+          "turnover_daily": 1.816302829487454,
+          "exposure_daily": 1.8807276748303463,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.08380393099888037,
+          "ann_vol": 0.12099428099851059,
+          "sharpe_gross": 0.6926272077265535,
+          "ann_return_net": -0.3739043820319581,
+          "sharpe_net": -3.0895120658201396,
+          "turnover_daily": 1.816302829487454,
+          "exposure_daily": 1.8807276748303463,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.08380393099888037,
+          "ann_vol": 0.12099428099851059,
+          "sharpe_gross": 0.6926272077265535,
+          "ann_return_net": -0.8316126950627964,
+          "sharpe_net": -6.861192041324022,
+          "turnover_daily": 1.816302829487454,
+          "exposure_daily": 1.8807276748303463,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.04319920365003539,
+          "ann_vol": 0.09540088963212828,
+          "sharpe_gross": 0.45281761854228186,
+          "ann_return_net": 0.04319920365003539,
+          "sharpe_net": 0.45281761854228186,
+          "turnover_daily": 1.0681223101065815,
+          "exposure_daily": 1.7952658127227141,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.04319920365003539,
+          "ann_vol": 0.09540088963212828,
+          "sharpe_gross": 0.45281761854228186,
+          "ann_return_net": -0.09138420742339387,
+          "sharpe_net": -0.9579116374058555,
+          "turnover_daily": 1.0681223101065815,
+          "exposure_daily": 1.7952658127227141,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.04319920365003539,
+          "ann_vol": 0.09540088963212828,
+          "sharpe_gross": 0.45281761854228186,
+          "ann_return_net": -0.22596761849682315,
+          "sharpe_net": -2.36829847483875,
+          "turnover_daily": 1.0681223101065815,
+          "exposure_daily": 1.7952658127227141,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.04319920365003539,
+          "ann_vol": 0.09540088963212828,
+          "sharpe_gross": 0.45281761854228186,
+          "ann_return_net": -0.4951344406436817,
+          "sharpe_net": -5.185291110913929,
+          "turnover_daily": 1.0681223101065815,
+          "exposure_daily": 1.7952658127227141,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.02758554427573411,
+          "ann_vol": 0.08107111752093862,
+          "sharpe_gross": 0.34026352564597945,
+          "ann_return_net": 0.02758554427573411,
+          "sharpe_net": 0.34026352564597945,
+          "turnover_daily": 0.6971640226085735,
+          "exposure_daily": 1.7108241140847915,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.02758554427573411,
+          "ann_vol": 0.08107111752093862,
+          "sharpe_gross": 0.34026352564597945,
+          "ann_return_net": -0.06025712257294614,
+          "sharpe_net": -0.743240770316081,
+          "turnover_daily": 0.6971640226085735,
+          "exposure_daily": 1.7108241140847915,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.02758554427573411,
+          "ann_vol": 0.08107111752093862,
+          "sharpe_gross": 0.34026352564597945,
+          "ann_return_net": -0.14809978942162638,
+          "sharpe_net": -1.8265189234886923,
+          "turnover_daily": 0.6971640226085735,
+          "exposure_daily": 1.7108241140847915,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.02758554427573411,
+          "ann_vol": 0.08107111752093862,
+          "sharpe_gross": 0.34026352564597945,
+          "ann_return_net": -0.3237851231189869,
+          "sharpe_net": -3.9912402239215563,
+          "turnover_daily": 0.6971640226085735,
+          "exposure_daily": 1.7108241140847915,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.018061793012502894,
+          "ann_vol": 0.06487067382884439,
+          "sharpe_gross": 0.2784277077213251,
+          "ann_return_net": 0.018061793012502894,
+          "sharpe_net": 0.2784277077213251,
+          "turnover_daily": 0.33247731513689216,
+          "exposure_daily": 1.5346653537882224,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.018061793012502894,
+          "ann_vol": 0.06487067382884439,
+          "sharpe_gross": 0.2784277077213251,
+          "ann_return_net": -0.023830348694745523,
+          "sharpe_net": -0.3673360162129386,
+          "turnover_daily": 0.33247731513689216,
+          "exposure_daily": 1.5346653537882224,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.018061793012502894,
+          "ann_vol": 0.06487067382884439,
+          "sharpe_gross": 0.2784277077213251,
+          "ann_return_net": -0.06572249040199393,
+          "sharpe_net": -1.013018395553532,
+          "turnover_daily": 0.33247731513689216,
+          "exposure_daily": 1.5346653537882224,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.018061793012502894,
+          "ann_vol": 0.06487067382884439,
+          "sharpe_gross": 0.2784277077213251,
+          "ann_return_net": -0.14950677381649077,
+          "sharpe_net": -2.3039373627658013,
+          "turnover_daily": 0.33247731513689216,
+          "exposure_daily": 1.5346653537882224,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": -0.38284970887738917,
+      "2021": 2.511688354376398,
+      "2022": 1.3677797923982806,
+      "2023": 1.2219796048128633
+    }
+  },
+  "chronobert__title": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.019631500180969833,
+          "ann_vol": 0.18134526769137502,
+          "sharpe_gross": 0.10825482479300193,
+          "ann_return_net": 0.019631500180969833,
+          "sharpe_net": 0.10825482479300193,
+          "turnover_daily": 3.664466391196708,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.019631500180969833,
+          "ann_vol": 0.18134526769137502,
+          "sharpe_gross": 0.10825482479300193,
+          "ann_return_net": -0.44209126510981533,
+          "sharpe_net": -2.436957683481448,
+          "turnover_daily": 3.664466391196708,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.019631500180969833,
+          "ann_vol": 0.18134526769137502,
+          "sharpe_gross": 0.10825482479300193,
+          "ann_return_net": -0.9038140304006006,
+          "sharpe_net": -4.977102183728378,
+          "turnover_daily": 3.664466391196708,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.019631500180969833,
+          "ann_vol": 0.18134526769137502,
+          "sharpe_gross": 0.10825482479300193,
+          "ann_return_net": -1.8272595609821711,
+          "sharpe_net": -10.022725925172653,
+          "turnover_daily": 3.664466391196708,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.017393523995823196,
+          "ann_vol": 0.16617824730539607,
+          "sharpe_gross": 0.1046678748744897,
+          "ann_return_net": 0.017393523995823196,
+          "sharpe_net": 0.1046678748744897,
+          "turnover_daily": 3.281949876032407,
+          "exposure_daily": 1.9480384033860803,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.017393523995823196,
+          "ann_vol": 0.16617824730539607,
+          "sharpe_gross": 0.1046678748744897,
+          "ann_return_net": -0.3961321603842601,
+          "sharpe_net": -2.382932879417894,
+          "turnover_daily": 3.281949876032407,
+          "exposure_daily": 1.9480384033860803,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.017393523995823196,
+          "ann_vol": 0.16617824730539607,
+          "sharpe_gross": 0.1046678748744897,
+          "ann_return_net": -0.8096578447643433,
+          "sharpe_net": -4.865808296651295,
+          "turnover_daily": 3.281949876032407,
+          "exposure_daily": 1.9480384033860803,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.017393523995823196,
+          "ann_vol": 0.16617824730539607,
+          "sharpe_gross": 0.1046678748744897,
+          "ann_return_net": -1.6367092135245098,
+          "sharpe_net": -9.799483295614161,
+          "turnover_daily": 3.281949876032407,
+          "exposure_daily": 1.9480384033860803,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.012705602685785094,
+          "ann_vol": 0.13882552960392208,
+          "sharpe_gross": 0.09152209051198994,
+          "ann_return_net": 0.012705602685785094,
+          "sharpe_net": 0.09152209051198994,
+          "turnover_daily": 2.5293689166367788,
+          "exposure_daily": 1.9201317180332835,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.012705602685785094,
+          "ann_vol": 0.13882552960392208,
+          "sharpe_gross": 0.09152209051198994,
+          "ann_return_net": -0.30599488081044895,
+          "sharpe_net": -2.203519530222004,
+          "turnover_daily": 2.5293689166367788,
+          "exposure_daily": 1.9201317180332835,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.012705602685785094,
+          "ann_vol": 0.13882552960392208,
+          "sharpe_gross": 0.09152209051198994,
+          "ann_return_net": -0.6246953643066832,
+          "sharpe_net": -4.494967730535585,
+          "turnover_daily": 2.5293689166367788,
+          "exposure_daily": 1.9201317180332835,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.012705602685785094,
+          "ann_vol": 0.13882552960392208,
+          "sharpe_gross": 0.09152209051198994,
+          "ann_return_net": -1.2620963312991513,
+          "sharpe_net": -9.053511578844267,
+          "turnover_daily": 2.5293689166367788,
+          "exposure_daily": 1.9201317180332835,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.01084300911547938,
+          "ann_vol": 0.11406058679263527,
+          "sharpe_gross": 0.09506359225726427,
+          "ann_return_net": 0.01084300911547938,
+          "sharpe_net": 0.09506359225726427,
+          "turnover_daily": 1.786087487402218,
+          "exposure_daily": 1.8739421679000563,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.01084300911547938,
+          "ann_vol": 0.11406058679263527,
+          "sharpe_gross": 0.09506359225726427,
+          "ann_return_net": -0.2142040142972001,
+          "sharpe_net": -1.8776173209532676,
+          "turnover_daily": 1.786087487402218,
+          "exposure_daily": 1.8739421679000563,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.01084300911547938,
+          "ann_vol": 0.11406058679263527,
+          "sharpe_gross": 0.09506359225726427,
+          "ann_return_net": -0.4392510377098796,
+          "sharpe_net": -3.8481792566731774,
+          "turnover_daily": 1.786087487402218,
+          "exposure_daily": 1.8739421679000563,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.01084300911547938,
+          "ann_vol": 0.11406058679263527,
+          "sharpe_gross": 0.09506359225726427,
+          "ann_return_net": -0.8893450845352384,
+          "sharpe_net": -7.774723930413658,
+          "turnover_daily": 1.786087487402218,
+          "exposure_daily": 1.8739421679000563,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.013625960943010966,
+          "ann_vol": 0.09051813614506399,
+          "sharpe_gross": 0.15053293763333858,
+          "ann_return_net": 0.013625960943010966,
+          "sharpe_net": 0.15053293763333858,
+          "turnover_daily": 1.0487521233104349,
+          "exposure_daily": 1.7850585488796749,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.013625960943010966,
+          "ann_vol": 0.09051813614506399,
+          "sharpe_gross": 0.15053293763333858,
+          "ann_return_net": -0.11851680659410382,
+          "sharpe_net": -1.309199287673203,
+          "turnover_daily": 1.0487521233104349,
+          "exposure_daily": 1.7850585488796749,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.013625960943010966,
+          "ann_vol": 0.09051813614506399,
+          "sharpe_gross": 0.15053293763333858,
+          "ann_return_net": -0.2506595741312186,
+          "sharpe_net": -2.7681821501889643,
+          "turnover_daily": 1.0487521233104349,
+          "exposure_daily": 1.7850585488796749,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.013625960943010966,
+          "ann_vol": 0.09051813614506399,
+          "sharpe_gross": 0.15053293763333858,
+          "ann_return_net": -0.5149451092054482,
+          "sharpe_net": -5.680811049477496,
+          "turnover_daily": 1.0487521233104349,
+          "exposure_daily": 1.7850585488796749,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.017240493575331372,
+          "ann_vol": 0.07855213375891162,
+          "sharpe_gross": 0.21947836106203117,
+          "ann_return_net": 0.017240493575331372,
+          "sharpe_net": 0.21947836106203117,
+          "turnover_daily": 0.6844135900669122,
+          "exposure_daily": 1.6999507745668163,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.017240493575331372,
+          "ann_vol": 0.07855213375891162,
+          "sharpe_gross": 0.21947836106203117,
+          "ann_return_net": -0.06899561877309957,
+          "sharpe_net": -0.8783050550500455,
+          "turnover_daily": 0.6844135900669122,
+          "exposure_daily": 1.6999507745668163,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.017240493575331372,
+          "ann_vol": 0.07855213375891162,
+          "sharpe_gross": 0.21947836106203117,
+          "ann_return_net": -0.15523173112153052,
+          "sharpe_net": -1.9758144090036254,
+          "turnover_daily": 0.6844135900669122,
+          "exposure_daily": 1.6999507745668163,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.017240493575331372,
+          "ann_vol": 0.07855213375891162,
+          "sharpe_gross": 0.21947836106203117,
+          "ann_return_net": -0.32770395581839235,
+          "sharpe_net": -4.168797630027068,
+          "turnover_daily": 0.6844135900669122,
+          "exposure_daily": 1.6999507745668163,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.02333624288247453,
+          "ann_vol": 0.06595596381509423,
+          "sharpe_gross": 0.353815508600512,
+          "ann_return_net": 0.02333624288247453,
+          "sharpe_net": 0.353815508600512,
+          "turnover_daily": 0.3271639166803225,
+          "exposure_daily": 1.5299277385944232,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.02333624288247453,
+          "ann_vol": 0.06595596381509423,
+          "sharpe_gross": 0.353815508600512,
+          "ann_return_net": -0.017886410619246118,
+          "sharpe_net": -0.2711796693826405,
+          "turnover_daily": 0.3271639166803225,
+          "exposure_daily": 1.5299277385944232,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.02333624288247453,
+          "ann_vol": 0.06595596381509423,
+          "sharpe_gross": 0.353815508600512,
+          "ann_return_net": -0.059109064120966746,
+          "sharpe_net": -0.896118178220651,
+          "turnover_daily": 0.3271639166803225,
+          "exposure_daily": 1.5299277385944232,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.02333624288247453,
+          "ann_vol": 0.06595596381509423,
+          "sharpe_gross": 0.353815508600512,
+          "ann_return_net": -0.141554371124408,
+          "sharpe_net": -2.145640060606482,
+          "turnover_daily": 0.3271639166803225,
+          "exposure_daily": 1.5299277385944232,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": -0.43954182347030746,
+      "2021": 0.1952458948731569,
+      "2022": 0.1578299170833332,
+      "2023": 0.9401186860538536
+    }
+  },
+  "finbert__body": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.07333064153375721,
+          "ann_vol": 0.19582224194192804,
+          "sharpe_gross": 0.37447554887816953,
+          "ann_return_net": 0.07333064153375721,
+          "sharpe_net": 0.37447554887816953,
+          "turnover_daily": 3.7123861143858807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.07333064153375721,
+          "ann_vol": 0.19582224194192804,
+          "sharpe_gross": 0.37447554887816953,
+          "ann_return_net": -0.39443000887886376,
+          "sharpe_net": -2.0145336761335497,
+          "turnover_daily": 3.7123861143858807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.07333064153375721,
+          "ann_vol": 0.19582224194192804,
+          "sharpe_gross": 0.37447554887816953,
+          "ann_return_net": -0.8621906592914846,
+          "sharpe_net": -4.40183334542081,
+          "turnover_daily": 3.7123861143858807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.07333064153375721,
+          "ann_vol": 0.19582224194192804,
+          "sharpe_gross": 0.37447554887816953,
+          "ann_return_net": -1.7977119601167264,
+          "sharpe_net": -9.155502796952767,
+          "turnover_daily": 3.7123861143858807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.07380849140317425,
+          "ann_vol": 0.1818536570379202,
+          "sharpe_gross": 0.40586751240192914,
+          "ann_return_net": 0.07380849140317425,
+          "sharpe_net": 0.40586751240192914,
+          "turnover_daily": 3.32795394120757,
+          "exposure_daily": 1.9490886421878741,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.07380849140317425,
+          "ann_vol": 0.1818536570379202,
+          "sharpe_gross": 0.40586751240192914,
+          "ann_return_net": -0.3455137051889796,
+          "sharpe_net": -1.900320337128251,
+          "turnover_daily": 3.32795394120757,
+          "exposure_daily": 1.9490886421878741,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.07380849140317425,
+          "ann_vol": 0.1818536570379202,
+          "sharpe_gross": 0.40586751240192914,
+          "ann_return_net": -0.7648359017811335,
+          "sharpe_net": -4.205256573337839,
+          "turnover_daily": 3.32795394120757,
+          "exposure_daily": 1.9490886421878741,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.07380849140317425,
+          "ann_vol": 0.1818536570379202,
+          "sharpe_gross": 0.40586751240192914,
+          "ann_return_net": -1.603480294965441,
+          "sharpe_net": -8.79737185986095,
+          "turnover_daily": 3.32795394120757,
+          "exposure_daily": 1.9490886421878741,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.059699887644711125,
+          "ann_vol": 0.15562874399833798,
+          "sharpe_gross": 0.3836045071811971,
+          "ann_return_net": 0.059699887644711125,
+          "sharpe_net": 0.3836045071811971,
+          "turnover_daily": 2.5680755136572446,
+          "exposure_daily": 1.923306618123618,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.059699887644711125,
+          "ann_vol": 0.15562874399833798,
+          "sharpe_gross": 0.3836045071811971,
+          "ann_return_net": -0.2638776270761017,
+          "sharpe_net": -1.6960040889633978,
+          "turnover_daily": 2.5680755136572446,
+          "exposure_daily": 1.923306618123618,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.059699887644711125,
+          "ann_vol": 0.15562874399833798,
+          "sharpe_gross": 0.3836045071811971,
+          "ann_return_net": -0.5874551417969146,
+          "sharpe_net": -3.775200340208165,
+          "turnover_daily": 2.5680755136572446,
+          "exposure_daily": 1.923306618123618,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.059699887644711125,
+          "ann_vol": 0.15562874399833798,
+          "sharpe_gross": 0.3836045071811971,
+          "ann_return_net": -1.2346101712385402,
+          "sharpe_net": -7.922432637336032,
+          "turnover_daily": 2.5680755136572446,
+          "exposure_daily": 1.923306618123618,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.033745220908498894,
+          "ann_vol": 0.12979802042538174,
+          "sharpe_gross": 0.2599825544172944,
+          "ann_return_net": 0.033745220908498894,
+          "sharpe_net": 0.2599825544172944,
+          "turnover_daily": 1.815765268996357,
+          "exposure_daily": 1.8796314348077066,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.033745220908498894,
+          "ann_vol": 0.12979802042538174,
+          "sharpe_gross": 0.2599825544172944,
+          "ann_return_net": -0.1950412029850421,
+          "sharpe_net": -1.502961087202466,
+          "turnover_daily": 1.815765268996357,
+          "exposure_daily": 1.8796314348077066,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.033745220908498894,
+          "ann_vol": 0.12979802042538174,
+          "sharpe_gross": 0.2599825544172944,
+          "ann_return_net": -0.4238276268785831,
+          "sharpe_net": -3.2657424020142214,
+          "turnover_daily": 1.815765268996357,
+          "exposure_daily": 1.8796314348077066,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.033745220908498894,
+          "ann_vol": 0.12979802042538174,
+          "sharpe_gross": 0.2599825544172944,
+          "ann_return_net": -0.8814004746656652,
+          "sharpe_net": -6.785072181493726,
+          "turnover_daily": 1.815765268996357,
+          "exposure_daily": 1.8796314348077066,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.00811076779414496,
+          "ann_vol": 0.10313823037891566,
+          "sharpe_gross": 0.07863978046110658,
+          "ann_return_net": 0.00811076779414496,
+          "sharpe_net": 0.07863978046110658,
+          "turnover_daily": 1.0671802768840613,
+          "exposure_daily": 1.7936068000502816,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.00811076779414496,
+          "ann_vol": 0.10313823037891566,
+          "sharpe_gross": 0.07863978046110658,
+          "ann_return_net": -0.12635394709324674,
+          "sharpe_net": -1.2252370271458906,
+          "turnover_daily": 1.0671802768840613,
+          "exposure_daily": 1.7936068000502816,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.00811076779414496,
+          "ann_vol": 0.10313823037891566,
+          "sharpe_gross": 0.07863978046110658,
+          "ann_return_net": -0.26081866198063847,
+          "sharpe_net": -2.5290708558372033,
+          "turnover_daily": 1.0671802768840613,
+          "exposure_daily": 1.7936068000502816,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.00811076779414496,
+          "ann_vol": 0.10313823037891566,
+          "sharpe_gross": 0.07863978046110658,
+          "ann_return_net": -0.5297480917554218,
+          "sharpe_net": -5.1344515648585505,
+          "turnover_daily": 1.0671802768840613,
+          "exposure_daily": 1.7936068000502816,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.0005482087743057299,
+          "ann_vol": 0.0894227217113826,
+          "sharpe_gross": 0.006130531075481105,
+          "ann_return_net": 0.0005482087743057299,
+          "sharpe_net": 0.006130531075481105,
+          "turnover_daily": 0.6963348581672095,
+          "exposure_daily": 1.7096875605314794,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.0005482087743057299,
+          "ann_vol": 0.0894227217113826,
+          "sharpe_gross": 0.006130531075481105,
+          "ann_return_net": -0.08718998335476266,
+          "sharpe_net": -0.9750967383313401,
+          "turnover_daily": 0.6963348581672095,
+          "exposure_daily": 1.7096875605314794,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.0005482087743057299,
+          "ann_vol": 0.0894227217113826,
+          "sharpe_gross": 0.006130531075481105,
+          "ann_return_net": -0.17492817548383108,
+          "sharpe_net": -1.9563117903913771,
+          "turnover_daily": 0.6963348581672095,
+          "exposure_daily": 1.7096875605314794,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.0005482087743057299,
+          "ann_vol": 0.0894227217113826,
+          "sharpe_gross": 0.006130531075481105,
+          "ann_return_net": -0.3504045597419679,
+          "sharpe_net": -3.917843456658922,
+          "turnover_daily": 0.6963348581672095,
+          "exposure_daily": 1.7096875605314794,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.0019306230348915688,
+          "ann_vol": 0.0754907558888505,
+          "sharpe_gross": 0.025574297305144742,
+          "ann_return_net": 0.0019306230348915688,
+          "sharpe_net": 0.025574297305144742,
+          "turnover_daily": 0.33263423190175484,
+          "exposure_daily": 1.540235480010076,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.0019306230348915688,
+          "ann_vol": 0.0754907558888505,
+          "sharpe_gross": 0.025574297305144742,
+          "ann_return_net": -0.03998129018472953,
+          "sharpe_net": -0.529625100209714,
+          "turnover_daily": 0.33263423190175484,
+          "exposure_daily": 1.540235480010076,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.0019306230348915688,
+          "ann_vol": 0.0754907558888505,
+          "sharpe_gross": 0.025574297305144742,
+          "ann_return_net": -0.08189320340435065,
+          "sharpe_net": -1.0848160436969674,
+          "turnover_daily": 0.33263423190175484,
+          "exposure_daily": 1.540235480010076,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.0019306230348915688,
+          "ann_vol": 0.0754907558888505,
+          "sharpe_gross": 0.025574297305144742,
+          "ann_return_net": -0.16571702984359285,
+          "sharpe_net": -2.1950338588221907,
+          "turnover_daily": 0.33263423190175484,
+          "exposure_daily": 1.540235480010076,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": 0.5272986308448508,
+      "2021": 1.7096176784709622,
+      "2022": -0.6711887399077158,
+      "2023": -0.2301094601461992
+    }
+  },
+  "finbert__title": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.09192333937737253,
+          "ann_vol": 0.17337350321343592,
+          "sharpe_gross": 0.5302040835167756,
+          "ann_return_net": 0.09192333937737253,
+          "sharpe_net": 0.5302040835167756,
+          "turnover_daily": 3.7181900429561123,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.09192333937737253,
+          "ann_vol": 0.17337350321343592,
+          "sharpe_gross": 0.5302040835167756,
+          "ann_return_net": -0.3765686060350977,
+          "sharpe_net": -2.1711685401544676,
+          "turnover_daily": 3.7181900429561123,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.09192333937737253,
+          "ann_vol": 0.17337350321343592,
+          "sharpe_gross": 0.5302040835167756,
+          "ann_return_net": -0.8450605514475678,
+          "sharpe_net": -4.867065031644349,
+          "turnover_daily": 3.7181900429561123,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.09192333937737253,
+          "ann_vol": 0.17337350321343592,
+          "sharpe_gross": 0.5302040835167756,
+          "ann_return_net": -1.782044442272508,
+          "sharpe_net": -10.220212458646788,
+          "turnover_daily": 3.7181900429561123,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.08383471406359387,
+          "ann_vol": 0.15821829214408215,
+          "sharpe_gross": 0.5298673935075058,
+          "ann_return_net": 0.08383471406359387,
+          "sharpe_net": 0.5298673935075058,
+          "turnover_daily": 3.3329747160255985,
+          "exposure_daily": 1.9477178869794887,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.08383471406359387,
+          "ann_vol": 0.15821829214408215,
+          "sharpe_gross": 0.5298673935075058,
+          "ann_return_net": -0.3361201001556315,
+          "sharpe_net": -2.1236887450497717,
+          "turnover_daily": 3.3329747160255985,
+          "exposure_daily": 1.9477178869794887,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.08383471406359387,
+          "ann_vol": 0.15821829214408215,
+          "sharpe_gross": 0.5298673935075058,
+          "ann_return_net": -0.7560749143748567,
+          "sharpe_net": -4.772298261454083,
+          "turnover_daily": 3.3329747160255985,
+          "exposure_daily": 1.9477178869794887,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.08383471406359387,
+          "ann_vol": 0.15821829214408215,
+          "sharpe_gross": 0.5298673935075058,
+          "ann_return_net": -1.595984542813308,
+          "sharpe_net": -10.033951867712013,
+          "turnover_daily": 3.3329747160255985,
+          "exposure_daily": 1.9477178869794887,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.06956916641992902,
+          "ann_vol": 0.1318508595255517,
+          "sharpe_gross": 0.5276352893736507,
+          "ann_return_net": 0.06956916641992902,
+          "sharpe_net": 0.5276352893736507,
+          "turnover_daily": 2.572389601439026,
+          "exposure_daily": 1.9183367563505753,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.06956916641992902,
+          "ann_vol": 0.1318508595255517,
+          "sharpe_gross": 0.5276352893736507,
+          "ann_return_net": -0.2545519233613883,
+          "sharpe_net": -1.9300754636133772,
+          "turnover_daily": 2.572389601439026,
+          "exposure_daily": 1.9183367563505753,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.06956916641992902,
+          "ann_vol": 0.1318508595255517,
+          "sharpe_gross": 0.5276352893736507,
+          "ann_return_net": -0.5786730131427056,
+          "sharpe_net": -4.3840514536673165,
+          "turnover_daily": 2.572389601439026,
+          "exposure_daily": 1.9183367563505753,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.06956916641992902,
+          "ann_vol": 0.1318508595255517,
+          "sharpe_gross": 0.5276352893736507,
+          "ann_return_net": -1.2269151927053403,
+          "sharpe_net": -9.264932598988283,
+          "turnover_daily": 2.572389601439026,
+          "exposure_daily": 1.9183367563505753,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.05251127041965504,
+          "ann_vol": 0.109225072321208,
+          "sharpe_gross": 0.4807620567668788,
+          "ann_return_net": 0.05251127041965504,
+          "sharpe_net": 0.4807620567668788,
+          "turnover_daily": 1.8181048998968268,
+          "exposure_daily": 1.8689646312522192,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.05251127041965504,
+          "ann_vol": 0.109225072321208,
+          "sharpe_gross": 0.4807620567668788,
+          "ann_return_net": -0.1765699469673451,
+          "sharpe_net": -1.6162749951662103,
+          "turnover_daily": 1.8181048998968268,
+          "exposure_daily": 1.8689646312522192,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.05251127041965504,
+          "ann_vol": 0.109225072321208,
+          "sharpe_gross": 0.4807620567668788,
+          "ann_return_net": -0.4056511643543452,
+          "sharpe_net": -3.711148744446587,
+          "turnover_daily": 1.8181048998968268,
+          "exposure_daily": 1.8689646312522192,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.05251127041965504,
+          "ann_vol": 0.109225072321208,
+          "sharpe_gross": 0.4807620567668788,
+          "ann_return_net": -0.8638135991283455,
+          "sharpe_net": -7.884998920294421,
+          "turnover_daily": 1.8181048998968268,
+          "exposure_daily": 1.8689646312522192,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.027661824515858652,
+          "ann_vol": 0.0883377397879279,
+          "sharpe_gross": 0.3131371097139942,
+          "ann_return_net": 0.027661824515858652,
+          "sharpe_net": 0.3131371097139942,
+          "turnover_daily": 1.0667318179353507,
+          "exposure_daily": 1.7715455686888986,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.027661824515858652,
+          "ann_vol": 0.0883377397879279,
+          "sharpe_gross": 0.3131371097139942,
+          "ann_return_net": -0.10674638454399552,
+          "sharpe_net": -1.2082739003548253,
+          "turnover_daily": 1.0667318179353507,
+          "exposure_daily": 1.7715455686888986,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.027661824515858652,
+          "ann_vol": 0.0883377397879279,
+          "sharpe_gross": 0.3131371097139942,
+          "ann_return_net": -0.24115459360384967,
+          "sharpe_net": -2.7288900031795906,
+          "turnover_daily": 1.0667318179353507,
+          "exposure_daily": 1.7715455686888986,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.027661824515858652,
+          "ann_vol": 0.0883377397879279,
+          "sharpe_gross": 0.3131371097139942,
+          "ann_return_net": -0.509971011723558,
+          "sharpe_net": -5.764378072267448,
+          "turnover_daily": 1.0667318179353507,
+          "exposure_daily": 1.7715455686888986,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.012555060245172002,
+          "ann_vol": 0.07762224010598441,
+          "sharpe_gross": 0.1617456572759236,
+          "ann_return_net": 0.012555060245172002,
+          "sharpe_net": 0.1617456572759236,
+          "turnover_daily": 0.6942578422134146,
+          "exposure_daily": 1.6748310632595778,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.012555060245172002,
+          "ann_vol": 0.07762224010598441,
+          "sharpe_gross": 0.1617456572759236,
+          "ann_return_net": -0.07492142787371824,
+          "sharpe_net": -0.9651296282634529,
+          "turnover_daily": 0.6942578422134146,
+          "exposure_daily": 1.6748310632595778,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.012555060245172002,
+          "ann_vol": 0.07762224010598441,
+          "sharpe_gross": 0.1617456572759236,
+          "ann_return_net": -0.1623979159926085,
+          "sharpe_net": -2.091628416269963,
+          "turnover_daily": 0.6942578422134146,
+          "exposure_daily": 1.6748310632595778,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.012555060245172002,
+          "ann_vol": 0.07762224010598441,
+          "sharpe_gross": 0.1617456572759236,
+          "ann_return_net": -0.337350892230389,
+          "sharpe_net": -4.342213902274101,
+          "turnover_daily": 0.6942578422134146,
+          "exposure_daily": 1.6748310632595778,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": -0.0028135180979513407,
+          "ann_vol": 0.06638905787516267,
+          "sharpe_gross": -0.04237924423090704,
+          "ann_return_net": -0.0028135180979513407,
+          "sharpe_net": -0.04237924423090704,
+          "turnover_daily": 0.32924542786059474,
+          "exposure_daily": 1.4767742162936706,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.0028135180979513407,
+          "ann_vol": 0.06638905787516267,
+          "sharpe_gross": -0.04237924423090704,
+          "ann_return_net": -0.04429844200838627,
+          "sharpe_net": -0.6671981505547108,
+          "turnover_daily": 0.32924542786059474,
+          "exposure_daily": 1.4767742162936706,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.0028135180979513407,
+          "ann_vol": 0.06638905787516267,
+          "sharpe_gross": -0.04237924423090704,
+          "ann_return_net": -0.08578336591882121,
+          "sharpe_net": -1.2918773278361613,
+          "turnover_daily": 0.32924542786059474,
+          "exposure_daily": 1.4767742162936706,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.0028135180979513407,
+          "ann_vol": 0.06638905787516267,
+          "sharpe_gross": -0.04237924423090704,
+          "ann_return_net": -0.16875321373969107,
+          "sharpe_net": -2.5406256364696027,
+          "turnover_daily": 0.32924542786059474,
+          "exposure_daily": 1.4767742162936706,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": 0.9914169715723179,
+      "2021": 1.9093854301725053,
+      "2022": -1.9664497237583372,
+      "2023": 1.9909677023509806
+    }
+  },
+  "llama3_base__body": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.12915803159834688,
+          "ann_vol": 0.21218083327454848,
+          "sharpe_gross": 0.6087167705257555,
+          "ann_return_net": 0.12915803159834688,
+          "sharpe_net": 0.6087167705257555,
+          "turnover_daily": 3.694035441293072,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.12915803159834688,
+          "ann_vol": 0.21218083327454848,
+          "sharpe_gross": 0.6087167705257555,
+          "ann_return_net": -0.3362904340045802,
+          "sharpe_net": -1.5848538880262448,
+          "turnover_daily": 3.694035441293072,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.12915803159834688,
+          "ann_vol": 0.21218083327454848,
+          "sharpe_gross": 0.6087167705257555,
+          "ann_return_net": -0.8017388996075072,
+          "sharpe_net": -3.776431034109991,
+          "turnover_daily": 3.694035441293072,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.12915803159834688,
+          "ann_vol": 0.21218083327454848,
+          "sharpe_gross": 0.6087167705257555,
+          "ann_return_net": -1.7326358308133614,
+          "sharpe_net": -8.141152547631037,
+          "turnover_daily": 3.694035441293072,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.12240992276375569,
+          "ann_vol": 0.19403425743828268,
+          "sharpe_gross": 0.6308675817345871,
+          "ann_return_net": 0.12240992276375569,
+          "sharpe_net": 0.6308675817345871,
+          "turnover_daily": 3.3102814578044395,
+          "exposure_daily": 1.9493297026198624,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.12240992276375569,
+          "ann_vol": 0.19403425743828268,
+          "sharpe_gross": 0.6308675817345871,
+          "ann_return_net": -0.2946855409196036,
+          "sharpe_net": -1.518682590091779,
+          "turnover_daily": 3.3102814578044395,
+          "exposure_daily": 1.9493297026198624,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.12240992276375569,
+          "ann_vol": 0.19403425743828268,
+          "sharpe_gross": 0.6308675817345871,
+          "ann_return_net": -0.7117810046029629,
+          "sharpe_net": -3.666455654473176,
+          "turnover_daily": 3.3102814578044395,
+          "exposure_daily": 1.9493297026198624,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.12240992276375569,
+          "ann_vol": 0.19403425743828268,
+          "sharpe_gross": 0.6308675817345871,
+          "ann_return_net": -1.5459719319696814,
+          "sharpe_net": -7.945182569940531,
+          "turnover_daily": 3.3102814578044395,
+          "exposure_daily": 1.9493297026198624,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.09984985362559358,
+          "ann_vol": 0.16288700997142458,
+          "sharpe_gross": 0.613000715300197,
+          "ann_return_net": 0.09984985362559358,
+          "sharpe_net": 0.613000715300197,
+          "turnover_daily": 2.553005644385467,
+          "exposure_daily": 1.9241450007953562,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.09984985362559358,
+          "ann_vol": 0.16288700997142458,
+          "sharpe_gross": 0.613000715300197,
+          "ann_return_net": -0.2218288575669753,
+          "sharpe_net": -1.3617493611476863,
+          "turnover_daily": 2.553005644385467,
+          "exposure_daily": 1.9241450007953562,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.09984985362559358,
+          "ann_vol": 0.16288700997142458,
+          "sharpe_gross": 0.613000715300197,
+          "ann_return_net": -0.5435075687595441,
+          "sharpe_net": -3.334978879714272,
+          "turnover_daily": 2.553005644385467,
+          "exposure_daily": 1.9241450007953562,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.09984985362559358,
+          "ann_vol": 0.16288700997142458,
+          "sharpe_gross": 0.613000715300197,
+          "ann_return_net": -1.1868649911446818,
+          "sharpe_net": -7.268349715008842,
+          "turnover_daily": 2.553005644385467,
+          "exposure_daily": 1.9241450007953562,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.0686963279017014,
+          "ann_vol": 0.13591295632891856,
+          "sharpe_gross": 0.5054435556199045,
+          "ann_return_net": 0.0686963279017014,
+          "sharpe_net": 0.5054435556199045,
+          "turnover_daily": 1.8043068572932408,
+          "exposure_daily": 1.8814542209150007,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.0686963279017014,
+          "ann_vol": 0.13591295632891856,
+          "sharpe_gross": 0.5054435556199045,
+          "ann_return_net": -0.15864633611724696,
+          "sharpe_net": -1.1671104893137987,
+          "turnover_daily": 1.8043068572932408,
+          "exposure_daily": 1.8814542209150007,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.0686963279017014,
+          "ann_vol": 0.13591295632891856,
+          "sharpe_gross": 0.5054435556199045,
+          "ann_return_net": -0.3859890001361954,
+          "sharpe_net": -2.8385251208338924,
+          "turnover_daily": 1.8043068572932408,
+          "exposure_daily": 1.8814542209150007,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.0686963279017014,
+          "ann_vol": 0.13591295632891856,
+          "sharpe_gross": 0.5054435556199045,
+          "ann_return_net": -0.8406743281740922,
+          "sharpe_net": -6.173021793266954,
+          "turnover_daily": 1.8043068572932408,
+          "exposure_daily": 1.8814542209150007,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.03468521526585177,
+          "ann_vol": 0.11042408279471383,
+          "sharpe_gross": 0.31410915434393094,
+          "ann_return_net": 0.03468521526585177,
+          "sharpe_net": 0.31410915434393094,
+          "turnover_daily": 1.0605961757508384,
+          "exposure_daily": 1.7977121586026072,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.03468521526585177,
+          "ann_vol": 0.11042408279471383,
+          "sharpe_gross": 0.31410915434393094,
+          "ann_return_net": -0.09894990287875387,
+          "sharpe_net": -0.8959937132885155,
+          "turnover_daily": 1.0605961757508384,
+          "exposure_daily": 1.7977121586026072,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.03468521526585177,
+          "ann_vol": 0.11042408279471383,
+          "sharpe_gross": 0.31410915434393094,
+          "ann_return_net": -0.2325850210233595,
+          "sharpe_net": -2.1055844360189973,
+          "turnover_daily": 1.0605961757508384,
+          "exposure_daily": 1.7977121586026072,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.03468521526585177,
+          "ann_vol": 0.11042408279471383,
+          "sharpe_gross": 0.31410915434393094,
+          "ann_return_net": -0.4998552573125708,
+          "sharpe_net": -4.5214942366663085,
+          "turnover_daily": 1.0605961757508384,
+          "exposure_daily": 1.7977121586026072,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.01978486765796285,
+          "ann_vol": 0.09796119029387426,
+          "sharpe_gross": 0.20196638687841714,
+          "ann_return_net": 0.01978486765796285,
+          "sharpe_net": 0.20196638687841714,
+          "turnover_daily": 0.6924172781627586,
+          "exposure_daily": 1.7167689055716941,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.01978486765796285,
+          "ann_vol": 0.09796119029387426,
+          "sharpe_gross": 0.20196638687841714,
+          "ann_return_net": -0.06745970939054473,
+          "sharpe_net": -0.6885714066510933,
+          "turnover_daily": 0.6924172781627586,
+          "exposure_daily": 1.7167689055716941,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.01978486765796285,
+          "ann_vol": 0.09796119029387426,
+          "sharpe_gross": 0.20196638687841714,
+          "ann_return_net": -0.1547042864390523,
+          "sharpe_net": -1.5788427205144346,
+          "turnover_daily": 0.6924172781627586,
+          "exposure_daily": 1.7167689055716941,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.01978486765796285,
+          "ann_vol": 0.09796119029387426,
+          "sharpe_gross": 0.20196638687841714,
+          "ann_return_net": -0.32919344053606747,
+          "sharpe_net": -3.3579336227350685,
+          "turnover_daily": 0.6924172781627586,
+          "exposure_daily": 1.7167689055716941,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.011866487062691158,
+          "ann_vol": 0.08650202631826952,
+          "sharpe_gross": 0.13718160796638956,
+          "ann_return_net": 0.011866487062691158,
+          "sharpe_net": 0.13718160796638956,
+          "turnover_daily": 0.33140535742115773,
+          "exposure_daily": 1.5552703750341865,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.011866487062691158,
+          "ann_vol": 0.08650202631826952,
+          "sharpe_gross": 0.13718160796638956,
+          "ann_return_net": -0.029890587972374726,
+          "sharpe_net": -0.3455242392796772,
+          "turnover_daily": 0.33140535742115773,
+          "exposure_daily": 1.5552703750341865,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.011866487062691158,
+          "ann_vol": 0.08650202631826952,
+          "sharpe_gross": 0.13718160796638956,
+          "ann_return_net": -0.07164766300744058,
+          "sharpe_net": -0.8281509074519777,
+          "turnover_daily": 0.33140535742115773,
+          "exposure_daily": 1.5552703750341865,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.011866487062691158,
+          "ann_vol": 0.08650202631826952,
+          "sharpe_gross": 0.13718160796638956,
+          "ann_return_net": -0.15516181307757237,
+          "sharpe_net": -1.7930741239547532,
+          "turnover_daily": 0.33140535742115773,
+          "exposure_daily": 1.5552703750341865,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": 0.8151216336743372,
+      "2021": 1.7221555127686439,
+      "2022": -0.011492183481955274,
+      "2023": -0.8996292159521162
+    }
+  },
+  "llama3_base__title": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": -0.061185573354047576,
+          "ann_vol": 0.1916251631896644,
+          "sharpe_gross": -0.31929821916701034,
+          "ann_return_net": -0.061185573354047576,
+          "sharpe_net": -0.31929821916701034,
+          "turnover_daily": 3.6460052842185613,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.061185573354047576,
+          "ann_vol": 0.1916251631896644,
+          "sharpe_gross": -0.31929821916701034,
+          "ann_return_net": -0.5205822391655862,
+          "sharpe_net": -2.7169300079232572,
+          "turnover_daily": 3.6460052842185613,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.061185573354047576,
+          "ann_vol": 0.1916251631896644,
+          "sharpe_gross": -0.31929821916701034,
+          "ann_return_net": -0.9799789049771248,
+          "sharpe_net": -5.111983512821475,
+          "turnover_daily": 3.6460052842185613,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.061185573354047576,
+          "ann_vol": 0.1916251631896644,
+          "sharpe_gross": -0.31929821916701034,
+          "ann_return_net": -1.8987722366002022,
+          "sharpe_net": -9.877401906797559,
+          "turnover_daily": 3.6460052842185613,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": -0.06790988936880019,
+          "ann_vol": 0.17775192307751245,
+          "sharpe_gross": -0.38204869006782366,
+          "ann_return_net": -0.06790988936880019,
+          "sharpe_net": -0.38204869006782366,
+          "turnover_daily": 3.2670819552104318,
+          "exposure_daily": 1.948455064462307,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.06790988936880019,
+          "ann_vol": 0.17775192307751245,
+          "sharpe_gross": -0.38204869006782366,
+          "ann_return_net": -0.47956221572531466,
+          "sharpe_net": -2.6983816647248355,
+          "turnover_daily": 3.2670819552104318,
+          "exposure_daily": 1.948455064462307,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.06790988936880019,
+          "ann_vol": 0.17775192307751245,
+          "sharpe_gross": -0.38204869006782366,
+          "ann_return_net": -0.891214542081829,
+          "sharpe_net": -5.012772815253006,
+          "turnover_daily": 3.2670819552104318,
+          "exposure_daily": 1.948455064462307,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.06790988936880019,
+          "ann_vol": 0.17775192307751245,
+          "sharpe_gross": -0.38204869006782366,
+          "ann_return_net": -1.7145191947948577,
+          "sharpe_net": -9.620762512163402,
+          "turnover_daily": 3.2670819552104318,
+          "exposure_daily": 1.948455064462307,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": -0.07113789019989271,
+          "ann_vol": 0.15308157327275346,
+          "sharpe_gross": -0.46470576882001735,
+          "ann_return_net": -0.07113789019989271,
+          "sharpe_net": -0.46470576882001735,
+          "turnover_daily": 2.5196592421439834,
+          "exposure_daily": 1.9216010475268988,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.07113789019989271,
+          "ann_vol": 0.15308157327275346,
+          "sharpe_gross": -0.46470576882001735,
+          "ann_return_net": -0.3886149547100346,
+          "sharpe_net": -2.53920042155725,
+          "turnover_daily": 2.5196592421439834,
+          "exposure_daily": 1.9216010475268988,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.07113789019989271,
+          "ann_vol": 0.15308157327275346,
+          "sharpe_gross": -0.46470576882001735,
+          "ann_return_net": -0.7060920192201764,
+          "sharpe_net": -4.612745287965585,
+          "turnover_daily": 2.5196592421439834,
+          "exposure_daily": 1.9216010475268988,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.07113789019989271,
+          "ann_vol": 0.15308157327275346,
+          "sharpe_gross": -0.46470576882001735,
+          "ann_return_net": -1.3410461482404603,
+          "sharpe_net": -8.746724558830131,
+          "turnover_daily": 2.5196592421439834,
+          "exposure_daily": 1.9216010475268988,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": -0.061245337237637525,
+          "ann_vol": 0.13052670067220382,
+          "sharpe_gross": -0.46921692590273195,
+          "ann_return_net": -0.061245337237637525,
+          "sharpe_net": -0.46921692590273195,
+          "turnover_daily": 1.7808134829422202,
+          "exposure_daily": 1.8772235149667114,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.061245337237637525,
+          "ann_vol": 0.13052670067220382,
+          "sharpe_gross": -0.46921692590273195,
+          "ann_return_net": -0.2856278360883573,
+          "sharpe_net": -2.188630927009657,
+          "turnover_daily": 1.7808134829422202,
+          "exposure_daily": 1.8772235149667114,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.061245337237637525,
+          "ann_vol": 0.13052670067220382,
+          "sharpe_gross": -0.46921692590273195,
+          "ann_return_net": -0.510010334939077,
+          "sharpe_net": -3.9075694523417392,
+          "turnover_daily": 1.7808134829422202,
+          "exposure_daily": 1.8772235149667114,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.061245337237637525,
+          "ann_vol": 0.13052670067220382,
+          "sharpe_gross": -0.46921692590273195,
+          "ann_return_net": -0.9587753326405165,
+          "sharpe_net": -7.338538793825623,
+          "turnover_daily": 1.7808134829422202,
+          "exposure_daily": 1.8772235149667114,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": -0.03930122365455039,
+          "ann_vol": 0.10820614357240517,
+          "sharpe_gross": -0.3632069525539678,
+          "ann_return_net": -0.03930122365455039,
+          "sharpe_net": -0.3632069525539678,
+          "turnover_daily": 1.0467994584187792,
+          "exposure_daily": 1.791191316207033,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.03930122365455039,
+          "ann_vol": 0.10820614357240517,
+          "sharpe_gross": -0.3632069525539678,
+          "ann_return_net": -0.17119795541531654,
+          "sharpe_net": -1.5822291129048955,
+          "turnover_daily": 1.0467994584187792,
+          "exposure_daily": 1.791191316207033,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.03930122365455039,
+          "ann_vol": 0.10820614357240517,
+          "sharpe_gross": -0.3632069525539678,
+          "ann_return_net": -0.3030946871760828,
+          "sharpe_net": -2.8010372882332155,
+          "turnover_daily": 1.0467994584187792,
+          "exposure_daily": 1.791191316207033,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.03930122365455039,
+          "ann_vol": 0.10820614357240517,
+          "sharpe_gross": -0.3632069525539678,
+          "ann_return_net": -0.5668881506976152,
+          "sharpe_net": -5.236230631948422,
+          "turnover_daily": 1.0467994584187792,
+          "exposure_daily": 1.791191316207033,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": -0.02402057410534551,
+          "ann_vol": 0.0965389944775926,
+          "sharpe_gross": -0.24881732231964424,
+          "ann_return_net": -0.02402057410534551,
+          "sharpe_net": -0.24881732231964424,
+          "turnover_daily": 0.6834235607087044,
+          "exposure_daily": 1.7073429978884027,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.02402057410534551,
+          "ann_vol": 0.0965389944775926,
+          "sharpe_gross": -0.24881732231964424,
+          "ann_return_net": -0.11013194275464229,
+          "sharpe_net": -1.1408192751824786,
+          "turnover_daily": 0.6834235607087044,
+          "exposure_daily": 1.7073429978884027,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.02402057410534551,
+          "ann_vol": 0.0965389944775926,
+          "sharpe_gross": -0.24881732231964424,
+          "ann_return_net": -0.19624331140393905,
+          "sharpe_net": -2.032724631667569,
+          "turnover_daily": 0.6834235607087044,
+          "exposure_daily": 1.7073429978884027,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.02402057410534551,
+          "ann_vol": 0.0965389944775926,
+          "sharpe_gross": -0.24881732231964424,
+          "ann_return_net": -0.3684660487025325,
+          "sharpe_net": -3.8156006992273115,
+          "turnover_daily": 0.6834235607087044,
+          "exposure_daily": 1.7073429978884027,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": -0.007781333235030025,
+          "ann_vol": 0.08471651879612366,
+          "sharpe_gross": -0.09185142809935756,
+          "ann_return_net": -0.007781333235030025,
+          "sharpe_net": -0.09185142809935756,
+          "turnover_daily": 0.32693198693324954,
+          "exposure_daily": 1.5393909864731177,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.007781333235030025,
+          "ann_vol": 0.08471651879612366,
+          "sharpe_gross": -0.09185142809935756,
+          "ann_return_net": -0.048974763588619456,
+          "sharpe_net": -0.5780925973947668,
+          "turnover_daily": 0.32693198693324954,
+          "exposure_daily": 1.5393909864731177,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.007781333235030025,
+          "ann_vol": 0.08471651879612366,
+          "sharpe_gross": -0.09185142809935756,
+          "ann_return_net": -0.0901681939422089,
+          "sharpe_net": -1.064301867741704,
+          "turnover_daily": 0.32693198693324954,
+          "exposure_daily": 1.5393909864731177,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.007781333235030025,
+          "ann_vol": 0.08471651879612366,
+          "sharpe_gross": -0.09185142809935756,
+          "ann_return_net": -0.17255505464938778,
+          "sharpe_net": -2.0365338283444667,
+          "turnover_daily": 0.32693198693324954,
+          "exposure_daily": 1.5393909864731177,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": -0.6263158560747492,
+      "2021": 0.3357123208740449,
+      "2022": -1.6582353304677966,
+      "2023": 1.398699928481336
+    }
+  },
+  "lm_dict__body": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": -0.05511422150221203,
+          "ann_vol": 0.22338811213942297,
+          "sharpe_gross": -0.24671958133481003,
+          "ann_return_net": -0.05511422150221203,
+          "sharpe_net": -0.24671958133481003,
+          "turnover_daily": 3.6545311597600807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.05511422150221203,
+          "ann_vol": 0.22338811213942297,
+          "sharpe_gross": -0.24671958133481003,
+          "ann_return_net": -0.5155851476319822,
+          "sharpe_net": -2.3074924995636494,
+          "turnover_daily": 3.6545311597600807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.05511422150221203,
+          "ann_vol": 0.22338811213942297,
+          "sharpe_gross": -0.24671958133481003,
+          "ann_return_net": -0.9760560737617523,
+          "sharpe_net": -4.365475260688318,
+          "turnover_daily": 3.6545311597600807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.05511422150221203,
+          "ann_vol": 0.22338811213942297,
+          "sharpe_gross": -0.24671958133481003,
+          "ann_return_net": -1.8969979260212926,
+          "sharpe_net": -8.462747401942341,
+          "turnover_daily": 3.6545311597600807,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": -0.05201286212437612,
+          "ann_vol": 0.20715426732944314,
+          "sharpe_gross": -0.2510827452164364,
+          "ann_return_net": -0.05201286212437612,
+          "sharpe_net": -0.2510827452164364,
+          "turnover_daily": 3.2727652684570994,
+          "exposure_daily": 1.9463366123726014,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.05201286212437612,
+          "ann_vol": 0.20715426732944314,
+          "sharpe_gross": -0.2510827452164364,
+          "ann_return_net": -0.46438128594997063,
+          "sharpe_net": -2.2412862085836074,
+          "turnover_daily": 3.2727652684570994,
+          "exposure_daily": 1.9463366123726014,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.05201286212437612,
+          "ann_vol": 0.20715426732944314,
+          "sharpe_gross": -0.2510827452164364,
+          "ann_return_net": -0.8767497097755651,
+          "sharpe_net": -4.229096315014258,
+          "turnover_daily": 3.2727652684570994,
+          "exposure_daily": 1.9463366123726014,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.05201286212437612,
+          "ann_vol": 0.20715426732944314,
+          "sharpe_gross": -0.2510827452164364,
+          "ann_return_net": -1.701486557426754,
+          "sharpe_net": -8.188424756157376,
+          "turnover_daily": 3.2727652684570994,
+          "exposure_daily": 1.9463366123726014,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": -0.03969054833597964,
+          "ann_vol": 0.17757857947673056,
+          "sharpe_gross": -0.22350977495672888,
+          "ann_return_net": -0.03969054833597964,
+          "sharpe_net": -0.22350977495672888,
+          "turnover_daily": 2.520370885036812,
+          "exposure_daily": 1.9142412904461588,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.03969054833597964,
+          "ann_vol": 0.17757857947673056,
+          "sharpe_gross": -0.22350977495672888,
+          "ann_return_net": -0.357257279850618,
+          "sharpe_net": -2.011687062206542,
+          "turnover_daily": 2.520370885036812,
+          "exposure_daily": 1.9142412904461588,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.03969054833597964,
+          "ann_vol": 0.17757857947673056,
+          "sharpe_gross": -0.22350977495672888,
+          "ann_return_net": -0.6748240113652563,
+          "sharpe_net": -3.7984842433536703,
+          "turnover_daily": 2.520370885036812,
+          "exposure_daily": 1.9142412904461588,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.03969054833597964,
+          "ann_vol": 0.17757857947673056,
+          "sharpe_gross": -0.22350977495672888,
+          "ann_return_net": -1.309957474394533,
+          "sharpe_net": -7.361578736851348,
+          "turnover_daily": 2.520370885036812,
+          "exposure_daily": 1.9142412904461588,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": -0.027526038105441106,
+          "ann_vol": 0.15205637085445553,
+          "sharpe_gross": -0.18102522078333916,
+          "ann_return_net": -0.027526038105441106,
+          "sharpe_net": -0.18102522078333916,
+          "turnover_daily": 1.778636141894048,
+          "exposure_daily": 1.8629014835773552,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.027526038105441106,
+          "ann_vol": 0.15205637085445553,
+          "sharpe_gross": -0.18102522078333916,
+          "ann_return_net": -0.2516341919840911,
+          "sharpe_net": -1.654898771586348,
+          "turnover_daily": 1.778636141894048,
+          "exposure_daily": 1.8629014835773552,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.027526038105441106,
+          "ann_vol": 0.15205637085445553,
+          "sharpe_gross": -0.18102522078333916,
+          "ann_return_net": -0.47574234586274117,
+          "sharpe_net": -3.128214857139526,
+          "turnover_daily": 1.778636141894048,
+          "exposure_daily": 1.8629014835773552,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.027526038105441106,
+          "ann_vol": 0.15205637085445553,
+          "sharpe_gross": -0.18102522078333916,
+          "ann_return_net": -0.9239586536200414,
+          "sharpe_net": -6.0697871912278485,
+          "turnover_daily": 1.778636141894048,
+          "exposure_daily": 1.8629014835773552,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": -0.022809564381748172,
+          "ann_vol": 0.130064490327831,
+          "sharpe_gross": -0.17537118950957378,
+          "ann_return_net": -0.022809564381748172,
+          "sharpe_net": -0.17537118950957378,
+          "turnover_daily": 1.0436977011040138,
+          "exposure_daily": 1.76738100302793,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.022809564381748172,
+          "ann_vol": 0.130064490327831,
+          "sharpe_gross": -0.17537118950957378,
+          "ann_return_net": -0.1543154747208539,
+          "sharpe_net": -1.1865054008480627,
+          "turnover_daily": 1.0436977011040138,
+          "exposure_daily": 1.76738100302793,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.022809564381748172,
+          "ann_vol": 0.130064490327831,
+          "sharpe_gross": -0.17537118950957378,
+          "ann_return_net": -0.2858213850599597,
+          "sharpe_net": -2.197544840806517,
+          "turnover_daily": 1.0436977011040138,
+          "exposure_daily": 1.76738100302793,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.022809564381748172,
+          "ann_vol": 0.130064490327831,
+          "sharpe_gross": -0.17537118950957378,
+          "ann_return_net": -0.5488332057381712,
+          "sharpe_net": -4.218328884006574,
+          "turnover_daily": 1.0436977011040138,
+          "exposure_daily": 1.76738100302793,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": -0.02326046756364976,
+          "ann_vol": 0.11900117496601417,
+          "sharpe_gross": -0.19546418403257593,
+          "ann_return_net": -0.02326046756364976,
+          "sharpe_net": -0.19546418403257593,
+          "turnover_daily": 0.6804809853592368,
+          "exposure_daily": 1.6765009675537919,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.02326046756364976,
+          "ann_vol": 0.11900117496601417,
+          "sharpe_gross": -0.19546418403257593,
+          "ann_return_net": -0.10900107171891361,
+          "sharpe_net": -0.9160024796385251,
+          "turnover_daily": 0.6804809853592368,
+          "exposure_daily": 1.6765009675537919,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.02326046756364976,
+          "ann_vol": 0.11900117496601417,
+          "sharpe_gross": -0.19546418403257593,
+          "ann_return_net": -0.19474167587417746,
+          "sharpe_net": -1.6365333495681786,
+          "turnover_daily": 0.6804809853592368,
+          "exposure_daily": 1.6765009675537919,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.02326046756364976,
+          "ann_vol": 0.11900117496601417,
+          "sharpe_gross": -0.19546418403257593,
+          "ann_return_net": -0.3662228841847051,
+          "sharpe_net": -3.0772333087165094,
+          "turnover_daily": 0.6804809853592368,
+          "exposure_daily": 1.6765009675537919,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": -0.02429178918661219,
+          "ann_vol": 0.10461812035445966,
+          "sharpe_gross": -0.23219485404926488,
+          "ann_return_net": -0.02429178918661219,
+          "sharpe_net": -0.23219485404926488,
+          "turnover_daily": 0.3249324775336478,
+          "exposure_daily": 1.4991278516474658,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.02429178918661219,
+          "ann_vol": 0.10461812035445966,
+          "sharpe_gross": -0.23219485404926488,
+          "ann_return_net": -0.0652332813558518,
+          "sharpe_net": -0.6235538477391557,
+          "turnover_daily": 0.3249324775336478,
+          "exposure_daily": 1.4991278516474658,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.02429178918661219,
+          "ann_vol": 0.10461812035445966,
+          "sharpe_gross": -0.23219485404926488,
+          "ann_return_net": -0.10617477352509144,
+          "sharpe_net": -1.0149238575274355,
+          "turnover_daily": 0.3249324775336478,
+          "exposure_daily": 1.4991278516474658,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.02429178918661219,
+          "ann_vol": 0.10461812035445966,
+          "sharpe_gross": -0.23219485404926488,
+          "ann_return_net": -0.1880577578635707,
+          "sharpe_net": -1.7976507248686795,
+          "turnover_daily": 0.3249324775336478,
+          "exposure_daily": 1.4991278516474658,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": 0.10646194659428851,
+      "2021": -1.556026986824493,
+      "2022": -0.709131704097972,
+      "2023": 1.050379242279113
+    }
+  },
+  "lm_dict__title": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": -0.01174974759998619,
+          "ann_vol": 0.18978359926833016,
+          "sharpe_gross": -0.06191129078215829,
+          "ann_return_net": -0.01174974759998619,
+          "sharpe_net": -0.06191129078215829,
+          "turnover_daily": 3.688551674939975,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.01174974759998619,
+          "ann_vol": 0.18978359926833016,
+          "sharpe_gross": -0.06191129078215829,
+          "ann_return_net": -0.47650725864242305,
+          "sharpe_net": -2.5107767482663004,
+          "turnover_daily": 3.688551674939975,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.01174974759998619,
+          "ann_vol": 0.18978359926833016,
+          "sharpe_gross": -0.06191129078215829,
+          "ann_return_net": -0.9412647696848597,
+          "sharpe_net": -4.956723975426002,
+          "turnover_daily": 3.688551674939975,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.01174974759998619,
+          "ann_vol": 0.18978359926833016,
+          "sharpe_gross": -0.06191129078215829,
+          "ann_return_net": -1.8707797917697335,
+          "sharpe_net": -9.822907135416425,
+          "turnover_daily": 3.688551674939975,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": -0.015461277686505228,
+          "ann_vol": 0.17474581537511769,
+          "sharpe_gross": -0.08847867202608152,
+          "ann_return_net": -0.015461277686505228,
+          "sharpe_net": -0.08847867202608152,
+          "turnover_daily": 3.299230486123616,
+          "exposure_daily": 1.9417567496049795,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.015461277686505228,
+          "ann_vol": 0.17474581537511769,
+          "sharpe_gross": -0.08847867202608152,
+          "ann_return_net": -0.4311643189380809,
+          "sharpe_net": -2.4673352792289007,
+          "turnover_daily": 3.299230486123616,
+          "exposure_daily": 1.9417567496049795,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.015461277686505228,
+          "ann_vol": 0.17474581537511769,
+          "sharpe_gross": -0.08847867202608152,
+          "ann_return_net": -0.8468673601896565,
+          "sharpe_net": -4.843489035982427,
+          "turnover_daily": 3.299230486123616,
+          "exposure_daily": 1.9417567496049795,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.015461277686505228,
+          "ann_vol": 0.17474581537511769,
+          "sharpe_gross": -0.08847867202608152,
+          "ann_return_net": -1.6782734426928079,
+          "sharpe_net": -9.572402987906681,
+          "turnover_daily": 3.299230486123616,
+          "exposure_daily": 1.9417567496049795,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": -0.020621170306572508,
+          "ann_vol": 0.14818417284725566,
+          "sharpe_gross": -0.13915906071715411,
+          "ann_return_net": -0.020621170306572508,
+          "sharpe_net": -0.13915906071715411,
+          "turnover_daily": 2.5335617697046806,
+          "exposure_daily": 1.8972355749927,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.020621170306572508,
+          "ann_vol": 0.14818417284725566,
+          "sharpe_gross": -0.13915906071715411,
+          "ann_return_net": -0.3398499532893623,
+          "sharpe_net": -2.293458835325653,
+          "turnover_daily": 2.5335617697046806,
+          "exposure_daily": 1.8972355749927,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.020621170306572508,
+          "ann_vol": 0.14818417284725566,
+          "sharpe_gross": -0.13915906071715411,
+          "ann_return_net": -0.6590787362721521,
+          "sharpe_net": -4.445915656252717,
+          "turnover_daily": 2.5335617697046806,
+          "exposure_daily": 1.8972355749927,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.020621170306572508,
+          "ann_vol": 0.14818417284725566,
+          "sharpe_gross": -0.13915906071715411,
+          "ann_return_net": -1.2975363022377313,
+          "sharpe_net": -8.734338140945024,
+          "turnover_daily": 2.5335617697046806,
+          "exposure_daily": 1.8972355749927,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": -0.02564535990019114,
+          "ann_vol": 0.12487778847909586,
+          "sharpe_gross": -0.2053636616449537,
+          "ann_return_net": -0.02564535990019114,
+          "sharpe_net": -0.2053636616449537,
+          "turnover_daily": 1.7788389764252543,
+          "exposure_daily": 1.8257937640123922,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.02564535990019114,
+          "ann_vol": 0.12487778847909586,
+          "sharpe_gross": -0.2053636616449537,
+          "ann_return_net": -0.24977907092977322,
+          "sharpe_net": -2.000306868299256,
+          "turnover_daily": 1.7788389764252543,
+          "exposure_daily": 1.8257937640123922,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.02564535990019114,
+          "ann_vol": 0.12487778847909586,
+          "sharpe_gross": -0.2053636616449537,
+          "ann_return_net": -0.4739127819593553,
+          "sharpe_net": -3.794391663392977,
+          "turnover_daily": 1.7788389764252543,
+          "exposure_daily": 1.8257937640123922,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.02564535990019114,
+          "ann_vol": 0.12487778847909586,
+          "sharpe_gross": -0.2053636616449537,
+          "ann_return_net": -0.9221802040185193,
+          "sharpe_net": -7.3739269273477115,
+          "turnover_daily": 1.7788389764252543,
+          "exposure_daily": 1.8257937640123922,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": -0.031193758583804708,
+          "ann_vol": 0.10317515904778722,
+          "sharpe_gross": -0.30233787736985046,
+          "ann_return_net": -0.031193758583804708,
+          "sharpe_net": -0.30233787736985046,
+          "turnover_daily": 1.0349372870231008,
+          "exposure_daily": 1.696399378799092,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.031193758583804708,
+          "ann_vol": 0.10317515904778722,
+          "sharpe_gross": -0.30233787736985046,
+          "ann_return_net": -0.16159585674871538,
+          "sharpe_net": -1.5662884449893617,
+          "turnover_daily": 1.0349372870231008,
+          "exposure_daily": 1.696399378799092,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.031193758583804708,
+          "ann_vol": 0.10317515904778722,
+          "sharpe_gross": -0.30233787736985046,
+          "ann_return_net": -0.29199795491362607,
+          "sharpe_net": -2.8299698776006155,
+          "turnover_daily": 1.0349372870231008,
+          "exposure_daily": 1.696399378799092,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.031193758583804708,
+          "ann_vol": 0.10317515904778722,
+          "sharpe_gross": -0.30233787736985046,
+          "ann_return_net": -0.5528021512434473,
+          "sharpe_net": -5.354566145249578,
+          "turnover_daily": 1.0349372870231008,
+          "exposure_daily": 1.696399378799092,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": -0.03368568471394913,
+          "ann_vol": 0.09123001279239884,
+          "sharpe_gross": -0.3692390659924995,
+          "ann_return_net": -0.03368568471394913,
+          "sharpe_net": -0.3692390659924995,
+          "turnover_daily": 0.6700345603619066,
+          "exposure_daily": 1.5783855942422245,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.03368568471394913,
+          "ann_vol": 0.09123001279239884,
+          "sharpe_gross": -0.3692390659924995,
+          "ann_return_net": -0.11811003931954937,
+          "sharpe_net": -1.2946508492310231,
+          "turnover_daily": 0.6700345603619066,
+          "exposure_daily": 1.5783855942422245,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.03368568471394913,
+          "ann_vol": 0.09123001279239884,
+          "sharpe_gross": -0.3692390659924995,
+          "ann_return_net": -0.2025343939251496,
+          "sharpe_net": -2.2199351147145143,
+          "turnover_daily": 0.6700345603619066,
+          "exposure_daily": 1.5783855942422245,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.03368568471394913,
+          "ann_vol": 0.09123001279239884,
+          "sharpe_gross": -0.3692390659924995,
+          "ann_return_net": -0.37138310313635003,
+          "sharpe_net": -4.06940755631791,
+          "turnover_daily": 0.6700345603619066,
+          "exposure_daily": 1.5783855942422245,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": -0.03319450472382974,
+          "ann_vol": 0.07520117569810664,
+          "sharpe_gross": -0.44140938510174765,
+          "ann_return_net": -0.03319450472382974,
+          "sharpe_net": -0.44140938510174765,
+          "turnover_daily": 0.3158909588198097,
+          "exposure_daily": 1.3573686705719177,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.03319450472382974,
+          "ann_vol": 0.07520117569810664,
+          "sharpe_gross": -0.44140938510174765,
+          "ann_return_net": -0.07299676553512575,
+          "sharpe_net": -0.9706863949112998,
+          "turnover_daily": 0.3158909588198097,
+          "exposure_daily": 1.3573686705719177,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.03319450472382974,
+          "ann_vol": 0.07520117569810664,
+          "sharpe_gross": -0.44140938510174765,
+          "ann_return_net": -0.11279902634642179,
+          "sharpe_net": -1.4999362489014434,
+          "turnover_daily": 0.3158909588198097,
+          "exposure_daily": 1.3573686705719177,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.03319450472382974,
+          "ann_vol": 0.07520117569810664,
+          "sharpe_gross": -0.44140938510174765,
+          "ann_return_net": -0.19240354796901385,
+          "sharpe_net": -2.558239995215705,
+          "turnover_daily": 0.3158909588198097,
+          "exposure_daily": 1.3573686705719177,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": -0.06820898043479164,
+      "2021": -1.0223004368166713,
+      "2022": 0.5501964340695839,
+      "2023": 0.3149471814159963
+    }
+  },
+  "minilm__body": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.020390393835388144,
+          "ann_vol": 0.19580772879671854,
+          "sharpe_gross": 0.10413477527517219,
+          "ann_return_net": 0.020390393835388144,
+          "sharpe_net": 0.10413477527517219,
+          "turnover_daily": 3.6151774327557864,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.020390393835388144,
+          "ann_vol": 0.19580772879671854,
+          "sharpe_gross": 0.10413477527517219,
+          "ann_return_net": -0.43512196269184095,
+          "sharpe_net": -2.2225711770373633,
+          "turnover_daily": 3.6151774327557864,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.020390393835388144,
+          "ann_vol": 0.19580772879671854,
+          "sharpe_gross": 0.10413477527517219,
+          "ann_return_net": -0.89063431921907,
+          "sharpe_net": -4.547527763361891,
+          "turnover_daily": 3.6151774327557864,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.020390393835388144,
+          "ann_vol": 0.19580772879671854,
+          "sharpe_gross": 0.10413477527517219,
+          "ann_return_net": -1.8016590322735277,
+          "sharpe_net": -9.176654933862284,
+          "turnover_daily": 3.6151774327557864,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.026282232810232762,
+          "ann_vol": 0.18239128576953087,
+          "sharpe_gross": 0.14409807299370062,
+          "ann_return_net": 0.026282232810232762,
+          "sharpe_net": 0.14409807299370062,
+          "turnover_daily": 3.2411332738000413,
+          "exposure_daily": 1.952796754883546,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.026282232810232762,
+          "ann_vol": 0.18239128576953087,
+          "sharpe_gross": 0.14409807299370062,
+          "ann_return_net": -0.3821005596885724,
+          "sharpe_net": -2.0950896042350684,
+          "turnover_daily": 3.2411332738000413,
+          "exposure_daily": 1.952796754883546,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.026282232810232762,
+          "ann_vol": 0.18239128576953087,
+          "sharpe_gross": 0.14409807299370062,
+          "ann_return_net": -0.7904833521873776,
+          "sharpe_net": -4.332377232683971,
+          "turnover_daily": 3.2411332738000413,
+          "exposure_daily": 1.952796754883546,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.026282232810232762,
+          "ann_vol": 0.18239128576953087,
+          "sharpe_gross": 0.14409807299370062,
+          "ann_return_net": -1.6072489371849883,
+          "sharpe_net": -8.787709281737953,
+          "turnover_daily": 3.2411332738000413,
+          "exposure_daily": 1.952796754883546,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.02861863067524834,
+          "ann_vol": 0.15932813377657118,
+          "sharpe_gross": 0.1796206984723789,
+          "ann_return_net": 0.02861863067524834,
+          "sharpe_net": 0.1796206984723789,
+          "turnover_daily": 2.5043897286793455,
+          "exposure_daily": 1.9377725805363648,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.02861863067524834,
+          "ann_vol": 0.15932813377657118,
+          "sharpe_gross": 0.1796206984723789,
+          "ann_return_net": -0.28693447513834924,
+          "sharpe_net": -1.800926713544605,
+          "turnover_daily": 2.5043897286793455,
+          "exposure_daily": 1.9377725805363648,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.02861863067524834,
+          "ann_vol": 0.15932813377657118,
+          "sharpe_gross": 0.1796206984723789,
+          "ann_return_net": -0.6024875809519468,
+          "sharpe_net": -3.7800904996108553,
+          "turnover_daily": 2.5043897286793455,
+          "exposure_daily": 1.9377725805363648,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.02861863067524834,
+          "ann_vol": 0.15932813377657118,
+          "sharpe_gross": 0.1796206984723789,
+          "ann_return_net": -1.233593792579142,
+          "sharpe_net": -7.725288607605561,
+          "turnover_daily": 2.5043897286793455,
+          "exposure_daily": 1.9377725805363648,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.021672054822024563,
+          "ann_vol": 0.13873114857236607,
+          "sharpe_gross": 0.15621621420311252,
+          "ann_return_net": 0.021672054822024563,
+          "sharpe_net": 0.15621621420311252,
+          "turnover_daily": 1.7774322184149742,
+          "exposure_daily": 1.9126341329706145,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.021672054822024563,
+          "ann_vol": 0.13873114857236607,
+          "sharpe_gross": 0.15621621420311252,
+          "ann_return_net": -0.20228440469826214,
+          "sharpe_net": -1.4582243371518504,
+          "turnover_daily": 1.7774322184149742,
+          "exposure_daily": 1.9126341329706145,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.021672054822024563,
+          "ann_vol": 0.13873114857236607,
+          "sharpe_gross": 0.15621621420311252,
+          "ann_return_net": -0.42624086421854895,
+          "sharpe_net": -3.0721985856793466,
+          "turnover_daily": 1.7774322184149742,
+          "exposure_daily": 1.9126341329706145,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.021672054822024563,
+          "ann_vol": 0.13873114857236607,
+          "sharpe_gross": 0.15621621420311252,
+          "ann_return_net": -0.8741537832591225,
+          "sharpe_net": -6.2941358937556675,
+          "turnover_daily": 1.7774322184149742,
+          "exposure_daily": 1.9126341329706145,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.014219596874118645,
+          "ann_vol": 0.1190190290484191,
+          "sharpe_gross": 0.119473305973063,
+          "ann_return_net": 0.014219596874118645,
+          "sharpe_net": 0.119473305973063,
+          "turnover_daily": 1.0541398468784224,
+          "exposure_daily": 1.8628095519135768,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.014219596874118645,
+          "ann_vol": 0.1190190290484191,
+          "sharpe_gross": 0.119473305973063,
+          "ann_return_net": -0.11860202383256259,
+          "sharpe_net": -0.9966302836934346,
+          "turnover_daily": 1.0541398468784224,
+          "exposure_daily": 1.8628095519135768,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.014219596874118645,
+          "ann_vol": 0.1190190290484191,
+          "sharpe_gross": 0.119473305973063,
+          "ann_return_net": -0.2514236445392439,
+          "sharpe_net": -2.1128119669925938,
+          "turnover_daily": 1.0541398468784224,
+          "exposure_daily": 1.8628095519135768,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.014219596874118645,
+          "ann_vol": 0.1190190290484191,
+          "sharpe_gross": 0.119473305973063,
+          "ann_return_net": -0.5170668859526063,
+          "sharpe_net": -4.344002432146505,
+          "turnover_daily": 1.0541398468784224,
+          "exposure_daily": 1.8628095519135768,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.014852083369249626,
+          "ann_vol": 0.10982178959028104,
+          "sharpe_gross": 0.13523803814032911,
+          "ann_return_net": 0.014852083369249626,
+          "sharpe_net": 0.13523803814032911,
+          "turnover_daily": 0.6942157203291671,
+          "exposure_daily": 1.813333520781139,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.014852083369249626,
+          "ann_vol": 0.10982178959028104,
+          "sharpe_gross": 0.13523803814032911,
+          "ann_return_net": -0.07261909739222544,
+          "sharpe_net": -0.6613055068088105,
+          "turnover_daily": 0.6942157203291671,
+          "exposure_daily": 1.813333520781139,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.014852083369249626,
+          "ann_vol": 0.10982178959028104,
+          "sharpe_gross": 0.13523803814032911,
+          "ann_return_net": -0.16009027815370044,
+          "sharpe_net": -1.4579229664603672,
+          "turnover_daily": 0.6942157203291671,
+          "exposure_daily": 1.813333520781139,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.014852083369249626,
+          "ann_vol": 0.10982178959028104,
+          "sharpe_gross": 0.13523803814032911,
+          "ann_return_net": -0.3350326396766506,
+          "sharpe_net": -3.0509066755043013,
+          "turnover_daily": 0.6942157203291671,
+          "exposure_daily": 1.813333520781139,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.020549022537880532,
+          "ann_vol": 0.1016113818366569,
+          "sharpe_gross": 0.2022315036608168,
+          "ann_return_net": 0.020549022537880532,
+          "sharpe_net": 0.2022315036608168,
+          "turnover_daily": 0.33765903342243075,
+          "exposure_daily": 1.7076901781849236,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.020549022537880532,
+          "ann_vol": 0.1016113818366569,
+          "sharpe_gross": 0.2022315036608168,
+          "ann_return_net": -0.021996015673345765,
+          "sharpe_net": -0.21647551070210475,
+          "turnover_daily": 0.33765903342243075,
+          "exposure_daily": 1.7076901781849236,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.020549022537880532,
+          "ann_vol": 0.1016113818366569,
+          "sharpe_gross": 0.2022315036608168,
+          "ann_return_net": -0.06454105388457203,
+          "sharpe_net": -0.6351890089319456,
+          "turnover_daily": 0.33765903342243075,
+          "exposure_daily": 1.7076901781849236,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.020549022537880532,
+          "ann_vol": 0.1016113818366569,
+          "sharpe_gross": 0.2022315036608168,
+          "ann_return_net": -0.14963113030702455,
+          "sharpe_net": -1.472578299234542,
+          "turnover_daily": 0.33765903342243075,
+          "exposure_daily": 1.7076901781849236,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": 0.5095210081756579,
+      "2021": -0.0721556811572912,
+      "2022": -0.43026480366985725,
+      "2023": 0.310669986889582
+    }
+  },
+  "minilm__title": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": -0.008402552872402495,
+          "ann_vol": 0.17953864670718978,
+          "sharpe_gross": -0.04680080320593176,
+          "ann_return_net": -0.008402552872402495,
+          "sharpe_net": -0.04680080320593176,
+          "turnover_daily": 3.6816636309225568,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.008402552872402495,
+          "ann_vol": 0.17953864670718978,
+          "sharpe_gross": -0.04680080320593176,
+          "ann_return_net": -0.4722921703686446,
+          "sharpe_net": -2.631584835391282,
+          "turnover_daily": 3.6816636309225568,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.008402552872402495,
+          "ann_vol": 0.17953864670718978,
+          "sharpe_gross": -0.04680080320593176,
+          "ann_return_net": -0.9361817878648866,
+          "sharpe_net": -5.214955593762875,
+          "turnover_daily": 3.6816636309225568,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.008402552872402495,
+          "ann_vol": 0.17953864670718978,
+          "sharpe_gross": -0.04680080320593176,
+          "ann_return_net": -1.8639610228573709,
+          "sharpe_net": -10.357510736156913,
+          "turnover_daily": 3.6816636309225568,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": -0.0032071716537670296,
+          "ann_vol": 0.1641899063209598,
+          "sharpe_gross": -0.019533305826349785,
+          "ann_return_net": -0.0032071716537670296,
+          "sharpe_net": -0.019533305826349785,
+          "turnover_daily": 3.298846413089788,
+          "exposure_daily": 1.948684033445998,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": -0.0032071716537670296,
+          "ann_vol": 0.1641899063209598,
+          "sharpe_gross": -0.019533305826349785,
+          "ann_return_net": -0.4188618197030804,
+          "sharpe_net": -2.551911336399495,
+          "turnover_daily": 3.298846413089788,
+          "exposure_daily": 1.948684033445998,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": -0.0032071716537670296,
+          "ann_vol": 0.1641899063209598,
+          "sharpe_gross": -0.019533305826349785,
+          "ann_return_net": -0.8345164677523937,
+          "sharpe_net": -5.082849157023583,
+          "turnover_daily": 3.298846413089788,
+          "exposure_daily": 1.948684033445998,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": -0.0032071716537670296,
+          "ann_vol": 0.1641899063209598,
+          "sharpe_gross": -0.019533305826349785,
+          "ann_return_net": -1.6658257638510205,
+          "sharpe_net": -10.12204724202142,
+          "turnover_daily": 3.298846413089788,
+          "exposure_daily": 1.948684033445998,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.0034404202248055488,
+          "ann_vol": 0.1378991766514326,
+          "sharpe_gross": 0.02494880903822864,
+          "ann_return_net": 0.0034404202248055488,
+          "sharpe_net": 0.02494880903822864,
+          "turnover_daily": 2.5447821673891964,
+          "exposure_daily": 1.9224905389321005,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.0034404202248055488,
+          "ann_vol": 0.1378991766514326,
+          "sharpe_gross": 0.02494880903822864,
+          "ann_return_net": -0.31720213286623317,
+          "sharpe_net": -2.3006825907905735,
+          "turnover_daily": 2.5447821673891964,
+          "exposure_daily": 1.9224905389321005,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.0034404202248055488,
+          "ann_vol": 0.1378991766514326,
+          "sharpe_gross": 0.02494880903822864,
+          "ann_return_net": -0.6378446859572718,
+          "sharpe_net": -4.624929993825218,
+          "turnover_daily": 2.5447821673891964,
+          "exposure_daily": 1.9224905389321005,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.0034404202248055488,
+          "ann_vol": 0.1378991766514326,
+          "sharpe_gross": 0.02494880903822864,
+          "ann_return_net": -1.2791297921393492,
+          "sharpe_net": -9.255677559907912,
+          "turnover_daily": 2.5447821673891964,
+          "exposure_daily": 1.9224905389321005,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.01137586172486723,
+          "ann_vol": 0.11528462207481706,
+          "sharpe_gross": 0.09867631536740919,
+          "ann_return_net": 0.01137586172486723,
+          "sharpe_net": 0.09867631536740919,
+          "turnover_daily": 1.798395622359696,
+          "exposure_daily": 1.8791112418765914,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.01137586172486723,
+          "ann_vol": 0.11528462207481706,
+          "sharpe_gross": 0.09867631536740919,
+          "ann_return_net": -0.21522198669245446,
+          "sharpe_net": -1.867111247718478,
+          "turnover_daily": 1.798395622359696,
+          "exposure_daily": 1.8791112418765914,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.01137586172486723,
+          "ann_vol": 0.11528462207481706,
+          "sharpe_gross": 0.09867631536740919,
+          "ann_return_net": -0.44181983510977624,
+          "sharpe_net": -3.832121430728826,
+          "turnover_daily": 1.798395622359696,
+          "exposure_daily": 1.8791112418765914,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.01137586172486723,
+          "ann_vol": 0.11528462207481706,
+          "sharpe_gross": 0.09867631536740919,
+          "ann_return_net": -0.8950155319444196,
+          "sharpe_net": -7.7519913132469975,
+          "turnover_daily": 1.798395622359696,
+          "exposure_daily": 1.8791112418765914,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.018132439853477202,
+          "ann_vol": 0.09417679661441389,
+          "sharpe_gross": 0.19253617138536236,
+          "ann_return_net": 0.018132439853477202,
+          "sharpe_net": 0.19253617138536236,
+          "turnover_daily": 1.0567900333477052,
+          "exposure_daily": 1.7945726715833163,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.018132439853477202,
+          "ann_vol": 0.09417679661441389,
+          "sharpe_gross": 0.19253617138536236,
+          "ann_return_net": -0.11502310434833367,
+          "sharpe_net": -1.221483937462142,
+          "turnover_daily": 1.0567900333477052,
+          "exposure_daily": 1.7945726715833163,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.018132439853477202,
+          "ann_vol": 0.09417679661441389,
+          "sharpe_gross": 0.19253617138536236,
+          "ann_return_net": -0.24817864855014457,
+          "sharpe_net": -2.6353867317543553,
+          "turnover_daily": 1.0567900333477052,
+          "exposure_daily": 1.7945726715833163,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.018132439853477202,
+          "ann_vol": 0.09417679661441389,
+          "sharpe_gross": 0.19253617138536236,
+          "ann_return_net": -0.5144897369537663,
+          "sharpe_net": -5.4601347344305635,
+          "turnover_daily": 1.0567900333477052,
+          "exposure_daily": 1.7945726715833163,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.01680974983929725,
+          "ann_vol": 0.08365653954326958,
+          "sharpe_gross": 0.2009376664522773,
+          "ann_return_net": 0.01680974983929725,
+          "sharpe_net": 0.2009376664522773,
+          "turnover_daily": 0.6901715569261376,
+          "exposure_daily": 1.7144314746154563,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.01680974983929725,
+          "ann_vol": 0.08365653954326958,
+          "sharpe_gross": 0.2009376664522773,
+          "ann_return_net": -0.07015186633339608,
+          "sharpe_net": -0.8386300446345593,
+          "turnover_daily": 0.6901715569261376,
+          "exposure_daily": 1.7144314746154563,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.01680974983929725,
+          "ann_vol": 0.08365653954326958,
+          "sharpe_gross": 0.2009376664522773,
+          "ann_return_net": -0.15711348250608942,
+          "sharpe_net": -1.8781965508031762,
+          "turnover_daily": 0.6901715569261376,
+          "exposure_daily": 1.7144314746154563,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.01680974983929725,
+          "ann_vol": 0.08365653954326958,
+          "sharpe_gross": 0.2009376664522773,
+          "ann_return_net": -0.33103671485147607,
+          "sharpe_net": -3.9563299010458146,
+          "turnover_daily": 0.6901715569261376,
+          "exposure_daily": 1.7144314746154563,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.009689882332658922,
+          "ann_vol": 0.07308629066520528,
+          "sharpe_gross": 0.13258139446488634,
+          "ann_return_net": 0.009689882332658922,
+          "sharpe_net": 0.13258139446488634,
+          "turnover_daily": 0.3312188992320461,
+          "exposure_daily": 1.5608178197440041,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.009689882332658922,
+          "ann_vol": 0.07308629066520528,
+          "sharpe_gross": 0.13258139446488634,
+          "ann_return_net": -0.03204369897057889,
+          "sharpe_net": -0.4384389787403132,
+          "turnover_daily": 0.3312188992320461,
+          "exposure_daily": 1.5608178197440041,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.009689882332658922,
+          "ann_vol": 0.07308629066520528,
+          "sharpe_gross": 0.13258139446488634,
+          "ann_return_net": -0.0737772802738167,
+          "sharpe_net": -1.0094454158528967,
+          "turnover_daily": 0.3312188992320461,
+          "exposure_daily": 1.5608178197440041,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.009689882332658922,
+          "ann_vol": 0.07308629066520528,
+          "sharpe_gross": 0.13258139446488634,
+          "ann_return_net": -0.15724444288029232,
+          "sharpe_net": -2.1512784472421913,
+          "turnover_daily": 0.3312188992320461,
+          "exposure_daily": 1.5608178197440041,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": 0.8046997789439858,
+      "2021": 0.7796528864807757,
+      "2022": -2.4306367711392443,
+      "2023": 0.581776342631529
+    }
+  },
+  "tfidf__body": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.08499239253502536,
+          "ann_vol": 0.2063298040222796,
+          "sharpe_gross": 0.41192494190440776,
+          "ann_return_net": 0.08499239253502536,
+          "sharpe_net": 0.41192494190440776,
+          "turnover_daily": 3.7581532711561363,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.08499239253502536,
+          "ann_vol": 0.2063298040222796,
+          "sharpe_gross": 0.41192494190440776,
+          "ann_return_net": -0.38853491963064785,
+          "sharpe_net": -1.8823588422830038,
+          "turnover_daily": 3.7581532711561363,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.08499239253502536,
+          "ann_vol": 0.2063298040222796,
+          "sharpe_gross": 0.41192494190440776,
+          "ann_return_net": -0.862062231796321,
+          "sharpe_net": -4.172827562707674,
+          "turnover_daily": 3.7581532711561363,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.08499239253502536,
+          "ann_vol": 0.2063298040222796,
+          "sharpe_gross": 0.41192494190440776,
+          "ann_return_net": -1.8091168561276674,
+          "sharpe_net": -8.728867188356524,
+          "turnover_daily": 3.7581532711561363,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.08935261148979154,
+          "ann_vol": 0.18982828654164272,
+          "sharpe_gross": 0.470702302157641,
+          "ann_return_net": 0.08935261148979154,
+          "sharpe_net": 0.470702302157641,
+          "turnover_daily": 3.368346440881179,
+          "exposure_daily": 1.9471867171270902,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.08935261148979154,
+          "ann_vol": 0.18982828654164272,
+          "sharpe_gross": 0.470702302157641,
+          "ann_return_net": -0.3350590400612371,
+          "sharpe_net": -1.764352830431032,
+          "turnover_daily": 3.368346440881179,
+          "exposure_daily": 1.9471867171270902,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.08935261148979154,
+          "ann_vol": 0.18982828654164272,
+          "sharpe_gross": 0.470702302157641,
+          "ann_return_net": -0.7594706916122655,
+          "sharpe_net": -3.9957645683326235,
+          "turnover_daily": 3.368346440881179,
+          "exposure_daily": 1.9471867171270902,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.08935261148979154,
+          "ann_vol": 0.18982828654164272,
+          "sharpe_gross": 0.470702302157641,
+          "ann_return_net": -1.6082939947143227,
+          "sharpe_net": -8.435440976241335,
+          "turnover_daily": 3.368346440881179,
+          "exposure_daily": 1.9471867171270902,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.08529096833195866,
+          "ann_vol": 0.160536512305222,
+          "sharpe_gross": 0.5312870393608536,
+          "ann_return_net": 0.08529096833195866,
+          "sharpe_net": 0.5312870393608536,
+          "turnover_daily": 2.5973832219351487,
+          "exposure_daily": 1.91785032713467,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.08529096833195866,
+          "ann_vol": 0.160536512305222,
+          "sharpe_gross": 0.5312870393608536,
+          "ann_return_net": -0.24197931763187,
+          "sharpe_net": -1.5067171276749463,
+          "turnover_daily": 2.5973832219351487,
+          "exposure_daily": 1.91785032713467,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.08529096833195866,
+          "ann_vol": 0.160536512305222,
+          "sharpe_gross": 0.5312870393608536,
+          "ann_return_net": -0.5692496035956988,
+          "sharpe_net": -3.541793114756961,
+          "turnover_daily": 2.5973832219351487,
+          "exposure_daily": 1.91785032713467,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.08529096833195866,
+          "ann_vol": 0.160536512305222,
+          "sharpe_gross": 0.5312870393608536,
+          "ann_return_net": -1.2237901755233562,
+          "sharpe_net": -7.594228858089119,
+          "turnover_daily": 2.5973832219351487,
+          "exposure_daily": 1.91785032713467,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.07076759044190731,
+          "ann_vol": 0.13307985277518553,
+          "sharpe_gross": 0.5317678744464531,
+          "ann_return_net": 0.07076759044190731,
+          "sharpe_net": 0.5317678744464531,
+          "turnover_daily": 1.8333948835155864,
+          "exposure_daily": 1.8704582369495883,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.07076759044190731,
+          "ann_vol": 0.13307985277518553,
+          "sharpe_gross": 0.5317678744464531,
+          "ann_return_net": -0.16024016488105658,
+          "sharpe_net": -1.2036865454076726,
+          "turnover_daily": 1.8333948835155864,
+          "exposure_daily": 1.8704582369495883,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.07076759044190731,
+          "ann_vol": 0.13307985277518553,
+          "sharpe_gross": 0.5317678744464531,
+          "ann_return_net": -0.3912479202040205,
+          "sharpe_net": -2.937224652230357,
+          "turnover_daily": 1.8333948835155864,
+          "exposure_daily": 1.8704582369495883,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.07076759044190731,
+          "ann_vol": 0.13307985277518553,
+          "sharpe_gross": 0.5317678744464531,
+          "ann_return_net": -0.8532634308499483,
+          "sharpe_net": -6.393261905190469,
+          "turnover_daily": 1.8333948835155864,
+          "exposure_daily": 1.8704582369495883,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.05636931403786173,
+          "ann_vol": 0.10495471158866689,
+          "sharpe_gross": 0.5370822632411345,
+          "ann_return_net": 0.05636931403786173,
+          "sharpe_net": 0.5370822632411345,
+          "turnover_daily": 1.0745916753543974,
+          "exposure_daily": 1.778728334252169,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.05636931403786173,
+          "ann_vol": 0.10495471158866689,
+          "sharpe_gross": 0.5370822632411345,
+          "ann_return_net": -0.0790292370567923,
+          "sharpe_net": -0.7528308420942101,
+          "turnover_daily": 1.0745916753543974,
+          "exposure_daily": 1.778728334252169,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.05636931403786173,
+          "ann_vol": 0.10495471158866689,
+          "sharpe_gross": 0.5370822632411345,
+          "ann_return_net": -0.21442778815144634,
+          "sharpe_net": -2.0419483438308537,
+          "turnover_daily": 1.0745916753543974,
+          "exposure_daily": 1.778728334252169,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.05636931403786173,
+          "ann_vol": 0.10495471158866689,
+          "sharpe_gross": 0.5370822632411345,
+          "ann_return_net": -0.48522489034075444,
+          "sharpe_net": -4.615757284670459,
+          "turnover_daily": 1.0745916753543974,
+          "exposure_daily": 1.778728334252169,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.051822960603301285,
+          "ann_vol": 0.08984544358152077,
+          "sharpe_gross": 0.5768012103616585,
+          "ann_return_net": 0.051822960603301285,
+          "sharpe_net": 0.5768012103616585,
+          "turnover_daily": 0.6994709239724479,
+          "exposure_daily": 1.688941138925707,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.051822960603301285,
+          "ann_vol": 0.08984544358152077,
+          "sharpe_gross": 0.5768012103616585,
+          "ann_return_net": -0.036310375817227174,
+          "sharpe_net": -0.4040911235704297,
+          "turnover_daily": 0.6994709239724479,
+          "exposure_daily": 1.688941138925707,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.051822960603301285,
+          "ann_vol": 0.08984544358152077,
+          "sharpe_gross": 0.5768012103616585,
+          "ann_return_net": -0.12444371223775563,
+          "sharpe_net": -1.3846341716732136,
+          "turnover_daily": 0.6994709239724479,
+          "exposure_daily": 1.688941138925707,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.051822960603301285,
+          "ann_vol": 0.08984544358152077,
+          "sharpe_gross": 0.5768012103616585,
+          "ann_return_net": -0.3007103850788125,
+          "sharpe_net": -3.3438316835679442,
+          "turnover_daily": 0.6994709239724479,
+          "exposure_daily": 1.688941138925707,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.04646938302743311,
+          "ann_vol": 0.07365948851905554,
+          "sharpe_gross": 0.630867576760482,
+          "ann_return_net": 0.04646938302743311,
+          "sharpe_net": 0.630867576760482,
+          "turnover_daily": 0.3320105313475182,
+          "exposure_daily": 1.5032818771315686,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.04646938302743311,
+          "ann_vol": 0.07365948851905554,
+          "sharpe_gross": 0.630867576760482,
+          "ann_return_net": 0.004636056077645816,
+          "sharpe_net": 0.06293541149882453,
+          "turnover_daily": 0.3320105313475182,
+          "exposure_daily": 1.5032818771315686,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.04646938302743311,
+          "ann_vol": 0.07365948851905554,
+          "sharpe_gross": 0.630867576760482,
+          "ann_return_net": -0.03719727087214149,
+          "sharpe_net": -0.5049211119778956,
+          "turnover_daily": 0.3320105313475182,
+          "exposure_daily": 1.5032818771315686,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.04646938302743311,
+          "ann_vol": 0.07365948851905554,
+          "sharpe_gross": 0.630867576760482,
+          "ann_return_net": -0.12086392477171605,
+          "sharpe_net": -1.640265557811546,
+          "turnover_daily": 0.3320105313475182,
+          "exposure_daily": 1.5032818771315686,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": -0.2948256600649479,
+      "2021": 0.7797796856170113,
+      "2022": 0.48656422015927087,
+      "2023": 1.506479158643762
+    }
+  },
+  "tfidf__title": {
+    "omegas": {
+      "1.0": {
+        "cost_0bps": {
+          "ann_return_gross": 0.06450496101597487,
+          "ann_vol": 0.1757154384376353,
+          "sharpe_gross": 0.36709899590791445,
+          "ann_return_net": 0.06450496101597487,
+          "sharpe_net": 0.36709899590791445,
+          "turnover_daily": 3.7114781309243354,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.06450496101597487,
+          "ann_vol": 0.1757154384376353,
+          "sharpe_gross": 0.36709899590791445,
+          "ann_return_net": -0.4031412834804915,
+          "sharpe_net": -2.293484288298688,
+          "turnover_daily": 3.7114781309243354,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.06450496101597487,
+          "ann_vol": 0.1757154384376353,
+          "sharpe_gross": 0.36709899590791445,
+          "ann_return_net": -0.8707875279769577,
+          "sharpe_net": -4.948865837529016,
+          "turnover_daily": 3.7114781309243354,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.06450496101597487,
+          "ann_vol": 0.1757154384376353,
+          "sharpe_gross": 0.36709899590791445,
+          "ann_return_net": -1.8060800169698903,
+          "sharpe_net": -10.222767952853616,
+          "turnover_daily": 3.7114781309243354,
+          "exposure_daily": 1.9582504970178927,
+          "active_days": 985,
+          "days": 1006
+        }
+      },
+      "0.9": {
+        "cost_0bps": {
+          "ann_return_gross": 0.06849136492353096,
+          "ann_vol": 0.16104894443334003,
+          "sharpe_gross": 0.42528291734243756,
+          "ann_return_net": 0.06849136492353096,
+          "sharpe_net": 0.42528291734243756,
+          "turnover_daily": 3.3257992496100672,
+          "exposure_daily": 1.9481609496775911,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.06849136492353096,
+          "ann_vol": 0.16104894443334003,
+          "sharpe_gross": 0.42528291734243756,
+          "ann_return_net": -0.3505593405273375,
+          "sharpe_net": -2.176129360717069,
+          "turnover_daily": 3.3257992496100672,
+          "exposure_daily": 1.9481609496775911,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.06849136492353096,
+          "ann_vol": 0.16104894443334003,
+          "sharpe_gross": 0.42528291734243756,
+          "ann_return_net": -0.769610045978206,
+          "sharpe_net": -4.7730838008242,
+          "turnover_daily": 3.3257992496100672,
+          "exposure_daily": 1.9481609496775911,
+          "active_days": 994,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.06849136492353096,
+          "ann_vol": 0.16104894443334003,
+          "sharpe_gross": 0.42528291734243756,
+          "ann_return_net": -1.607711456879943,
+          "sharpe_net": -9.934045772991256,
+          "turnover_daily": 3.3257992496100672,
+          "exposure_daily": 1.9481609496775911,
+          "active_days": 994,
+          "days": 1006
+        }
+      },
+      "0.7": {
+        "cost_0bps": {
+          "ann_return_gross": 0.06637659202151237,
+          "ann_vol": 0.1356073725931792,
+          "sharpe_gross": 0.4894762781124114,
+          "ann_return_net": 0.06637659202151237,
+          "sharpe_net": 0.4894762781124114,
+          "turnover_daily": 2.5653735537115434,
+          "exposure_daily": 1.920212201181638,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.06637659202151237,
+          "ann_vol": 0.1356073725931792,
+          "sharpe_gross": 0.4894762781124114,
+          "ann_return_net": -0.25686047574614207,
+          "sharpe_net": -1.8939018207993616,
+          "turnover_daily": 2.5653735537115434,
+          "exposure_daily": 1.920212201181638,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.06637659202151237,
+          "ann_vol": 0.1356073725931792,
+          "sharpe_gross": 0.4894762781124114,
+          "ann_return_net": -0.5800975435137965,
+          "sharpe_net": -4.274461750165345,
+          "turnover_daily": 2.5653735537115434,
+          "exposure_daily": 1.920212201181638,
+          "active_days": 1002,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.06637659202151237,
+          "ann_vol": 0.1356073725931792,
+          "sharpe_gross": 0.4894762781124114,
+          "ann_return_net": -1.2265716790491055,
+          "sharpe_net": -9.012560064692524,
+          "turnover_daily": 2.5653735537115434,
+          "exposure_daily": 1.920212201181638,
+          "active_days": 1002,
+          "days": 1006
+        }
+      },
+      "0.5": {
+        "cost_0bps": {
+          "ann_return_gross": 0.05306227141993616,
+          "ann_vol": 0.1132101825259531,
+          "sharpe_gross": 0.4687058198830462,
+          "ann_return_net": 0.05306227141993616,
+          "sharpe_net": 0.4687058198830462,
+          "turnover_daily": 1.8121984414829067,
+          "exposure_daily": 1.8733625564143206,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.05306227141993616,
+          "ann_vol": 0.1132101825259531,
+          "sharpe_gross": 0.4687058198830462,
+          "ann_return_net": -0.1752747322069101,
+          "sharpe_net": -1.5481635147829624,
+          "turnover_daily": 1.8121984414829067,
+          "exposure_daily": 1.8733625564143206,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.05306227141993616,
+          "ann_vol": 0.1132101825259531,
+          "sharpe_gross": 0.4687058198830462,
+          "ann_return_net": -0.4036117358337563,
+          "sharpe_net": -3.5636190177306117,
+          "turnover_daily": 1.8121984414829067,
+          "exposure_daily": 1.8733625564143206,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.05306227141993616,
+          "ann_vol": 0.1132101825259531,
+          "sharpe_gross": 0.4687058198830462,
+          "ann_return_net": -0.8602857430874489,
+          "sharpe_net": -7.581807879773896,
+          "turnover_daily": 1.8121984414829067,
+          "exposure_daily": 1.8733625564143206,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.3": {
+        "cost_0bps": {
+          "ann_return_gross": 0.03150551302412204,
+          "ann_vol": 0.09182838203166922,
+          "sharpe_gross": 0.34309123527033947,
+          "ann_return_net": 0.03150551302412204,
+          "sharpe_net": 0.34309123527033947,
+          "turnover_daily": 1.0634729655055741,
+          "exposure_daily": 1.7811945354313108,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.03150551302412204,
+          "ann_vol": 0.09182838203166922,
+          "sharpe_gross": 0.34309123527033947,
+          "ann_return_net": -0.10249208062958032,
+          "sharpe_net": -1.1160710445913422,
+          "turnover_daily": 1.0634729655055741,
+          "exposure_daily": 1.7811945354313108,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.03150551302412204,
+          "ann_vol": 0.09182838203166922,
+          "sharpe_gross": 0.34309123527033947,
+          "ann_return_net": -0.23648967428328266,
+          "sharpe_net": -2.5746427839466364,
+          "turnover_daily": 1.0634729655055741,
+          "exposure_daily": 1.7811945354313108,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.03150551302412204,
+          "ann_vol": 0.09182838203166922,
+          "sharpe_gross": 0.34309123527033947,
+          "ann_return_net": -0.5044848615906874,
+          "sharpe_net": -5.486992447581228,
+          "turnover_daily": 1.0634729655055741,
+          "exposure_daily": 1.7811945354313108,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.2": {
+        "cost_0bps": {
+          "ann_return_gross": 0.0211921959107061,
+          "ann_vol": 0.0807505422099534,
+          "sharpe_gross": 0.2624402924206487,
+          "ann_return_net": 0.0211921959107061,
+          "sharpe_net": 0.2624402924206487,
+          "turnover_daily": 0.6929276577546745,
+          "exposure_daily": 1.6912906163079935,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.0211921959107061,
+          "ann_vol": 0.0807505422099534,
+          "sharpe_gross": 0.2624402924206487,
+          "ann_return_net": -0.06611668896638288,
+          "sharpe_net": -0.8187278522142153,
+          "turnover_daily": 0.6929276577546745,
+          "exposure_daily": 1.6912906163079935,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.0211921959107061,
+          "ann_vol": 0.0807505422099534,
+          "sharpe_gross": 0.2624402924206487,
+          "ann_return_net": -0.15342557384347186,
+          "sharpe_net": -1.8995963619151512,
+          "turnover_daily": 0.6929276577546745,
+          "exposure_daily": 1.6912906163079935,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.0211921959107061,
+          "ann_vol": 0.0807505422099534,
+          "sharpe_gross": 0.2624402924206487,
+          "ann_return_net": -0.32804334359764986,
+          "sharpe_net": -4.059277476451685,
+          "turnover_daily": 0.6929276577546745,
+          "exposure_daily": 1.6912906163079935,
+          "active_days": 1006,
+          "days": 1006
+        }
+      },
+      "0.1": {
+        "cost_0bps": {
+          "ann_return_gross": 0.018576170522768047,
+          "ann_vol": 0.06889537024189586,
+          "sharpe_gross": 0.26962872044298447,
+          "ann_return_net": 0.018576170522768047,
+          "sharpe_net": 0.26962872044298447,
+          "turnover_daily": 0.32982360427379354,
+          "exposure_daily": 1.5085984222875455,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_5bps": {
+          "ann_return_gross": 0.018576170522768047,
+          "ann_vol": 0.06889537024189586,
+          "sharpe_gross": 0.26962872044298447,
+          "ann_return_net": -0.022981603615729936,
+          "sharpe_net": -0.3335574212345969,
+          "turnover_daily": 0.32982360427379354,
+          "exposure_daily": 1.5085984222875455,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_10bps": {
+          "ann_return_gross": 0.018576170522768047,
+          "ann_vol": 0.06889537024189586,
+          "sharpe_gross": 0.26962872044298447,
+          "ann_return_net": -0.06453937775422795,
+          "sharpe_net": -0.9366663840720797,
+          "turnover_daily": 0.32982360427379354,
+          "exposure_daily": 1.5085984222875455,
+          "active_days": 1006,
+          "days": 1006
+        },
+        "cost_20bps": {
+          "ann_return_gross": 0.018576170522768047,
+          "ann_vol": 0.06889537024189586,
+          "sharpe_gross": 0.26962872044298447,
+          "ann_return_net": -0.14765492603122393,
+          "sharpe_net": -2.1424790430067677,
+          "turnover_daily": 0.32982360427379354,
+          "exposure_daily": 1.5085984222875455,
+          "active_days": 1006,
+          "days": 1006
+        }
+      }
+    },
+    "by_year_gross_sharpe": {
+      "2020": -0.039936280992764396,
+      "2021": 1.4199260425830589,
+      "2022": -0.9393852854974759,
+      "2023": 1.8765456391670325
+    }
+  }
+}

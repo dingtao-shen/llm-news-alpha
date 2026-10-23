@@ -31,3 +31,16 @@ def test_ewct_recursion_and_cost():
     s = summarize(ps, cost_bps=10)
     assert s["turnover_daily"] == 3.0                  # 第 1 天 2.0，第 2 天 4.0（完全反向）
     assert abs(s["ann_return_net"] - (-10 / 1e4 * 3.0 * 252)) < 1e-12
+
+
+def test_value_weights_and_decile():
+    idx = pd.to_datetime(["2020-01-02"]); cols = list("ABCDEFGHIJKL")       # 12 只，每组 ⌊12/5⌋ = 2 只
+    scores = pd.DataFrame([np.arange(12)], index=idx, columns=cols, dtype=float)
+    size = pd.DataFrame([[1.0] * 10 + [3.0, 1.0]], index=idx, columns=cols)
+    W = quintile_weights(scores, size=size)
+    assert abs(W.loc[idx[0], "K"] - 0.75) < 1e-12 and abs(W.loc[idx[0], "L"] - 0.25) < 1e-12 and W.loc[idx[0], "A"] == -0.5
+    size.loc[idx[0], "L"] = np.nan                       # 缺市值 → 不入组合；剩 11 只，最高两只变成 J、K
+    W = quintile_weights(scores, size=size)
+    assert W.loc[idx[0], "L"] == 0 and abs(W.loc[idx[0], "K"] - 0.75) < 1e-12 and abs(W.loc[idx[0], "J"] - 0.25) < 1e-12
+    W10 = quintile_weights(scores, n_groups=10)          # 十分组：每组 1 只
+    assert W10.loc[idx[0], "L"] == 1.0 and W10.loc[idx[0], "A"] == -1.0 and (W10.loc[idx[0]] != 0).sum() == 2
