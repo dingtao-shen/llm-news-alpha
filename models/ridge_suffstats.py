@@ -7,6 +7,8 @@
 - 输出：pred_dir/<model>__<text_type>__<cutoff>.parquet（datetime, instrument, score=主标签预测, score_<label>…；接口文件 3）；
   results/ridge/<key>.md/.json（每个测试年的 λ、验证 IC、测试 IC/ICIR/Rank IC）。
 运行：python -m models.ridge_suffstats --model llama3_base --text-type title --cutoff main
+ChronoBERT 按年滚动：每个版本目录只含自己窗口的嵌入，逐个版本跑单个测试年，再由 analysis/table_a.py 拼成一行：
+  --model chronobert-20191231 --test-years 2020 … --model chronobert-20221231 --test-years 2023
 """
 from __future__ import annotations
 
@@ -161,12 +163,14 @@ def main() -> None:
     ap.add_argument("--model", default="llama3_base")
     ap.add_argument("--text-type", choices=["title", "body"], required=True)
     ap.add_argument("--cutoff", choices=["main", "1600"], default="main")
+    ap.add_argument("--test-years", type=int, nargs="+", default=TEST_YEARS,
+                    help="只跑这些测试年（ChronoBERT 每个版本只覆盖自己的 6 年窗口：--model chronobert-20191231 --test-years 2020）")
     args = ap.parse_args()
     paths = load_paths()
     key = f"{args.model}__{args.text_type}__{args.cutoff}"
     agg_dir = Path(paths["agg_dir"]) / args.model / args.text_type / args.cutoff
     labels = pl.read_parquet(paths["labels"])
-    pred, report = run(agg_dir, labels)
+    pred, report = run(agg_dir, labels, args.test_years)
     out = Path(paths["pred_dir"]); out.mkdir(parents=True, exist_ok=True)
     pred.write_parquet(out / f"{key}.parquet", compression="zstd")
     report.update(model=args.model, text_type=args.text_type, cutoff=args.cutoff, pred=str(out / f"{key}.parquet"), n_pred=len(pred))

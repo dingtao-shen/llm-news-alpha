@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small labels aggregate ridge dev-sample
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small labels aggregate ridge table-a dev-sample
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -107,6 +107,9 @@ aggregate:  ## [Pod] 股票-日聚合嵌入：make aggregate MODEL=llama3_base T
 
 ridge:  ## [Pod] 年度滚动充分统计量 Ridge → pred.parquet + results/ridge/：make ridge MODEL=llama3_base TEXT=title CUTOFF=main
 	$(BG) ridge-$(MODEL)-$(TEXT)-$(CUTOFF) $(PY) -m models.ridge_suffstats --model $(MODEL) --text-type $(TEXT) --cutoff $(CUTOFF)
+
+table-a:  ## [Pod] 后台：所有 模型 × 文本类型 的聚合 + Ridge，再汇成 results/ridge/table_a.md（已有结果跳过）
+	$(BG) table-a bash models/run_table_a.sh
 
 # ---------------------------------------------------------------- 后续模块（实现时补上）
 # 模块 1：market-cap
