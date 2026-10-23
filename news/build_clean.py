@@ -8,6 +8,8 @@
  4. 长度：有正文的记录正文不在 [100, 100000] 字符内剔除。
  5. 近似重复：同一股票、前 5 个交易日内词袋余弦 >= 0.8 的后一条剔除。
  6. in_sp500：feature_day 落在该 ticker 的成分股区间内。
+ 0. 日期修正（DATE_FIXES=True，依据 results/news/tz_check_conclusions.md）：Benzinga 有时刻记录 +8 小时（FNSPID 标注的 "UTC" 实为 UTC−8）；
+    剔除 nasdaq.com 的全部有时刻记录与 2023-11-30..2023-12-16 的记录（最后一次抓取按抓取期打标）；nasdaq.com 日期取 max(FNSPID 日期, URL 日期)。
 输出列：news_id, ticker, ts_et, time_precision, title, body, has_body, source_file, feature_day, feature_day_1600, in_sp500。
 面板：(feature_day, ticker) → news_cnt, n_timed, n_body, in_sp500。
 运行：make news-clean（Pod，几分钟）。
@@ -26,6 +28,44 @@ import polars as pl
 from common import ROOT, load_paths, ncpu
 from news.align import feature_days, load_calendar_from_prices, to_et
 from news.filters import MAX_CHARS, MIN_CHARS, THRESHOLD, WINDOW, near_duplicates_by_group
+
+
+DATE_FIXES = True
+BENZINGA_OFFSET_HOURS = 8
+SCRAPE_STAMPED = (dt.date(2023, 11, 30), dt.date(2023, 12, 16))
+
+
+def load_url_info(parquet_dir: str, news_ids: pl.Series) -> pl.DataFrame:
+    """每个 news_id 的 url_host 与 URL 末尾日期（nasdaq.com 的 …-YYYY-MM-DD）。"""
+    import duckdb
+    con = duckdb.connect(); con.execute("SET enable_progress_bar=false")
+    con.register("ids", news_ids.to_frame("news_id").to_arrow())
+    return con.execute(rf"""
+        SELECT DISTINCT n.news_id, n.url_host,
+               try_strptime(regexp_extract(n.Url, '-(\d{{4}}-\d{{2}}-\d{{2}})$', 1), '%Y-%m-%d')::DATE AS url_date
+        FROM read_parquet('{parquet_dir}/nasdaq/*.parquet') n JOIN ids USING (news_id)""").pl().unique(subset=["news_id"])
+
+
+def apply_date_fixes(df: pl.DataFrame, url_info: pl.DataFrame) -> tuple[pl.DataFrame, dict]:
+    """在候选集（ts_utc, has_time）上做日期修正，返回 (df, 各规则影响行数)。"""
+    df = df.join(url_info, on="news_id", how="left")
+    stats = {}
+    is_nasdaq = pl.col("url_host") == "nasdaq.com"
+    is_benz = pl.col("url_host") == "benzinga.com"
+    drop_timed = is_nasdaq & pl.col("has_time")
+    drop_stamped = is_nasdaq & pl.col("ts_utc").dt.date().is_between(SCRAPE_STAMPED[0], SCRAPE_STAMPED[1])
+    stats["dropped_nasdaq_timed"] = int(df.select(drop_timed.sum()).item())
+    stats["dropped_nasdaq_scrape_stamped"] = int(df.select((drop_stamped & ~drop_timed).sum()).item())
+    df = df.filter(~(drop_timed | drop_stamped))
+    shift_benz = is_benz & pl.col("has_time")
+    stats["benzinga_timed_shifted_8h"] = int(df.select(shift_benz.sum()).item())
+    url_later = is_nasdaq & ~pl.col("has_time") & (pl.col("url_date") > pl.col("ts_utc").dt.date())
+    stats["nasdaq_date_moved_to_url_date"] = int(df.select(url_later.sum()).item())
+    df = df.with_columns(
+        pl.when(shift_benz).then(pl.col("ts_utc") + pl.duration(hours=BENZINGA_OFFSET_HOURS))
+          .when(url_later).then(pl.col("url_date").cast(pl.Datetime("us")))
+          .otherwise(pl.col("ts_utc")).alias("ts_utc"))
+    return df.drop("url_host", "url_date"), stats
 
 
 def add_time_and_alignment(df: pl.DataFrame, cal: np.ndarray) -> pl.DataFrame:
@@ -57,10 +97,15 @@ def dedup_groups(df: pl.DataFrame, cal: np.ndarray) -> dict[str, list[tuple[str,
     return groups
 
 
-def build(candidates: Path, cal: np.ndarray, membership: pl.DataFrame, workers: int) -> tuple[pl.DataFrame, pl.DataFrame, dict]:
+def build(candidates: Path, cal: np.ndarray, membership: pl.DataFrame, workers: int,
+          url_info: pl.DataFrame | None = None) -> tuple[pl.DataFrame, pl.DataFrame, dict]:
     t0 = time.time()
     df = pl.read_parquet(candidates)
     funnel = {"candidates": len(df)}
+    fix_stats = {}
+    if url_info is not None:
+        df, fix_stats = apply_date_fixes(df, url_info)
+        funnel["after_date_fixes"] = len(df)
     df = add_time_and_alignment(df, cal)
     n_oob = int(df["feature_day"].is_null().sum())
     df = df.filter(pl.col("feature_day").is_not_null())
@@ -80,7 +125,7 @@ def build(candidates: Path, cal: np.ndarray, membership: pl.DataFrame, workers: 
                                                       pl.col("has_body").sum().alias("n_body"),
                                                       pl.col("in_sp500").first().alias("in_sp500"))
                 .sort("feature_day", "ticker"))
-    stats = {"funnel": funnel, "out_of_calendar": n_oob, "near_dup_removed": len(dups), "dedup_secs": round(dedup_secs, 1),
+    stats = {"funnel": funnel, "date_fixes": fix_stats, "out_of_calendar": n_oob, "near_dup_removed": len(dups), "dedup_secs": round(dedup_secs, 1),
              "secs": round(time.time() - t0, 1)}
     return df, panel, stats
 
@@ -122,6 +167,9 @@ def write_report(stats: dict, desc: dict, meta: dict, res: Path) -> None:
           f"- 规则：主口径 9:00 ET（day 精度按当日 23:59:59）；16:00 口径；正文长度 [{MIN_CHARS}, {MAX_CHARS:,}]；近似重复阈值 {THRESHOLD}、窗口 {WINDOW} 个交易日；耗时 {stats['secs']} s（去重 {stats['dedup_secs']} s）",
           "", "## 过滤漏斗", "", "| 步骤 | 剩余 | 剔除 |", "| --- | ---: | ---: |",
           f"| 候选集 | {f['candidates']:,} | |",
+          *([f"| 日期修正后（剔除 nasdaq.com 有时刻 {stats['date_fixes'].get('dropped_nasdaq_timed', 0):,}、抓取期打标 {stats['date_fixes'].get('dropped_nasdaq_scrape_stamped', 0):,}；"
+             f"Benzinga 有时刻 +8h {stats['date_fixes'].get('benzinga_timed_shifted_8h', 0):,}；nasdaq 日期改为 URL 日期 {stats['date_fixes'].get('nasdaq_date_moved_to_url_date', 0):,}） | {f['after_date_fixes']:,} | {f['candidates'] - f['after_date_fixes']:,} |"]
+            if "after_date_fixes" in f else []),
           f"| 日历范围内 | {f['after_calendar_range']:,} | {stats['out_of_calendar']:,} |",
           f"| 正文长度 | {f['after_length']:,} | {f['after_calendar_range'] - f['after_length']:,} |",
           f"| 近似重复 | {f['after_near_dup']:,} | {stats['near_dup_removed']:,} |",
@@ -160,7 +208,11 @@ def main() -> None:
     cal_csv = Path(args.calendar_csv or Path(paths["raw"]["prices_csv"]) / "SPY.csv")
     cal = load_calendar_from_prices(cal_csv)
     membership = pl.read_parquet(Path(paths["raw"]["universe"]) / "sp500_membership.parquet")
-    df, panel, stats = build(Path(paths["news"]["embed_candidates"]), cal, membership, args.workers or ncpu())
+    url_info = None
+    if DATE_FIXES:
+        ids = pl.read_parquet(paths["news"]["embed_candidates"], columns=["news_id"])["news_id"]
+        url_info = load_url_info(paths["news"]["parquet_dir"], ids)
+    df, panel, stats = build(Path(paths["news"]["embed_candidates"]), cal, membership, args.workers or ncpu(), url_info)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.write_parquet(out, compression="zstd", row_group_size=100_000)
     panel.write_parquet(panel_path, compression="zstd")
@@ -168,7 +220,8 @@ def main() -> None:
             "calendar_range": [str(cal[0]), str(cal[-1])], "created_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
             "rules": {"cutoff_main": "09:00 ET, day precision -> 23:59:59", "cutoff_robust": "16:00 ET", "min_chars": MIN_CHARS,
                       "max_chars": MAX_CHARS, "near_dup_threshold": THRESHOLD, "near_dup_window_days": WINDOW},
-            "timezone_note": "ts_utc 按数据卡当作 UTC 转美东；时区校验（模块 2 任务 4）未做，second 精度只有 0.5%"}
+            "date_fixes": DATE_FIXES, "benzinga_offset_hours": BENZINGA_OFFSET_HOURS, "scrape_stamped_range": [str(d) for d in SCRAPE_STAMPED],
+            "timezone_note": "见 results/news/tz_check_conclusions.md：Benzinga 有时刻 = UTC−8，已 +8h；nasdaq.com 有时刻与 2023-11-30..12-16 剔除；nasdaq 日期取 max(FNSPID, URL)"}
     (out.parent / "news_clean_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
     write_report(stats, describe(df, panel, membership, cal), meta,
                  Path(args.out_dir) if args.out_dir else ROOT / paths["results"] / "news")

@@ -41,3 +41,20 @@ def test_build_pipeline(tmp_path):
     assert r["h"]["in_sp500"] is False and r["a"]["in_sp500"] is True
     p = panel.filter((pl.col("ticker") == "AAPL") & (pl.col("feature_day") == dt.date(2020, 1, 3))).row(0, named=True)
     assert p["news_cnt"] == 2 and p["n_timed"] == 1 and p["n_body"] == 0
+
+
+def test_apply_date_fixes():
+    import polars as pl
+    from news.build_clean import apply_date_fixes
+    df = pl.DataFrame({"news_id": list("abcdef"),
+                       "ts_utc": pl.Series(["2020-05-22 07:38:59", "2023-12-16 13:00:00", "2023-12-11 00:00:00", "2019-06-03 00:00:00", "2019-06-03 00:00:00", "2016-01-05 00:00:00"]).str.to_datetime(),
+                       "has_time": [True, True, False, False, False, False]})
+    url = pl.DataFrame({"news_id": list("abcdef"), "url_host": ["benzinga.com", "nasdaq.com", "nasdaq.com", "nasdaq.com", "nasdaq.com", "benzinga.com"],
+                        "url_date": [None, None, None, dt.date(2019, 6, 4), dt.date(2019, 6, 3), None]})
+    out, st = apply_date_fixes(df, url)
+    assert st == {"dropped_nasdaq_timed": 1, "dropped_nasdaq_scrape_stamped": 1, "benzinga_timed_shifted_8h": 1, "nasdaq_date_moved_to_url_date": 1}
+    r = {x["news_id"]: x["ts_utc"] for x in out.to_dicts()}
+    assert set(r) == {"a", "d", "e", "f"}
+    assert r["a"] == dt.datetime(2020, 5, 22, 15, 38, 59)           # Benzinga 有时刻 +8h（真实 UTC）
+    assert r["d"] == dt.datetime(2019, 6, 4, 0, 0)                   # URL 日期晚一天 → 取 URL 日期
+    assert r["e"] == dt.datetime(2019, 6, 3, 0, 0) and r["f"] == dt.datetime(2016, 1, 5, 0, 0)

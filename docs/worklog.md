@@ -2,12 +2,18 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
-## 2026-10-23（续 6）· Phase A 收口（进行中）：日期校验、市值、DM 检验、信号拆分、λ 口径
+## 2026-10-23（续 6）· Phase A 收口：日期校验、市值、DM 检验、信号拆分、λ 口径
 
 - 做了什么：
-  - 日期/时区校验（模块 2 任务 4）：benzinga.com 与 nasdaq.com 对数据中心 IP 返回 Cloudflare 403，改用 Wayback 快照（`news/validate_timezone.py`，400 条样本，
-    单线程 + 2.5 秒间隔 + 429 退避，运行超过 1.5 小时，结果待写）。不依赖抓取的全量检查：nasdaq.com 2015–2021 有 900,006 行 URL 末尾带日期，
-    与 FNSPID 日期相同 99.1%，0.9%（仅 2019–2021）URL 日期晚一天；Benzinga URL 年月与 FNSPID 一致 99.99%，5% 的仅日期行 FNSPID 日期晚于 URL 月份（滞后，安全）。
+  - 日期/时区校验（模块 2 任务 4，结论见 `results/news/tz_check_conclusions.md`）：benzinga.com 与 nasdaq.com 对数据中心 IP 返回 Cloudflare 403，改用 Wayback 快照
+    （400 条跑了 2 小时，74 条有快照、45 页抓到、14 条解析出时间；nasdaq.com 归档页是 JS 壳）。
+    **发现 1**：Benzinga 有时刻记录 FNSPID = 真实 UTC − 8 小时，13/13 一致（数据卡的 UTC 标注不成立，按 UTC 解读会把新闻提前 8 小时 → 前视）。
+    **发现 2**：nasdaq.com 全部 26,623 条"有时刻"记录都标 2023-12-16，页面实际 12-18 发布 → 抓取时间冒充发布时间。
+    **发现 3**：nasdaq.com 2023-11-30..12-16 每天 1.5 万–5.4 万行（正常 1,200），每篇挂 14 个 ticker → 最后一次抓取按抓取期打标，日期不可信。
+    **发现 4**（全量、不依赖抓取）：nasdaq.com 2015–2021 的 90 万行 URL 日期与 FNSPID 相同 99.1%，0.9% URL 晚一天；Benzinga URL 年月一致 99.99%。
+    仅日期记录的发布时刻分布仍未知（归档页解析不出）。
+    修正规则已实现在 `news/build_clean.py`（`DATE_FIXES`）：Benzinga 有时刻 +8h；剔除 nasdaq.com 有时刻与 2023-11-30..12-16；nasdaq 日期取 max(FNSPID, URL)。
+    **尚未重跑**（会覆盖 news_clean 及下游全部产物，等用户确认）。
   - 市值（模块 1 任务 6，`data/market_cap.py`）：SEC companyfacts 股数 × 调整后收盘价。三个坑都处理了：companyfacts 不含维度事实，多类别公司（GOOGL、FOX、BRK）
     的 dei 股数缺失或零碎 → 回退到合并口径 us-gaap 元素；披露股数已反映申报日前的拆股，拆股换算按 filed 而不是 end（否则 GOOG 2022 多算 20 倍）；
     量级错误（PKG 按千股填报）在换算后按 8 倍阈值剔除；伯克希尔按 A 类等价股披露，B 股乘 1500。631 只中 553 只有股数，90% 股票-日有市值，其余 adv20 代理。
@@ -20,9 +26,10 @@
     注意事后选固定值本身有轻微前视，正式口径应预先固定或用多年验证平均。
 - 产出在哪：`/workspace/data/market_cap/market_cap.parquet`、`/workspace/data/raw/sec/`；`results/prices/market_cap_coverage.{md,csv}`；
   `results/ridge/{dm_test,signal_decomposition,lambda_sensitivity}.md`、`*__lam10.*`；`results/news/tz_check.*`（待 400 条结果）。
-- 下一步：Wayback 结果出来后定日期规则（候选：nasdaq.com 取 max(FNSPID 日期, URL 日期)）；评估"16:00 截止 + 收盘成交"口径能否吃到隔夜收益
-  （取决于 nasdaq.com 文章发布时刻分布）；Alpaca 需要用户注册拿 API key；BRK.B 增量嵌入；Phase B（摘要、词袋基线、PCA）。
-- 遗留问题：Wayback 校验脚本原来只在结束时输出，无法看进度（已改为每 10 条打印一次）；SEC 没有 160 只退市公司的 CIK，市值缺口 10% 用 adv20 代理。
+- 下一步：用户确认后用 DATE_FIXES 重建 news_clean 并重跑 聚合 → Ridge → 表 A → 多空（约 25 分钟）；"16:00 截止 + 收盘成交"能否吃到隔夜收益取决于仅日期新闻的发布时刻，
+  FNSPID 给不出，只能靠 Alpaca（Benzinga 部分，需用户注册 API key）或放弃；BRK.B 增量嵌入；Phase B（摘要、词袋基线、PCA）。
+- 遗留问题：Wayback 对连续请求最终拒绝连接，再抓需间隔更久；SEC 没有 160 只退市公司的 CIK，市值缺口 10% 用 adv20 代理；
+  2023 年 12 月的测试样本在修正后会少约 3%，2023 年所有结果需重算。
 
 ## 2026-10-23（续 5）· 模块 6 任务 1–2：五分位多空（等权）、成本、EWCT
 
