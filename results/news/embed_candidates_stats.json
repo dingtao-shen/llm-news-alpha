@@ -1,16 +1,16 @@
 {
   "stats": {
-    "n_candidates": 505147,
-    "n_with_body": 270049,
+    "n_candidates": 506827,
+    "n_with_body": 271729,
     "funnel": {
       "raw_rows": 15549301,
       "after_date": 5974861,
       "after_lang": 5704408,
       "after_title": 5704408,
-      "after_ticker": 1353264,
-      "after_single": 509329
+      "after_ticker": 1362033,
+      "after_single": 511953
     },
-    "dedup_removed": 4182,
+    "dedup_removed": 5126,
     "single_stock_removed_by_source_year": [
       {
         "source_file": "nasdaq",
@@ -21,61 +21,61 @@
       {
         "source_file": "nasdaq",
         "year": 2015,
-        "rows_removed": 88769,
-        "articles_removed": 48686
+        "rows_removed": 88828,
+        "articles_removed": 48696
       },
       {
         "source_file": "nasdaq",
         "year": 2016,
-        "rows_removed": 90580,
-        "articles_removed": 45817
+        "rows_removed": 90770,
+        "articles_removed": 45845
       },
       {
         "source_file": "nasdaq",
         "year": 2017,
-        "rows_removed": 104038,
-        "articles_removed": 55261
+        "rows_removed": 104267,
+        "articles_removed": 55327
       },
       {
         "source_file": "nasdaq",
         "year": 2018,
-        "rows_removed": 131419,
-        "articles_removed": 63954
+        "rows_removed": 131672,
+        "articles_removed": 64041
       },
       {
         "source_file": "nasdaq",
         "year": 2019,
-        "rows_removed": 122191,
-        "articles_removed": 54538
+        "rows_removed": 122395,
+        "articles_removed": 54591
       },
       {
         "source_file": "nasdaq",
         "year": 2020,
-        "rows_removed": 86785,
-        "articles_removed": 37520
+        "rows_removed": 87733,
+        "articles_removed": 37621
       },
       {
         "source_file": "nasdaq",
         "year": 2021,
-        "rows_removed": 39493,
-        "articles_removed": 21791
+        "rows_removed": 40204,
+        "articles_removed": 21882
       },
       {
         "source_file": "nasdaq",
         "year": 2022,
-        "rows_removed": 76809,
-        "articles_removed": 41636
+        "rows_removed": 78499,
+        "articles_removed": 41830
       },
       {
         "source_file": "nasdaq",
         "year": 2023,
-        "rows_removed": 103608,
-        "articles_removed": 52778
+        "rows_removed": 105469,
+        "articles_removed": 52961
       }
     ],
     "single_stock_removed_total": {
-      "rows": 843935,
-      "articles": 422101
+      "rows": 850080,
+      "articles": 422914
     },
     "unmatched_tickers_top20": [
       {
@@ -131,10 +131,6 @@
         "rows": 8822
       },
       {
-        "symbol": "BRK",
-        "rows": 8769
-      },
-      {
         "symbol": "HCRB",
         "rows": 8722
       },
@@ -157,10 +153,14 @@
       {
         "symbol": "WLDR",
         "rows": 8698
+      },
+      {
+        "symbol": "KJUL",
+        "rows": 8693
       }
     ],
-    "n_matched_symbols": 646,
-    "n_universe": 716,
+    "n_matched_symbols": 647,
+    "n_universe": 717,
     "by_year": [
       {
         "year": 2014,
@@ -169,48 +169,48 @@
       },
       {
         "year": 2015,
-        "n": 52937,
-        "n_body": 15713
+        "n": 52978,
+        "n_body": 15747
       },
       {
         "year": 2016,
-        "n": 56164,
-        "n_body": 18410
+        "n": 56296,
+        "n_body": 18525
       },
       {
         "year": 2017,
-        "n": 50881,
-        "n_body": 22200
+        "n": 50984,
+        "n_body": 22328
       },
       {
         "year": 2018,
-        "n": 69077,
-        "n_body": 22969
+        "n": 69181,
+        "n_body": 23072
       },
       {
         "year": 2019,
-        "n": 80155,
-        "n_body": 22477
+        "n": 80210,
+        "n_body": 22532
       },
       {
         "year": 2020,
-        "n": 53443,
-        "n_body": 25839
+        "n": 53674,
+        "n_body": 26070
       },
       {
         "year": 2021,
-        "n": 31317,
-        "n_body": 31317
+        "n": 31514,
+        "n_body": 31514
       },
       {
         "year": 2022,
-        "n": 44820,
-        "n_body": 44820
+        "n": 45246,
+        "n_body": 45246
       },
       {
         "year": 2023,
-        "n": 66197,
-        "n_body": 66197
+        "n": 66588,
+        "n_body": 66588
       },
       {
         "year": 2024,
@@ -220,16 +220,16 @@
     ],
     "shard": 50000,
     "min_date": "2014-12-31",
-    "out": "/workspace/data/news/embed_candidates.parquet"
+    "out": "/workspace/data/fnspid/news/embed_candidates.parquet"
   },
   "token_estimate": {
     "sample": 20000,
-    "title_tokens_mean": 17.6,
-    "title_tokens_max": 86,
-    "body_tokens_mean_capped512": 460.8,
-    "body_share_hitting_512": 0.718,
+    "title_tokens_mean": 17.5,
+    "title_tokens_max": 94,
+    "body_tokens_mean_capped512": 460.7,
+    "body_share_hitting_512": 0.716,
     "title_gpu_hours": 0.24,
-    "body_gpu_hours": 3.41,
+    "body_gpu_hours": 3.43,
     "tokens_per_sec_assumed": 11144
   }
 }

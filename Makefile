@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small labels aggregate ridge table-a longshort dev-sample
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small labels aggregate ridge table-a longshort delta-embed downstream dev-sample
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -110,6 +110,13 @@ ridge:  ## [Pod] 年度滚动充分统计量 Ridge → pred.parquet + results/ri
 
 table-a:  ## [Pod] 后台：所有 模型 × 文本类型 的聚合 + Ridge，再汇成 results/ridge/table_a.md（已有结果跳过）
 	$(BG) table-a bash models/run_table_a.sh
+
+TAG ?= $(shell date +%Y%m%d)
+delta-embed:  ## [Pod] 后台：候选集里尚无嵌入的 news_id 对全部模型追加 delta 分片（make delta-embed TAG=brkb）
+	$(BG) delta-embed bash models/run_delta_embed.sh $(TAG)
+
+downstream:  ## [Pod] 后台：从 news_clean 重跑 聚合 → Ridge → 表 A → 多空 → DM → 拆分 → λ（会重建当前数据集的 agg/preds 与 results/ridge、longshort）
+	$(BG) downstream bash models/run_downstream.sh
 
 # ---------------------------------------------------------------- 模块 6：回测与分析
 longshort:  ## [Pod/Mac] preds 里每个 模型×文本 的五分位多空（等权）、成本、EWCT → results/longshort/

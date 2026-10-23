@@ -54,11 +54,13 @@
 
 | 文件 | 键 | 说明 |
 | --- | --- | --- |
-| `news_clean.parquet` | `news_id` | ticker、美东时间戳、`time_precision`（second/day）、标题、正文、两种口径的特征日。`news_id` = sha256(规范化 URL + 换行 + 规范化标题) 前 24 位十六进制，定义固定在 `news/news_id.py`，不再改动 |
-| 嵌入分片（`emb_dir/<model>/<text_type>/part-*.parquet` 或 `.npy` + 索引） | `news_id` | float16 |
-| `pred.parquet` | `(datetime, instrument)` | `score`；每个 模型 × 文本类型 × 口径 一个文件 |
+| 标准新闻表 `embed_candidates.parquet`（接口文件 0） | `news_id` | 任何新闻源的解析器都产出它：ticker、`ts_utc`、`has_time`、标题、正文、`url`、`source`（域名）、`dataset`。schema 在 `news/schema.py`。`news_id` = sha256(规范化 URL + 换行 + 规范化标题) 前 24 位十六进制，定义固定在 `news/news_id.py`，不再改动 |
+| `news_clean.parquet`（接口文件 1） | `news_id` | 在标准新闻表上做日期修正、对齐、过滤：美东时间戳、`time_precision`（second/day）、`source`、`date_fix`、两种口径的特征日、`in_sp500` |
+| 嵌入分片 `emb_dir/<model>/<text_type>/*part-*.parquet`（接口文件 2） | `news_id` | float16 `fixed_size_list`；`delta-<tag>-part-*` 是增量分片，读取方按 glob 读全部 |
+| `pred.parquet`（接口文件 3） | `(datetime, instrument)` | `score`；每个 模型 × 文本类型 × 口径 一个文件 |
 
-模块之间只通过这三个文件交互；改它们的 schema 要同步更新本节和所有读写方。
+模块之间只通过这些文件交互；改 schema 要同步更新 `news/schema.py`、`tests/test_interfaces.py`、本节和所有读写方。
+带 `{dataset}` 的路径按数据集分目录（`paths.yaml` 的 `dataset`，可用环境变量 `DATASET` 覆盖）：换新闻源只需新写 `news/sources/<src>.py` 产出标准新闻表，然后 `make downstream`。
 
 ## 代码约定
 

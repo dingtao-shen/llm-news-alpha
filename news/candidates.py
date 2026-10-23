@@ -8,7 +8,8 @@
  5. 单一股票：在**过滤前的全量数据**上，同一 news_id 出现在 >1 个不同 Stock_symbol 下的整篇剔除（原文规则）；
  6. 去重：同一 news_id 多行（同一 ticker 下重复）时保留 has_body 为真、正文更长的那一行。
 输入只用 nasdaq 文件：模块 2 统计证实 All_external 的 11,551,494 个 news_id 全部在 nasdaq 文件中且 ticker、行数、日期、正文标记完全相同。
-输出列：news_id, ticker（成分股表写法）, ts_utc, has_time, title, body, has_body, source_file。
+输出：标准新闻表（news/schema.py STANDARD_NEWS）：news_id, ticker（成分股表写法）, ts_utc, has_time, title, body, has_body, url, source（域名）, dataset, source_file。
+ticker 映射用 news/ticker_map.py 的规范化与别名（BRK → BRK.B）。
 嵌入分片按行号切（第 i 片 = 行 [i*SHARD, (i+1)*SHARD)），所以文件必须按 news_id 排序且行组大小 = SHARD。
 news_id 是哈希，按它排序等于随机打乱：每个已完成分片都是候选集的随机样本。
 
@@ -33,9 +34,14 @@ TOKENS_PER_SEC = 11_144  # 模块 0 实测 LLaMA3-8B 32 × 512
 
 
 def load_universe(path: Path) -> dict[str, str]:
-    """{规范化代码('-'→'.') : 成分股表写法}"""
+    """{FNSPID 写法（规范化后）: 成分股表写法}，含别名（BRK → BRK.B）。"""
+    from news.ticker_map import ALIASES
     tickers = [t.strip() for t in path.read_text().splitlines() if t.strip()]
-    return {t.replace("-", "."): t for t in tickers}
+    m = {t.replace("-", "."): t for t in tickers}
+    for alias, target in ALIASES.items():
+        if target in tickers:
+            m[alias] = target
+    return m
 
 
 def build_candidates(con: duckdb.DuckDBPyConnection, parquet_glob: str, universe: dict[str, str],
@@ -81,7 +87,8 @@ def build_candidates(con: duckdb.DuckDBPyConnection, parquet_glob: str, universe
     con.execute(f"""
         COPY (
           SELECT news_id, u.ticker, ts_utc, has_time, trim(Article_title) AS title,
-                 CASE WHEN has_body THEN Article END AS body, has_body, source_file
+                 CASE WHEN has_body THEN Article END AS body, has_body, trim(Url) AS url, coalesce(url_host, '') AS source,
+                 'fnspid' AS dataset, source_file
           FROM (SELECT *, row_number() OVER (PARTITION BY news_id
                                              ORDER BY has_body DESC, length(Article) DESC NULLS LAST, source_file) AS rn
                 FROM flagged WHERE f_date AND f_lang AND f_title AND f_ticker AND f_single) f

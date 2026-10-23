@@ -23,7 +23,7 @@ from common import load_paths
 
 
 def load_embeddings(emb_dir: Path) -> tuple[pl.DataFrame, np.ndarray]:
-    files = sorted(glob.glob(str(emb_dir / "part-*.parquet")))
+    files = sorted(glob.glob(str(emb_dir / "*part-*.parquet")))     # 含 delta-<tag>-part-*.parquet 增量分片
     assert files, f"no shards in {emb_dir}"
     ids, mats = [], []
     for f in files:
@@ -31,7 +31,8 @@ def load_embeddings(emb_dir: Path) -> tuple[pl.DataFrame, np.ndarray]:
         ids.extend(t["news_id"].to_pylist())
         mats.append(np.stack(t["emb"].to_numpy(zero_copy_only=False)))
     emb = np.concatenate(mats)
-    return pl.DataFrame({"news_id": ids, "row": np.arange(len(ids), dtype=np.int64)}), emb
+    df = pl.DataFrame({"news_id": ids, "row": np.arange(len(ids), dtype=np.int64)}).unique(subset=["news_id"], keep="first")
+    return df, emb
 
 
 def group_mean(emb: np.ndarray, rows: np.ndarray, keys: pl.DataFrame) -> tuple[pl.DataFrame, np.ndarray]:

@@ -1,25 +1,32 @@
 {
   "stats": {
     "funnel": {
-      "candidates": 505147,
-      "after_calendar_range": 505147,
-      "after_length": 505119,
-      "after_near_dup": 476895
+      "candidates": 506827,
+      "after_date_fixes": 504822,
+      "after_calendar_range": 504822,
+      "after_length": 504794,
+      "after_near_dup": 477082
+    },
+    "date_fixes": {
+      "dropped_nasdaq_timed": 150,
+      "dropped_nasdaq_scrape_stamped": 1855,
+      "benzinga_timed_shifted_8h": 2362,
+      "nasdaq_date_moved_to_url_date": 1569
     },
     "out_of_calendar": 0,
-    "near_dup_removed": 28224,
-    "dedup_secs": 11.2,
-    "secs": 12.1
+    "near_dup_removed": 27712,
+    "dedup_secs": 10.4,
+    "secs": 11.8
   },
   "describe": {
     "by_precision": [
       {
         "time_precision": "day",
-        "len": 474478
+        "len": 474772
       },
       {
         "time_precision": "second",
-        "len": 2417
+        "len": 2310
       }
     ],
     "by_year": [
@@ -32,66 +39,66 @@
       },
       {
         "year": 2015,
-        "n": 51474,
-        "n_body": 15094,
+        "n": 51516,
+        "n_body": 15128,
         "n_timed": 32,
-        "n_in_sp500": 42917
+        "n_in_sp500": 42971
       },
       {
         "year": 2016,
-        "n": 54796,
-        "n_body": 17618,
+        "n": 54923,
+        "n_body": 17732,
         "n_timed": 35,
-        "n_in_sp500": 47256
+        "n_in_sp500": 47372
       },
       {
         "year": 2017,
-        "n": 49775,
-        "n_body": 21417,
+        "n": 49879,
+        "n_body": 21545,
         "n_timed": 36,
-        "n_in_sp500": 43209
+        "n_in_sp500": 43315
       },
       {
         "year": 2018,
-        "n": 67536,
-        "n_body": 22238,
-        "n_timed": 58,
-        "n_in_sp500": 58052
+        "n": 67631,
+        "n_body": 22334,
+        "n_timed": 57,
+        "n_in_sp500": 58148
       },
       {
         "year": 2019,
-        "n": 77819,
-        "n_body": 21255,
-        "n_timed": 60,
-        "n_in_sp500": 65942
+        "n": 77870,
+        "n_body": 21305,
+        "n_timed": 61,
+        "n_in_sp500": 65993
       },
       {
         "year": 2020,
-        "n": 51604,
-        "n_body": 24942,
-        "n_timed": 2100,
-        "n_in_sp500": 45572
+        "n": 51835,
+        "n_body": 25173,
+        "n_timed": 2089,
+        "n_in_sp500": 45804
       },
       {
         "year": 2021,
-        "n": 29906,
-        "n_body": 29906,
+        "n": 30104,
+        "n_body": 30104,
         "n_timed": 0,
-        "n_in_sp500": 26458
+        "n_in_sp500": 26656
       },
       {
         "year": 2022,
-        "n": 41653,
-        "n_body": 41653,
+        "n": 42057,
+        "n_body": 42057,
         "n_timed": 0,
-        "n_in_sp500": 37570
+        "n_in_sp500": 37974
       },
       {
         "year": 2023,
-        "n": 52178,
-        "n_body": 52178,
-        "n_timed": 96,
-        "n_in_sp500": 47794
+        "n": 51113,
+        "n_body": 51113,
+        "n_timed": 0,
+        "n_in_sp500": 46858
       },
       {
         "year": 2024,
@@ -102,111 +109,111 @@
       }
     ],
     "in_sp500": {
-      "true": 414770,
-      "false": 62125
+      "true": 415091,
+      "false": 61991
     },
     "feature_day_minus_pub_date_days": [
       {
         "d": -4,
-        "len": 46
+        "len": 30
       },
       {
         "d": -3,
-        "len": 2836
+        "len": 2733
       },
       {
         "d": -2,
-        "len": 9690
+        "len": 9677
       },
       {
         "d": -1,
-        "len": 11304
+        "len": 10846
       },
       {
         "d": 0,
-        "len": 453019
+        "len": 453796
       }
     ],
-    "cutoff_1600_differs": 2359,
+    "cutoff_1600_differs": 1255,
     "per_ticker": {
-      "n_tickers": 646,
-      "median": 553.0,
-      "p10": 188.0,
+      "n_tickers": 643,
+      "median": 554.0,
+      "p10": 191.0,
       "p90": 1483.0,
-      "max": 4396
+      "max": 4362
     },
     "stock_days": {
       "total": 1141896,
-      "with_news": 235267,
-      "share": 0.206
+      "with_news": 235476,
+      "share": 0.2062
     },
     "stock_days_by_year": [
       {
         "year": 2015,
         "stock_days": 126147,
-        "with_news": 24288,
-        "share": 0.1925
+        "with_news": 24319,
+        "share": 0.1928
       },
       {
         "year": 2016,
         "stock_days": 127356,
-        "with_news": 26230,
-        "share": 0.206
+        "with_news": 26326,
+        "share": 0.2067
       },
       {
         "year": 2017,
         "stock_days": 126995,
-        "with_news": 25689,
-        "share": 0.2023
+        "with_news": 25755,
+        "share": 0.2028
       },
       {
         "year": 2018,
         "stock_days": 126917,
-        "with_news": 31573,
-        "share": 0.2488
+        "with_news": 31644,
+        "share": 0.2493
       },
       {
         "year": 2019,
         "stock_days": 127260,
-        "with_news": 34302,
-        "share": 0.2695
+        "with_news": 34389,
+        "share": 0.2702
       },
       {
         "year": 2020,
         "stock_days": 127768,
-        "with_news": 24770,
-        "share": 0.1939
+        "with_news": 25015,
+        "share": 0.1958
       },
       {
         "year": 2021,
         "stock_days": 127261,
-        "with_news": 17134,
-        "share": 0.1346
+        "with_news": 17355,
+        "share": 0.1364
       },
       {
         "year": 2022,
         "stock_days": 126440,
-        "with_news": 23108,
-        "share": 0.1828
+        "with_news": 23306,
+        "share": 0.1843
       },
       {
         "year": 2023,
         "stock_days": 125752,
-        "with_news": 28173,
-        "share": 0.224
+        "with_news": 27367,
+        "share": 0.2176
       }
     ]
   },
   "meta": {
-    "out": "/tmp/claude-0/-workspace-repo/285edadc-055c-4ef6-985b-015eea06fc93/scratchpad/clean_v2/news_clean.parquet",
-    "panel": "/tmp/claude-0/-workspace-repo/285edadc-055c-4ef6-985b-015eea06fc93/scratchpad/clean_v2/news_panel.parquet",
+    "out": "/workspace/data/fnspid/news/news_clean.parquet",
+    "panel": "/workspace/data/fnspid/news/news_panel.parquet",
     "calendar": "/workspace/data/prices/SPY.csv",
     "calendar_days": 2433,
     "calendar_range": [
       "2014-06-02",
       "2024-01-30"
     ],
-    "created_at": "2026-10-23T02:46:05+00:00",
+    "created_at": "2026-10-23T06:45:51+00:00",
     "rules": {
       "cutoff_main": "09:00 ET, day precision -> 23:59:59",
       "cutoff_robust": "16:00 ET",
@@ -215,6 +222,12 @@
       "near_dup_threshold": 0.8,
       "near_dup_window_days": 5
     },
-    "timezone_note": "ts_utc 按数据卡当作 UTC 转美东；时区校验（模块 2 任务 4）未做，second 精度只有 0.5%"
+    "date_fixes": true,
+    "benzinga_offset_hours": 8,
+    "scrape_stamped_range": [
+      "2023-11-30",
+      "2023-12-16"
+    ],
+    "timezone_note": "见 results/news/tz_check_conclusions.md：Benzinga 有时刻 = UTC−8，已 +8h；nasdaq.com 有时刻与 2023-11-30..12-16 剔除；nasdaq 日期取 max(FNSPID, URL)"
   }
 }

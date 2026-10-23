@@ -1,4 +1,6 @@
 # 所有数据路径集中在这里；代码只读这个文件，不写死路径。
+# 带 {dataset} 的路径按数据集分目录（默认 fnspid；换新闻源时设环境变量 DATASET=<name>），价格、Qlib、标签、市值与数据集无关。
+dataset: fnspid
 workspace: /workspace
 logs: /workspace/logs
 mlruns: /workspace/mlruns
@@ -12,18 +14,18 @@ qlib_dir: /workspace/qlib_data/us_sp500
 
 news:
   parquet_dir: /workspace/data/news/fnspid_parquet   # 模块 2 任务 1：原始 CSV 的全字符串 parquet（<source>/data_*.parquet）
-  embed_candidates: /workspace/data/news/embed_candidates.parquet   # 嵌入候选集（按 news_id 排序，行组 5 万 = 分片）
-  clean: /workspace/data/news/news_clean.parquet   # 接口文件 1
-  panel: /workspace/data/news/news_panel.parquet
+  embed_candidates: /workspace/data/{dataset}/news/embed_candidates.parquet   # 标准新闻表（接口文件 0）：按 news_id 排序，行组 5 万 = 分片
+  clean: /workspace/data/{dataset}/news/news_clean.parquet   # 接口文件 1
+  panel: /workspace/data/{dataset}/news/news_panel.parquet
 
-emb_dir: /workspace/data/emb                   # 接口文件 2：按 news_id 分片的 float16 嵌入
-agg_dir: /workspace/data/agg                   # 股票-日聚合嵌入：<model>/<text_type>/<cutoff>/year=YYYY.parquet
+emb_dir: /workspace/data/{dataset}/emb         # 接口文件 2：按 news_id 分片的 float16 嵌入（含 delta-* 增量分片）
+agg_dir: /workspace/data/{dataset}/agg         # 股票-日聚合嵌入：<model>/<text_type>/<cutoff>/year=YYYY.parquet
 labels: /workspace/data/labels/labels_sp500.parquet   # Qlib 算出的各口径标签（datetime, instrument）
 market_cap: /workspace/data/market_cap/market_cap.parquet   # 近似历史市值：SEC 流通股数 × 收盘价，缺失用 20 日平均成交额代理
 sec_dir: /workspace/data/raw/sec                    # SEC companyfacts JSON 缓存、拆股事件
-pred_dir: /workspace/data/preds                # 接口文件 3：pred.parquet（datetime × instrument × score）
-suffstats_dir: /workspace/data/suffstats
-pca_dir: /workspace/data/pca
+pred_dir: /workspace/data/{dataset}/preds      # 接口文件 3：pred.parquet（datetime × instrument × score）
+suffstats_dir: /workspace/data/{dataset}/suffstats
+pca_dir: /workspace/data/{dataset}/pca
 
 results: results                               # 仓库内，小文件进 git
 dev_sample: dev_data                           # 仅 Mac：开发样本，不进 git

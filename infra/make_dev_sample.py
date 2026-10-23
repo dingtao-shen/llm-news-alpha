@@ -2,7 +2,8 @@
 
 内容（都是卷上真实产物的子集，不进 git）：
 - fnspid_sample.parquet        nasdaq 文件 parquet 随机 15,000 行 + 1,000 篇多 ticker 文章的全部行（保留单一股票规则的测试场景），全部列
-- embed_candidates_sample.parquet  候选集前 5,000 行（候选集按 news_id 哈希排序，前 N 行就是随机样本）
+- embed_candidates_sample.parquet  标准新闻表前 5,000 行（按 news_id 哈希排序，前 N 行就是随机样本）
+- news_clean_sample.parquet        对应的 news_clean 行（接口文件 1）
 - emb/llama3_base/title/part-00000.parquet   与上面 5,000 行一一对应的标题嵌入
 - emb/llama3_base/body/part-00000.parquet    其中有正文的记录的原文嵌入
 - emb/llama3_base/{title,body}/_meta.json    原样拷贝
@@ -72,6 +73,9 @@ def main() -> None:
         shutil.copy(emb_root / tt / "_meta.json", out / "emb" / "llama3_base" / tt / "_meta.json")
         manifest[f"emb_{tt}_rows"] = len(tbl)
     manifest["candidates_rows"] = len(cand)
+    clean = pl.scan_parquet(paths["news"]["clean"]).filter(pl.col("news_id").is_in(list(ids))).collect()
+    clean.write_parquet(out / "news_clean_sample.parquet")
+    manifest["news_clean_rows"] = len(clean)
 
     # 3. 股票池
     shutil.copy(Path(paths["qlib_dir"]) / "instruments" / "sp500.txt", out / "universe" / "instruments_sp500.txt")

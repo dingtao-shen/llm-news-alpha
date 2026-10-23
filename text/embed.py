@@ -14,6 +14,9 @@
   （ChronoBERT 按年滚动：测试年 Y 用 (Y-1)1231 版本，只嵌入窗口 [Y-5, Y] 的 6 年），输入表名带年份后缀。
   原文 max_len：MiniLM 256（模型训练长度），其余 512；标题一律 128。BERT 类模型含 [CLS]/[SEP] 一起做均值池化。
 
+增量（--delta <tag>）：候选集里尚无嵌入的 news_id（对照该目录现有全部分片）写成输入表 _inputs/<text>_delta-<tag>.parquet，
+  嵌入输出为 delta-<tag>-part-NNNNN.parquet，与原分片并存；聚合读目录下全部 *part-*.parquet。换数据源或补别名（BRK.B）后只嵌新来的新闻。
+
 试跑：python -m text.embed --model llama3_base --text-type title --limit 2000 --out <dir> --verify-readback
 放量：make embed（LLaMA3）/ make embed-small（FinBERT、MiniLM、ChronoBERT 四个版本）
 """
@@ -47,12 +50,23 @@ SEED = 0
 
 
 # ------------------------------------------------------------------ 输入表
+def existing_ids(out_dir: Path) -> set[str]:
+    """该模型/文本目录下所有分片（含 delta）已有的 news_id。"""
+    ids: set[str] = set()
+    for f in out_dir.glob("*part-*.parquet"):
+        ids.update(pq.read_table(f, columns=["news_id"])["news_id"].to_pylist())
+    return ids
+
+
 def build_inputs(candidates: Path, text_type: str, out: Path, shard_size: int, limit: int | None,
-                 years: tuple[int, int] | None = None) -> int:
-    """从候选集生成 (news_id, text) 输入表，按 news_id 排序、行组 = shard_size。返回行数。years=(Y0, Y1) 只取该年份区间。"""
+                 years: tuple[int, int] | None = None, exclude_ids: set[str] | None = None) -> int:
+    """从候选集生成 (news_id, text) 输入表，按 news_id 排序、行组 = shard_size。返回行数。
+    years=(Y0, Y1) 只取该年份区间；exclude_ids 给定时只取其外的 news_id（增量）。"""
     lf = pl.scan_parquet(str(candidates))
     if years:
         lf = lf.filter(pl.col("ts_utc").dt.year().is_between(years[0], years[1]))
+    if exclude_ids is not None:
+        lf = lf.filter(~pl.col("news_id").is_in(list(exclude_ids)))
     if text_type == "title":
         lf = lf.select("news_id", pl.col("title").alias("text"))
     elif text_type == "body":
@@ -67,6 +81,8 @@ def build_inputs(candidates: Path, text_type: str, out: Path, shard_size: int, l
     lf.sink_parquet(str(tmp), row_group_size=shard_size, maintain_order=True)
     ids = pl.scan_parquet(str(tmp)).select("news_id").collect()["news_id"]
     assert ids.is_sorted() and ids.n_unique() == len(ids), "input news_id must be sorted and unique"
+    if len(ids) == 0:
+        tmp.unlink(); return 0
     os.replace(tmp, out)
     return len(ids)
 
@@ -192,6 +208,7 @@ def main() -> None:
     ap.add_argument("--max-batch", type=int, default=1024)
     ap.add_argument("--max-pad-ratio", type=float, default=1.25, help="批内 padded/real token 上限")
     ap.add_argument("--verify-readback", action="store_true")
+    ap.add_argument("--delta", default=None, metavar="TAG", help="只嵌入该目录尚无嵌入的 news_id，分片名 delta-<TAG>-part-NNNNN.parquet")
     args = ap.parse_args()
 
     if args.limit and not args.out:
@@ -210,14 +227,18 @@ def main() -> None:
     torch.set_num_threads(ncpu())
 
     suffix = f"_{years[0]}-{years[1]}" if years else ""
-    inputs = emb_root / "_inputs" / f"{args.text_type}{suffix}.parquet"
+    prefix = f"delta-{args.delta}-" if args.delta else ""
+    inputs = emb_root / "_inputs" / f"{args.text_type}{suffix}{'_delta-' + args.delta if args.delta else ''}.parquet"
     if not inputs.exists():
         t0 = time.time()
-        n = build_inputs(Path(paths["news"]["embed_candidates"]), args.text_type, inputs, args.shard_size, args.limit, years)
-        print(f"inputs {inputs}: {n:,} rows in {time.time() - t0:.1f}s", flush=True)
+        exclude = existing_ids(out_dir) if args.delta else None
+        n = build_inputs(Path(paths["news"]["embed_candidates"]), args.text_type, inputs, args.shard_size, args.limit, years, exclude)
+        print(f"inputs {inputs}: {n:,} rows in {time.time() - t0:.1f}s" + (f" (excluded {len(exclude):,} existing)" if exclude is not None else ""), flush=True)
+        if n == 0:
+            print("nothing to embed"); return
     pf = pq.ParquetFile(inputs)
     n_shards, n_rows = pf.metadata.num_row_groups, pf.metadata.num_rows
-    todo = [i for i in range(n_shards) if not (out_dir / shard_name(i)).exists()]
+    todo = [i for i in range(n_shards) if not (out_dir / (prefix + shard_name(i))).exists()]
     print(f"{model_key}/{args.text_type}{suffix}: {n_rows:,} rows, {n_shards} shards, {n_shards - len(todo)} done, {len(todo)} to do; "
           f"max_len={max_len} batch_tokens={args.batch_tokens} max_batch={args.max_batch}", flush=True)
     if not todo:
@@ -235,7 +256,8 @@ def main() -> None:
         "transformers": __import__("transformers").__version__, "torch": torch.__version__,
         "code_commit": git_commit(), "started_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
     }
-    (out_dir / "_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
+    meta_name = f"_meta{'-delta-' + args.delta if args.delta else ''}.json"
+    (out_dir / meta_name).write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
 
     def load_and_tokenize(i: int):
         rg = pf.read_row_group(i, columns=["news_id", "text"])
@@ -257,7 +279,7 @@ def main() -> None:
         emb, st = embed_shard(model, ids, tok.pad_token_id, args.batch_tokens, args.max_batch, args.max_pad_ratio)
         t_gpu = time.time() - t1
         assert np.isfinite(emb.astype(np.float32)).all(), f"non-finite embeddings in shard {i}"
-        write_shard(out_dir / shard_name(i), news_ids, emb)
+        write_shard(out_dir / (prefix + shard_name(i)), news_ids, emb)
         secs = time.time() - t0
         done_tokens += st["tokens"]; done_secs += t_gpu
         tps = st["tokens"] / t_gpu
@@ -266,11 +288,11 @@ def main() -> None:
               f"batches={st['batches']}  tok_wait={t_tok:.1f}s  gpu={t_gpu:.1f}s  total={secs:.1f}s  "
               f"{tps:,.0f} tok/s  peak_mem={torch.cuda.max_memory_allocated() / 1e9:.1f} GB  eta={eta:.1f} min", flush=True)
         if args.verify_readback and k == 0:
-            print("readback:", json.dumps(verify_readback(out_dir / shard_name(i), news_ids, emb), ensure_ascii=False), flush=True)
+            print("readback:", json.dumps(verify_readback(out_dir / (prefix + shard_name(i)), news_ids, emb), ensure_ascii=False), flush=True)
     pool.shutdown()
     meta.update(finished_at=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
                 tokens_per_sec_overall=round(done_tokens / max(done_secs, 1e-9)), wall_secs=round(time.time() - t_start, 1))
-    (out_dir / "_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
+    (out_dir / meta_name).write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
     print(f"done {model_key}/{args.text_type}{suffix}: {len(todo)} shards, {done_tokens:,} tokens, {meta['tokens_per_sec_overall']:,} tok/s overall, "
           f"{meta['wall_secs']} s wall", flush=True)
 

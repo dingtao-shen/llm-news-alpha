@@ -38,7 +38,7 @@ def test_build_candidates(tmp_path):
     con.execute(f"COPY ({select_sql(read_csv_sql(str(csv)), 'nasdaq')}) TO '{pq / 'data_0.parquet'}' (FORMAT parquet)")
     uni_file = tmp_path / "u.txt"; uni_file.write_text("AAPL\nMSFT\nBRK.B\nGOOG\n")
     universe = load_universe(uni_file)
-    assert universe == {"AAPL": "AAPL", "MSFT": "MSFT", "BRK.B": "BRK.B", "GOOG": "GOOG"}
+    assert universe == {"AAPL": "AAPL", "MSFT": "MSFT", "BRK.B": "BRK.B", "GOOG": "GOOG", "BRK": "BRK.B"}   # 含别名
 
     out = tmp_path / "cand.parquet"
     stats = build_candidates(con, f"{pq}/*.parquet", universe, out)
@@ -54,7 +54,9 @@ def test_build_candidates(tmp_path):
     assert stats["unmatched_tickers_top20"] == [{"symbol": "ZZZZ", "rows": 2}]
 
     df = pl.read_parquet(out)
-    assert df.columns == ["news_id", "ticker", "ts_utc", "has_time", "title", "body", "has_body", "source_file"]
+    from news.schema import STANDARD_NEWS, check_schema
+    check_schema(df, STANDARD_NEWS, "candidates")
+    assert df.filter(pl.col("ticker") == "AAPL")["source"][0] == "nasdaq.com" and (df["dataset"] == "fnspid").all()
     assert df["news_id"].is_sorted() and df["news_id"].n_unique() == 3
     r = df.filter(pl.col("ticker") == "AAPL").row(0, named=True)
     assert r["news_id"] == news_id("https://www.nasdaq.com/articles/apple-beats", "Apple beats estimates")

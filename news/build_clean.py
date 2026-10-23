@@ -1,7 +1,7 @@
 """模块 2 任务 5–9：候选集 → 接口文件 1 `news_clean.parquet` 与股票-日面板 `news_panel.parquet`。
 
 流程（各步剔除数写进 results/news/news_clean_report.md）：
- 1. 读 paths.news.embed_candidates；ticker 已是成分股表写法（candidates.py 用 news/ticker_map.py 映射）。
+ 1. 读标准新闻表 paths.news.embed_candidates（接口文件 0，任何数据源的解析器都产出它）；ticker 已是成分股表写法。
  2. 时间：second 精度 ts_utc → 美东 ts_et；day 精度直接取日历日期（00:00:00 UTC 只是占位，不做时区转换）；time_precision = second / day。
  3. 对齐：主口径 feature_day（9:00 ET，day 精度按 23:59:59）与 feature_day_1600（news/align.py）；日历来自 SPY 交易日
     （开发期；最终换 Qlib D.calendar()）。越界（日历首日前 / 末日后）剔除。
@@ -10,7 +10,8 @@
  6. in_sp500：feature_day 落在该 ticker 的成分股区间内。
  0. 日期修正（DATE_FIXES=True，依据 results/news/tz_check_conclusions.md）：Benzinga 有时刻记录 +8 小时（FNSPID 标注的 "UTC" 实为 UTC−8）；
     剔除 nasdaq.com 的全部有时刻记录与 2023-11-30..2023-12-16 的记录（最后一次抓取按抓取期打标）；nasdaq.com 日期取 max(FNSPID 日期, URL 日期)。
-输出列：news_id, ticker, ts_et, time_precision, title, body, has_body, source_file, feature_day, feature_day_1600, in_sp500。
+输出列（news/schema.py NEWS_CLEAN）：news_id, ticker, ts_et, time_precision, title, body, has_body, body_chars, url, source, dataset, source_file,
+date_fix, feature_day, feature_day_1600, in_sp500。
 面板：(feature_day, ticker) → news_cnt, n_timed, n_body, in_sp500。
 运行：make news-clean（Pod，几分钟）。
 """
@@ -35,23 +36,12 @@ BENZINGA_OFFSET_HOURS = 8
 SCRAPE_STAMPED = (dt.date(2023, 11, 30), dt.date(2023, 12, 16))
 
 
-def load_url_info(parquet_dir: str, news_ids: pl.Series) -> pl.DataFrame:
-    """每个 news_id 的 url_host 与 URL 末尾日期（nasdaq.com 的 …-YYYY-MM-DD）。"""
-    import duckdb
-    con = duckdb.connect(); con.execute("SET enable_progress_bar=false")
-    con.register("ids", news_ids.to_frame("news_id").to_arrow())
-    return con.execute(rf"""
-        SELECT DISTINCT n.news_id, n.url_host,
-               try_strptime(regexp_extract(n.Url, '-(\d{{4}}-\d{{2}}-\d{{2}})$', 1), '%Y-%m-%d')::DATE AS url_date
-        FROM read_parquet('{parquet_dir}/nasdaq/*.parquet') n JOIN ids USING (news_id)""").pl().unique(subset=["news_id"])
-
-
-def apply_date_fixes(df: pl.DataFrame, url_info: pl.DataFrame) -> tuple[pl.DataFrame, dict]:
-    """在候选集（ts_utc, has_time）上做日期修正，返回 (df, 各规则影响行数)。"""
-    df = df.join(url_info, on="news_id", how="left")
+def apply_date_fixes(df: pl.DataFrame) -> tuple[pl.DataFrame, dict]:
+    """在标准新闻表（ts_utc, has_time, url, source）上做日期修正，返回 (df 含 date_fix 列, 各规则影响行数)。"""
+    df = df.with_columns(pl.col("url").str.extract(r"-(\d{4}-\d{2}-\d{2})$", 1).str.to_date("%Y-%m-%d", strict=False).alias("url_date"))
     stats = {}
-    is_nasdaq = pl.col("url_host") == "nasdaq.com"
-    is_benz = pl.col("url_host") == "benzinga.com"
+    is_nasdaq = pl.col("source") == "nasdaq.com"
+    is_benz = pl.col("source") == "benzinga.com"
     drop_timed = is_nasdaq & pl.col("has_time")
     drop_stamped = is_nasdaq & pl.col("ts_utc").dt.date().is_between(SCRAPE_STAMPED[0], SCRAPE_STAMPED[1])
     stats["dropped_nasdaq_timed"] = int(df.select(drop_timed.sum()).item())
@@ -64,8 +54,10 @@ def apply_date_fixes(df: pl.DataFrame, url_info: pl.DataFrame) -> tuple[pl.DataF
     df = df.with_columns(
         pl.when(shift_benz).then(pl.col("ts_utc") + pl.duration(hours=BENZINGA_OFFSET_HOURS))
           .when(url_later).then(pl.col("url_date").cast(pl.Datetime("us")))
-          .otherwise(pl.col("ts_utc")).alias("ts_utc"))
-    return df.drop("url_host", "url_date"), stats
+          .otherwise(pl.col("ts_utc")).alias("ts_utc"),
+        pl.when(shift_benz).then(pl.lit(f"benzinga_plus_{BENZINGA_OFFSET_HOURS}h"))
+          .when(url_later).then(pl.lit("nasdaq_url_date")).otherwise(pl.lit("none")).alias("date_fix"))
+    return df.drop("url_date"), stats
 
 
 def add_time_and_alignment(df: pl.DataFrame, cal: np.ndarray) -> pl.DataFrame:
@@ -98,14 +90,19 @@ def dedup_groups(df: pl.DataFrame, cal: np.ndarray) -> dict[str, list[tuple[str,
 
 
 def build(candidates: Path, cal: np.ndarray, membership: pl.DataFrame, workers: int,
-          url_info: pl.DataFrame | None = None) -> tuple[pl.DataFrame, pl.DataFrame, dict]:
+          date_fixes: bool = DATE_FIXES) -> tuple[pl.DataFrame, pl.DataFrame, dict]:
     t0 = time.time()
     df = pl.read_parquet(candidates)
+    for col, default in (("url", ""), ("source", ""), ("dataset", "fnspid"), ("source_file", "")):   # 兼容旧候选集
+        if col not in df.columns:
+            df = df.with_columns(pl.lit(default).alias(col))
     funnel = {"candidates": len(df)}
     fix_stats = {}
-    if url_info is not None:
-        df, fix_stats = apply_date_fixes(df, url_info)
+    if date_fixes:
+        df, fix_stats = apply_date_fixes(df)
         funnel["after_date_fixes"] = len(df)
+    else:
+        df = df.with_columns(pl.lit("none").alias("date_fix"))
     df = add_time_and_alignment(df, cal)
     n_oob = int(df["feature_day"].is_null().sum())
     df = df.filter(pl.col("feature_day").is_not_null())
@@ -118,8 +115,9 @@ def build(candidates: Path, cal: np.ndarray, membership: pl.DataFrame, workers: 
     funnel["after_near_dup"] = len(df)
     dedup_secs = time.time() - t1
     df = add_in_sp500(df, membership)
-    df = df.select("news_id", "ticker", "ts_et", "time_precision", "title", "body", "has_body", "source_file",
-                   "feature_day", "feature_day_1600", "in_sp500").sort("news_id")
+    df = df.with_columns(pl.col("body").str.len_chars().fill_null(0).cast(pl.Int32).alias("body_chars"))
+    df = df.select("news_id", "ticker", "ts_et", "time_precision", "title", "body", "has_body", "body_chars", "url", "source", "dataset",
+                   "source_file", "date_fix", "feature_day", "feature_day_1600", "in_sp500").sort("news_id")
     panel = (df.group_by("feature_day", "ticker").agg(pl.len().alias("news_cnt"),
                                                       (pl.col("time_precision") == "second").sum().alias("n_timed"),
                                                       pl.col("has_body").sum().alias("n_body"),
@@ -208,11 +206,7 @@ def main() -> None:
     cal_csv = Path(args.calendar_csv or Path(paths["raw"]["prices_csv"]) / "SPY.csv")
     cal = load_calendar_from_prices(cal_csv)
     membership = pl.read_parquet(Path(paths["raw"]["universe"]) / "sp500_membership.parquet")
-    url_info = None
-    if DATE_FIXES:
-        ids = pl.read_parquet(paths["news"]["embed_candidates"], columns=["news_id"])["news_id"]
-        url_info = load_url_info(paths["news"]["parquet_dir"], ids)
-    df, panel, stats = build(Path(paths["news"]["embed_candidates"]), cal, membership, args.workers or ncpu(), url_info)
+    df, panel, stats = build(Path(paths["news"]["embed_candidates"]), cal, membership, args.workers or ncpu())
     out.parent.mkdir(parents=True, exist_ok=True)
     df.write_parquet(out, compression="zstd", row_group_size=100_000)
     panel.write_parquet(panel_path, compression="zstd")

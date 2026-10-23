@@ -12,7 +12,7 @@ run() {  # run <model> <text_type> [test years...]
   [ -f "/workspace/data/agg/${model}/${text}/main/_meta.json" ] || $PY -m models.aggregate --model "$model" --text-type "$text" --cutoff main | tail -n 3
   $PY -m models.ridge_suffstats --model "$model" --text-type "$text" --cutoff main ${1:+--test-years "$@"} | grep -E "^test|^- 全测试期"
 }
-run llama3_base body
+run llama3_base title; run llama3_base body
 run finbert title;  run finbert body
 run minilm  title;  run minilm  body
 for v in 20191231:2020 20201231:2021 20211231:2022 20221231:2023; do

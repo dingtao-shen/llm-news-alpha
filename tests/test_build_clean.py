@@ -25,11 +25,14 @@ def test_build_pipeline(tmp_path):
     df = pl.DataFrame({"news_id": [r[0] for r in rows], "ticker": [r[1] for r in rows],
                        "ts_utc": pl.Series([r[2] for r in rows]).str.to_datetime(), "has_time": [r[3] for r in rows],
                        "title": [r[4] for r in rows], "body": [r[5] for r in rows]})
-    df = df.with_columns(pl.col("body").is_not_null().alias("has_body"), pl.lit("nasdaq").alias("source_file"))
+    df = df.with_columns(pl.col("body").is_not_null().alias("has_body"), pl.lit("nasdaq").alias("source_file"),
+                         pl.lit("https://www.nasdaq.com/articles/x").alias("url"), pl.lit("nasdaq.com").alias("source"), pl.lit("fnspid").alias("dataset"))
     cand = tmp_path / "cand.parquet"; df.write_parquet(cand)
     membership = pl.DataFrame({"ticker": ["AAPL", "MSFT", "OLD"], "start": [dt.date(2015, 1, 1)] * 3,
                                "end": [dt.date(2023, 12, 31), dt.date(2023, 12, 31), dt.date(2020, 1, 5)]})
-    out, panel, stats = build(cand, CAL, membership, workers=1)
+    out, panel, stats = build(cand, CAL, membership, workers=1, date_fixes=False)
+    from news.schema import NEWS_CLEAN, check_schema
+    check_schema(out, NEWS_CLEAN, "news_clean")
     assert stats["funnel"] == {"candidates": 8, "after_calendar_range": 7, "after_length": 6, "after_near_dup": 5}
     r = {x["news_id"]: x for x in out.to_dicts()}
     assert set(r) == {"a", "b", "d", "f", "h"}
@@ -48,10 +51,12 @@ def test_apply_date_fixes():
     from news.build_clean import apply_date_fixes
     df = pl.DataFrame({"news_id": list("abcdef"),
                        "ts_utc": pl.Series(["2020-05-22 07:38:59", "2023-12-16 13:00:00", "2023-12-11 00:00:00", "2019-06-03 00:00:00", "2019-06-03 00:00:00", "2016-01-05 00:00:00"]).str.to_datetime(),
-                       "has_time": [True, True, False, False, False, False]})
-    url = pl.DataFrame({"news_id": list("abcdef"), "url_host": ["benzinga.com", "nasdaq.com", "nasdaq.com", "nasdaq.com", "nasdaq.com", "benzinga.com"],
-                        "url_date": [None, None, None, dt.date(2019, 6, 4), dt.date(2019, 6, 3), None]})
-    out, st = apply_date_fixes(df, url)
+                       "has_time": [True, True, False, False, False, False],
+                       "source": ["benzinga.com", "nasdaq.com", "nasdaq.com", "nasdaq.com", "nasdaq.com", "benzinga.com"],
+                       "url": ["https://www.benzinga.com/news/20/05/1/x", "https://www.nasdaq.com/articles/a", "https://www.nasdaq.com/articles/b",
+                               "https://www.nasdaq.com/articles/c-2019-06-04", "https://www.nasdaq.com/articles/d-2019-06-03", "https://www.benzinga.com/news/16/01/2/y"]})
+    out, st = apply_date_fixes(df)
+    assert out.filter(pl.col("news_id") == "a")["date_fix"][0] == "benzinga_plus_8h" and out.filter(pl.col("news_id") == "d")["date_fix"][0] == "nasdaq_url_date"
     assert st == {"dropped_nasdaq_timed": 1, "dropped_nasdaq_scrape_stamped": 1, "benzinga_timed_shifted_8h": 1, "nasdaq_date_moved_to_url_date": 1}
     r = {x["news_id"]: x["ts_utc"] for x in out.to_dicts()}
     assert set(r) == {"a", "d", "e", "f"}
