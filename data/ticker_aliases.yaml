@@ -8,4 +8,6 @@ yfinance:
   FBHS: FBIN      # 2022-12-15 Fortune Brands Home & Security -> Fortune Brands Innovations
   KORS: CPRI      # 2019-01-02 Michael Kors -> Capri Holdings
   HRS: LHX        # 2019-06-29 Harris 与 L3 合并后改名 L3Harris（Harris 为存续实体）
+  MMC: MRSH       # 2025 Marsh McLennan 改代码（SEC 现用代码表只有 MRSH）
+  BK: BNY         # 2025 BNY Mellon 改代码（SEC 现用代码表只有 BNY）
 # yfinance 的记法：点号换连字符（BRK.B -> BRK-B, BF.B -> BF-B），代码里自动处理，不用列在这里。

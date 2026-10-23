@@ -1,7 +1,8 @@
 """模块 1 任务 6：近似历史市值。
 
 - 股数：SEC companyfacts `dei:EntityCommonStockSharesOutstanding`（10-K/10-Q 封面披露），记录 (end=股数截止日, filed=公开日, val)。
-  按 **filed** 日期生效（避免前视），取每个交易日前最近一次披露。
+  按 **filed** 日期生效（避免前视），取每个交易日前最近一次披露。多类别股票同一文件里按类别分别披露，求和为公司总股数（两类的价格接近，
+  市值 ≈ 总股数 × 本类价格，用于规模分组足够）；与中位数相差 20 倍以上的披露视为量级错误剔除。
 - 拆股一致性：披露股数是 end 日的原始股数，而价格是 Yahoo 的拆股调整价（今日口径）。用 yfinance 的拆股事件把股数换算到今日口径：
   shares_today(end) = val × Π(ratio of splits after end)；mcap(d) = shares_today × close_adj(d)。
 - ticker → CIK：SEC company_tickers.json（只含现用代码）+ data/ticker_aliases.yaml；退市公司拿不到 CIK，mcap 为空。
@@ -57,16 +58,48 @@ def fetch_facts(cik: int, cache: Path) -> dict | None:
     return json.loads(f.read_text())
 
 
-def shares_records(facts: dict) -> pd.DataFrame:
-    """(end, filed, val) 去重：同一 end 取最早 filed；只保留 10-K/10-Q/20-F 等含股数的记录。"""
+SCALE_TOL = 20.0   # 与该公司（今日口径）股数中位数相差 20 倍以上的披露视为 XBRL 量级错误（PKG 有几期按千股填报，市值膨胀 1000 倍）
+# companyfacts 只含非维度事实：多类别公司按类别披露的 dei 股数常常缺失或只剩零碎记录（GOOGL 没有、FOXA 只有 1 条、BRK 只有 2010–2011），
+# 依次回退到合并口径的 us-gaap 元素。
+SHARE_ELEMENTS = [("dei", "EntityCommonStockSharesOutstanding", "sum"),          # 封面披露；多类别时同一文件内各类求和
+                  ("us-gaap", "CommonStockSharesOutstanding", "max"),            # 资产负债表
+                  ("us-gaap", "WeightedAverageNumberOfDilutedSharesOutstanding", "max"),
+                  ("us-gaap", "WeightedAverageNumberOfSharesOutstandingBasic", "max")]
+MIN_RECORDS = 4
+# 披露口径与价格口径不一致的特例：伯克希尔按 A 类等价股披露，B 股 = 1/1500 A 股
+SHARE_MULTIPLIER = {"BRK.B": 1500.0, "BRK.A": 1.0}
+
+
+def _records(facts: dict, taxonomy: str, element: str, agg: str) -> pd.DataFrame:
     try:
-        recs = facts["facts"]["dei"]["EntityCommonStockSharesOutstanding"]["units"]["shares"]
+        recs = facts["facts"][taxonomy][element]["units"]["shares"]
     except KeyError:
         return pd.DataFrame(columns=["end", "filed", "val"])
-    df = pd.DataFrame(recs)[["end", "filed", "val"]].dropna()
+    df = pd.DataFrame(recs)
+    if "form" in df:
+        df = df[df["form"].isin(["10-K", "10-Q", "10-K/A", "10-Q/A", "20-F", "40-F"])]
+    df = df[["end", "filed", "val"]].dropna()
     df["end"] = pd.to_datetime(df["end"]); df["filed"] = pd.to_datetime(df["filed"])
-    df = df[df["val"] > 0].sort_values(["filed", "end"]).drop_duplicates("end", keep="first")
-    return df.reset_index(drop=True)
+    df = df[df["val"] > 0].drop_duplicates(["end", "filed", "val"])
+    df = df.groupby(["end", "filed"], as_index=False)["val"].agg(agg)
+    return df.sort_values(["filed", "end"]).drop_duplicates("end", keep="first").reset_index(drop=True)
+
+
+def shares_records(facts: dict, min_records: int = MIN_RECORDS) -> tuple[pd.DataFrame, str | None]:
+    """按 SHARE_ELEMENTS 顺序取第一个 2014 年起记录数 >= min_records 的元素。返回 (记录, 元素名)。"""
+    for tax, el, agg in SHARE_ELEMENTS:
+        df = _records(facts, tax, el, agg)
+        if (df["end"] >= "2014-01-01").sum() >= min_records:
+            return df, f"{tax}:{el}"
+    return pd.DataFrame(columns=["end", "filed", "val"]), None
+
+
+def drop_scale_errors(rec: pd.DataFrame, scale_tol: float = SCALE_TOL) -> pd.DataFrame:
+    """在换算到今日口径之后再剔除量级错误（否则拆股前后的正常差异会被误判）。"""
+    if rec.empty:
+        return rec
+    med = rec["val_today"].median()
+    return rec[(rec["val_today"] <= med * scale_tol) & (rec["val_today"] >= med / scale_tol)].reset_index(drop=True)
 
 
 def fetch_splits(yf_symbols: list[str], start: str, end: str, batch: int = 50) -> pd.DataFrame:
@@ -127,12 +160,13 @@ def main() -> None:
 
     t0 = time.time()
     recs: dict[str, pd.DataFrame] = {}
+    elements: dict[str, str | None] = {}
     for i, (t, cik) in enumerate(ciks.items()):
         if cik is None:
             continue
         facts = fetch_facts(cik, cache)
         if facts:
-            recs[t] = shares_records(facts)
+            recs[t], elements[t] = shares_records(facts)
         if (i + 1) % 100 == 0:
             print(f"  facts {i + 1}/{len(ciks)} ({time.time() - t0:.0f}s)", flush=True)
     print(f"companyfacts fetched for {len(recs)} tickers, {sum(len(r) > 0 for r in recs.values())} with shares records ({time.time() - t0:.0f}s)", flush=True)
@@ -152,11 +186,13 @@ def main() -> None:
         rec = recs.get(t)
         if rec is not None and len(rec):
             rec = shares_today_basis(rec, splits[splits["yf"] == aliases.get(t, t).replace(".", "-")])
+            rec["val_today"] = rec["val_today"] * SHARE_MULTIPLIER.get(t, 1.0)
+            rec = drop_scale_errors(rec)
         d = daily_market_cap(px, rec if rec is not None and len(rec) else None)
         d.insert(1, "instrument", t)
         d["size_source"] = np.where(d["mcap"].notna(), "sec_shares_x_close", "adv20_proxy")
         frames.append(d)
-        cov.append({"ticker": t, "has_cik": ciks[t] is not None, "n_share_records": 0 if rec is None else len(rec),
+        cov.append({"ticker": t, "has_cik": ciks[t] is not None, "element": elements.get(t), "n_share_records": 0 if rec is None else len(rec),
                     "mcap_days": int(d["mcap"].notna().sum()), "days": len(d)})
     out = pd.concat(frames)
     out = out[(out["date"] >= args.start) & (out["date"] <= args.end)]
@@ -172,7 +208,9 @@ def main() -> None:
           "| 年 | 股票-日 | 有市值 | 比例 |", "| --- | ---: | ---: | ---: |"]
     for y, g in out.groupby(out["date"].dt.year):
         md.append(f"| {y} | {len(g):,} | {int(g['mcap'].notna().sum()):,} | {g['mcap'].notna().mean():.1%} |")
-    md += ["", "缺市值的股票（无 CIK，多为退市公司）：" + ", ".join(cv[~cv.has_cik].ticker.tolist())]
+    md += ["", "股数来源元素分布：" + json.dumps(cv["element"].fillna("none").value_counts().to_dict(), ensure_ascii=False),
+           "", "缺市值的股票（无 CIK，多为退市公司）：" + ", ".join(cv[~cv.has_cik].ticker.tolist()),
+           "", "有 CIK 但没有可用股数披露：" + ", ".join(cv[cv.has_cik & (cv.n_share_records == 0)].ticker.tolist())]
     (res / "market_cap_coverage.md").write_text("\n".join(md) + "\n")
     print("\n".join(md[:8]))
 
