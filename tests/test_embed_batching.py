@@ -33,3 +33,22 @@ def test_make_batches_single_long_item_and_empty():
 
 def test_shard_name():
     assert shard_name(7) == "part-00007.parquet"
+
+
+def test_build_inputs_summary_is_sorted_and_recleaned(tmp_path):
+    """摘要输入：join 后按 news_id 重排；文本用 summary_raw + 最新 clean_summary 重算（拒答 → 标题）。"""
+    import polars as pl
+    from text.embed import build_inputs
+    ids = [f"{i:024x}" for i in range(6)]
+    cand = tmp_path / "cand.parquet"
+    pl.DataFrame({"news_id": ids, "title": [f"title {i}" for i in range(6)], "has_body": [True] * 6,
+                  "ts_utc": pl.Series([__import__("datetime").datetime(2020, 1, 1)] * 6)}).write_parquet(cand)
+    sdir = tmp_path / "summ"; sdir.mkdir()
+    # 分片顺序打乱、且只覆盖部分 news_id
+    pl.DataFrame({"news_id": [ids[4], ids[1]], "summary_raw": ["Acme beat estimates.", "Foo (FOO) is not mentioned in the article. It discusses Bar."]}).write_parquet(sdir / "part-00001.parquet")
+    pl.DataFrame({"news_id": [ids[3]], "summary_raw": ["Here is a summary:\n\nBar raised guidance."]}).write_parquet(sdir / "part-00000.parquet")
+    out = tmp_path / "inputs.parquet"
+    assert build_inputs(cand, "summary", out, shard_size=2, limit=None, summaries_dir=sdir) == 3
+    got = pl.read_parquet(out)
+    assert got["news_id"].to_list() == [ids[1], ids[3], ids[4]]
+    assert got["text"].to_list() == ["title 1", "Bar raised guidance.", "Acme beat estimates."]
