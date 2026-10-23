@@ -82,7 +82,7 @@ def aggregate(clean: pl.DataFrame, emb_ids: pl.DataFrame, emb: np.ndarray, out_d
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="llama3_base")
-    ap.add_argument("--text-type", choices=["title", "body"], required=True)
+    ap.add_argument("--text-type", choices=["title", "body", "summary"], required=True)
     ap.add_argument("--cutoff", choices=["main", "1600"], default="main")
     args = ap.parse_args()
     paths = load_paths()

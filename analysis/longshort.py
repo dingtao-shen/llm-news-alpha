@@ -111,14 +111,15 @@ def run_all(preds: dict[str, pd.DataFrame], R: pd.DataFrame) -> tuple[dict, pd.D
     return results, pd.DataFrame(daily)
 
 
-NAMES = {"llama3_base": "LLaMA3-8B", "chronobert": "ChronoBERT（按年滚动）", "finbert": "FinBERT", "minilm": "MiniLM"}
-TEXT = {"title": "标题", "body": "原文"}
-ORDER = ["llama3_base", "chronobert", "finbert", "minilm"]
+NAMES = {"llama3_base": "LLaMA3-8B", "chronobert": "ChronoBERT（按年滚动）", "finbert": "FinBERT", "minilm": "MiniLM",
+         "tfidf": "TF-IDF + Ridge", "lm_dict": "LM 词典"}
+TEXT = {"title": "标题", "body": "原文", "summary": "摘要"}
+ORDER = ["llama3_base", "chronobert", "finbert", "minilm", "tfidf", "lm_dict"]
 
 
 def write_report(results: dict, daily: pd.DataFrame, res: Path) -> None:
     res.mkdir(parents=True, exist_ok=True)
-    keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body") if f"{m}__{t}" in results]
+    keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body", "summary") if f"{m}__{t}" in results]
     label = lambda k: f"{NAMES[k.split('__')[0]]} / {TEXT[k.split('__')[1]]}"
     md = ["# 五分位多空（等权）：夏普、换手与成本", "",
           f"测试期 2020–2023，每日按 score 做多前 20%、做空后 20%（有新闻的股票中），t+1 开盘建仓、t+2 开盘换仓；不足 {MIN_NAMES} 只的日子空仓。"

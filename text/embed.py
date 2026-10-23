@@ -12,7 +12,8 @@
 模型：--model 取 paths.yaml models 里的键（llama3_base、finbert、minilm）；ChronoBERT 用 --model chronobert --version YYYYMMDD
   （model id = chronobert_prefix + version，输出目录 chronobert-YYYYMMDD）。--years Y0 Y1 只嵌入 ts_utc 年份在 [Y0, Y1] 的记录
   （ChronoBERT 按年滚动：测试年 Y 用 (Y-1)1231 版本，只嵌入窗口 [Y-5, Y] 的 6 年），输入表名带年份后缀。
-  原文 max_len：MiniLM 256（模型训练长度），其余 512；标题一律 128。BERT 类模型含 [CLS]/[SEP] 一起做均值池化。
+  原文 max_len：MiniLM 256（模型训练长度），其余 512；标题一律 128；摘要 160。BERT 类模型含 [CLS]/[SEP] 一起做均值池化。
+  --text-type summary 读 summaries_dir/llama3_instruct 的摘要表（第三种文本）。
 
 增量（--delta <tag>）：候选集里尚无嵌入的 news_id（对照该目录现有全部分片）写成输入表 _inputs/<text>_delta-<tag>.parquet，
   嵌入输出为 delta-<tag>-part-NNNNN.parquet，与原分片并存；聚合读目录下全部 *part-*.parquet。换数据源或补别名（BRK.B）后只嵌新来的新闻。
@@ -44,6 +45,7 @@ from text.batching import make_batches, padded_tokens, shard_name
 
 BODY_CHARS = 8000          # 512 token 约 2,000–2,500 字符；多留余量后再交给分词器截断
 TITLE_MAX_LEN = 128
+SUMMARY_MAX_LEN = 160            # 摘要 1–2 句，128 个输出 token 以内
 BODY_MAX_LEN = {"minilm": 256}   # 其余模型 512
 BODY_MAX_LEN_DEFAULT = 512
 SEED = 0
@@ -72,6 +74,14 @@ def build_inputs(candidates: Path, text_type: str, out: Path, shard_size: int, l
     elif text_type == "body":
         lf = (lf.filter(pl.col("has_body"))
                 .select("news_id", pl.concat_str([pl.col("title"), pl.lit("\n"), pl.col("body").str.slice(0, BODY_CHARS)]).alias("text")))
+    elif text_type == "summary":
+        # 第三种文本：LLaMA3-8B-Instruct 生成的摘要（text/summarize_vllm.py，summaries_dir/<model>/part-*.parquet），只对有摘要的记录
+        import glob as _glob
+        sdir = Path(load_paths()["summaries_dir"]) / "llama3_instruct"
+        files = sorted(_glob.glob(str(sdir / "part-*.parquet")))
+        assert files, f"no summaries in {sdir}"
+        summ = pl.concat([pl.scan_parquet(f).select("news_id", "summary") for f in files])
+        lf = lf.select("news_id").join(summ, on="news_id", how="inner").select("news_id", pl.col("summary").alias("text"))
     else:
         raise ValueError(text_type)
     if limit:
@@ -199,7 +209,7 @@ def main() -> None:
     ap.add_argument("--version", default=None, help="chronobert 的知识截止日 YYYYMMDD")
     ap.add_argument("--years", type=int, nargs=2, metavar=("Y0", "Y1"), default=None, help="只嵌入 ts_utc 年份在 [Y0, Y1] 的记录")
     ap.add_argument("--dtype", choices=["bf16", "fp32"], default="bf16")
-    ap.add_argument("--text-type", choices=["title", "body"], required=True)
+    ap.add_argument("--text-type", choices=["title", "body", "summary"], required=True)
     ap.add_argument("--limit", type=int, default=None, help="只取前 N 条（试跑）")
     ap.add_argument("--out", default=None, help="输出根目录（默认 paths.emb_dir）；试跑时指向临时目录")
     ap.add_argument("--shard-size", type=int, default=50_000)
@@ -219,7 +229,7 @@ def main() -> None:
         model_id, model_key = paths["models"]["chronobert_prefix"] + args.version, f"chronobert-{args.version}"
     else:
         model_id, model_key = paths["models"][args.model], args.model
-    max_len = args.max_len or (TITLE_MAX_LEN if args.text_type == "title" else BODY_MAX_LEN.get(args.model, BODY_MAX_LEN_DEFAULT))
+    max_len = args.max_len or {"title": TITLE_MAX_LEN, "summary": SUMMARY_MAX_LEN}.get(args.text_type, BODY_MAX_LEN.get(args.model, BODY_MAX_LEN_DEFAULT))
     years = tuple(args.years) if args.years else None
     emb_root = Path(args.out or paths["emb_dir"])
     out_dir = emb_root / model_key / args.text_type

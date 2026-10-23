@@ -11,9 +11,10 @@ from pathlib import Path
 from common import ROOT, load_paths
 from models.labels import MAIN_LABEL
 
-ORDER = ["llama3_base", "chronobert", "finbert", "minilm"]
-NAMES = {"llama3_base": "LLaMA3-8B", "chronobert": "ChronoBERT（按年滚动）", "finbert": "FinBERT", "minilm": "MiniLM"}
-TEXT = {"title": "标题", "body": "原文"}
+ORDER = ["llama3_base", "chronobert", "finbert", "minilm", "tfidf", "lm_dict"]
+NAMES = {"llama3_base": "LLaMA3-8B", "chronobert": "ChronoBERT（按年滚动）", "finbert": "FinBERT", "minilm": "MiniLM",
+         "tfidf": "TF-IDF（5,000 维）+ Ridge", "lm_dict": "LM 词典情绪分（无训练）"}
+TEXT = {"title": "标题", "body": "原文", "summary": "摘要"}
 YEARS = [2020, 2021, 2022, 2023]
 
 
@@ -42,10 +43,12 @@ def main() -> None:
           "| 模型 | 文本 | " + " | ".join(f"{y} Rank IC" for y in YEARS) + " | 全期 Rank IC | 全期 IC | 平均 Rank ICIR | n_test（合计） |",
           "| --- | --- |" + " ---: |" * (len(YEARS) + 4)]
     for model in ORDER:
-        for text in ("title", "body"):
+        for text in ("title", "body", "summary"):
             ws = rows.get((model, text))
             if not ws:
-                md.append(f"| {NAMES[model]} | {TEXT[text]} |" + " – |" * (len(YEARS) + 4)); continue
+                if text != "summary":
+                    md.append(f"| {NAMES[model]} | {TEXT[text]} |" + " – |" * (len(YEARS) + 4))
+                continue
             cells = [f"{ws[y]['test_rank_ic']:+.4f}" if y in ws else "–" for y in YEARS]
             wl = [ws[y] for y in YEARS if y in ws]
             md.append(f"| {NAMES[model]} | {TEXT[text]} | " + " | ".join(cells) +
@@ -53,9 +56,9 @@ def main() -> None:
     md += ["", "## 验证年选出的 λ（相对 trace(S)/P）与验证 Rank IC", "",
            "| 模型 | 文本 | " + " | ".join(f"{y}: λ_rel / 验证 Rank IC" for y in YEARS) + " |", "| --- | --- |" + " ---: |" * len(YEARS)]
     for model in ORDER:
-        for text in ("title", "body"):
+        for text in ("title", "body", "summary"):
             ws = rows.get((model, text))
-            if ws:
+            if ws and all(ws[y].get("lambda_rel") is not None for y in ws):
                 md.append(f"| {NAMES[model]} | {TEXT[text]} | " + " | ".join(f"{ws[y]['lambda_rel']:.3g} / {ws[y]['val_rank_ic']:+.4f}" if y in ws else "–" for y in YEARS) + " |")
     (res / "table_a.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))

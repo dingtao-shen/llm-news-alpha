@@ -162,7 +162,7 @@ def write_report(report: dict, key: str, res: Path) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="llama3_base")
-    ap.add_argument("--text-type", choices=["title", "body"], required=True)
+    ap.add_argument("--text-type", choices=["title", "body", "summary"], required=True)
     ap.add_argument("--cutoff", choices=["main", "1600"], default="main")
     ap.add_argument("--test-years", type=int, nargs="+", default=TEST_YEARS,
                     help="只跑这些测试年（ChronoBERT 每个版本只覆盖自己的 6 年窗口：--model chronobert-20191231 --test-years 2020）")

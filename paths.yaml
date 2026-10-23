@@ -9,6 +9,7 @@ raw:
   fnspid_news: /workspace/data/raw/fnspid      # nasdaq_exteral_data.csv, All_external.csv
   prices_csv: /workspace/data/prices           # yfinance 日频 CSV 缓存
   universe: /workspace/data/raw/universe       # 时点成分股表
+  lm_dictionary: /workspace/data/raw/lm/LM.csv   # Loughran-McDonald 主词典（取自 pysentiment2 0.1.1 的随包副本，学术用途）
 
 qlib_dir: /workspace/qlib_data/us_sp500
 

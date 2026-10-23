@@ -1,0 +1,86 @@
+{
+  "windows": [
+    {
+      "test_year": 2020,
+      "train_years": [],
+      "val_year": null,
+      "n_train": 0,
+      "n_test": 24808,
+      "labels": {
+        "ret_oo": {
+          "lambda_rel": null,
+          "val_rank_ic": null,
+          "test_rank_ic": -0.00543,
+          "test_rank_icir": -0.0407,
+          "test_ic": 0.00887,
+          "test_icir": 0.0676,
+          "test_days": 253
+        }
+      }
+    },
+    {
+      "test_year": 2021,
+      "train_years": [],
+      "val_year": null,
+      "n_train": 0,
+      "n_test": 17320,
+      "labels": {
+        "ret_oo": {
+          "lambda_rel": null,
+          "val_rank_ic": null,
+          "test_rank_ic": -0.02139,
+          "test_rank_icir": -0.1661,
+          "test_ic": -0.01503,
+          "test_icir": -0.1166,
+          "test_days": 252
+        }
+      }
+    },
+    {
+      "test_year": 2022,
+      "train_years": [],
+      "val_year": null,
+      "n_train": 0,
+      "n_test": 23235,
+      "labels": {
+        "ret_oo": {
+          "lambda_rel": null,
+          "val_rank_ic": null,
+          "test_rank_ic": 0.00628,
+          "test_rank_icir": 0.0557,
+          "test_ic": 0.00175,
+          "test_icir": 0.0155,
+          "test_days": 251
+        }
+      }
+    },
+    {
+      "test_year": 2023,
+      "train_years": [],
+      "val_year": null,
+      "n_train": 0,
+      "n_test": 27316,
+      "labels": {
+        "ret_oo": {
+          "lambda_rel": null,
+          "val_rank_ic": null,
+          "test_rank_ic": 0.00079,
+          "test_rank_icir": 0.008,
+          "test_ic": -0.00342,
+          "test_icir": -0.0357,
+          "test_days": 229
+        }
+      }
+    }
+  ],
+  "model": "lm_dict",
+  "text_type": "title",
+  "cutoff": "main",
+  "n_pred": 93043,
+  "lambda_rel_grid": [],
+  "n_by_year": {},
+  "lm_coverage": {
+    "news_with_any_lm_word": 0.2622945321768585,
+    "mean_words": 10.031698953219783
+  }
+}

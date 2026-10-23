@@ -41,7 +41,7 @@ def main() -> None:
     paths = load_paths()
     labels = pl.read_parquet(paths["labels"], columns=["datetime", "instrument", MAIN_LABEL]).to_pandas()
     preds = load_preds(Path(paths["pred_dir"]))
-    keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body") if f"{m}__{t}" in preds]
+    keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body", "summary") if f"{m}__{t}" in preds]
     ics = pd.DataFrame({k: daily_rank_ic(preds[k], labels) for k in keys})
     label = lambda k: f"{NAMES[k.split('__')[0]]} / {TEXT[k.split('__')[1]]}"
     single = {k: nw_tstat(ics[k].to_numpy()) for k in keys}
