@@ -17,7 +17,10 @@ def test_shares_records_and_split_basis():
     assert rec["val"].tolist() == [4000, 16000, 16000000, 16000]
     splits = pd.DataFrame({"date": [pd.Timestamp("2020-08-31")], "yf": ["X"], "ratio": [4.0]})
     rec = drop_scale_errors(shares_today_basis(rec, splits))
-    assert rec["val_today"].tolist() == [16000.0, 16000.0, 16000.0]     # 拆股前的披露换算到今日口径；量级错误在换算后剔除
+    assert rec["val_today"].tolist() == [16000.0, 16000.0, 16000.0]     # 拆股前申报的披露换算到今日口径；量级错误在换算后剔除
+    # 期末在拆股前、申报在拆股后的披露已按拆股后口径列报，不再乘拆股比例
+    r2 = pd.DataFrame({"end": pd.to_datetime(["2020-06-30"]), "filed": pd.to_datetime(["2020-09-15"]), "val": [16000]})
+    assert shares_today_basis(r2, splits)["val_today"].tolist() == [16000.0]
 
 
 def test_fallback_to_consolidated_element():

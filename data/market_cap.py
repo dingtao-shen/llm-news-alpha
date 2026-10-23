@@ -3,8 +3,8 @@
 - 股数：SEC companyfacts `dei:EntityCommonStockSharesOutstanding`（10-K/10-Q 封面披露），记录 (end=股数截止日, filed=公开日, val)。
   按 **filed** 日期生效（避免前视），取每个交易日前最近一次披露。多类别股票同一文件里按类别分别披露，求和为公司总股数（两类的价格接近，
   市值 ≈ 总股数 × 本类价格，用于规模分组足够）；与中位数相差 20 倍以上的披露视为量级错误剔除。
-- 拆股一致性：披露股数是 end 日的原始股数，而价格是 Yahoo 的拆股调整价（今日口径）。用 yfinance 的拆股事件把股数换算到今日口径：
-  shares_today(end) = val × Π(ratio of splits after end)；mcap(d) = shares_today × close_adj(d)。
+- 拆股一致性：披露股数反映申报日之前的全部拆股，而价格是 Yahoo 的拆股调整价（今日口径）。用 yfinance 的拆股事件把股数换算到今日口径：
+  shares_today = val × Π(ratio of splits after filed)；mcap(d) = shares_today × close_adj(d)。
 - ticker → CIK：SEC company_tickers.json（只含现用代码）+ data/ticker_aliases.yaml；退市公司拿不到 CIK，mcap 为空。
 - 代理：所有股票都算 adv20 = 20 日平均（close × volume），作为规模代理；报告中注明用哪一个。
 - 输出：paths.market_cap（datetime, instrument, shares, mcap, adv20, size_source）与 results/prices/market_cap_coverage.md。
@@ -58,7 +58,7 @@ def fetch_facts(cik: int, cache: Path) -> dict | None:
     return json.loads(f.read_text())
 
 
-SCALE_TOL = 20.0   # 与该公司（今日口径）股数中位数相差 20 倍以上的披露视为 XBRL 量级错误（PKG 有几期按千股填报，市值膨胀 1000 倍）
+SCALE_TOL = 8.0    # 与该公司（今日口径）股数中位数相差 8 倍以上的披露视为错误（PKG 有几期按千股填报；GOOG 有几期被重复乘了 20:1 拆股）
 # companyfacts 只含非维度事实：多类别公司按类别披露的 dei 股数常常缺失或只剩零碎记录（GOOGL 没有、FOXA 只有 1 条、BRK 只有 2010–2011），
 # 依次回退到合并口径的 us-gaap 元素。
 SHARE_ELEMENTS = [("dei", "EntityCommonStockSharesOutstanding", "sum"),          # 封面披露；多类别时同一文件内各类求和
@@ -124,11 +124,13 @@ def fetch_splits(yf_symbols: list[str], start: str, end: str, batch: int = 50) -
 
 
 def shares_today_basis(rec: pd.DataFrame, splits: pd.DataFrame) -> pd.DataFrame:
-    """把每条披露的股数按 end 之后的拆股换算到今日口径。"""
+    """把每条披露的股数按 **filed 之后**的拆股换算到今日口径。
+    用 filed 而不是 end：封面股数本来就是接近申报日的数字，资产负债表股数也会对申报前发生的拆股做追溯重述
+    （GOOG 2022-06-30 期末股数在 7 月 27 日的 10-Q 里已按 20:1 拆股后口径列报，若按 end 再乘 20 就会多算 20 倍）。"""
     rec = rec.copy()
     if splits.empty:
         rec["val_today"] = rec["val"]; return rec
-    rec["val_today"] = [v * float(np.prod(splits.loc[splits["date"] > e, "ratio"])) for e, v in zip(rec["end"], rec["val"])]
+    rec["val_today"] = [v * float(np.prod(splits.loc[splits["date"] > f, "ratio"])) for f, v in zip(rec["filed"], rec["val"])]
     return rec
 
 
