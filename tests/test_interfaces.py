@@ -49,4 +49,5 @@ def test_dev_sample_matches_interfaces():
     for tt in ("title", "body"):
         f = d / "emb" / "llama3_base" / tt / "part-00000.parquet"
         s = pq.read_schema(f)
-        assert str(s.field("emb").type).startswith("fixed_size_list<element: halffloat>[4096]") and str(s.field("news_id").type) == "string"
+        # pyarrow 写出的是 string，polars 写出的是 large_string，两者都算合规
+        assert str(s.field("emb").type).startswith("fixed_size_list<element: halffloat>[4096]") and str(s.field("news_id").type) in ("string", "large_string")
