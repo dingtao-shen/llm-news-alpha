@@ -2,6 +2,36 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23 · 小模型嵌入、价格下载、模块 2 任务 5–8（Pod 上继续开发）
+
+- 做了什么：
+  - `text/embed.py` 泛化：`--model finbert|minilm`、`--model chronobert --version YYYYMMDD --years Y0 Y1`（按年滚动窗口）、FinBERT 的 BertModel/BertTokenizerFast 回退。
+    `make embed-small` 一条链跑完：FinBERT、MiniLM 全集，ChronoBERT 四个版本（(Y-1)1231，窗口 [Y-5, Y]，Y=2020–2023）。合计约 50 分钟。
+    吞吐：FinBERT 356k/399k tok/s，MiniLM 695k/2.16M，ChronoBERT 约 150k/135k（标题/原文）。所有 14 套嵌入分片数、行数与 _meta.json 一致，float16 无 NaN。
+  - `data/download_prices.py`：yfinance 分批下载 716 只 + SPY → `/workspace/data/prices/<ticker>.csv`（date, symbol, OHLCV, adj_close, factor=adj_close/close）。
+    552 只成功、164 失败（逐只重试确认 Yahoo 已不提供：多为 2024 年后被收购/私有化/改名）；成分股区间 549/723 有完整价格。
+    **缺口集中在 2015–2022 年退出指数的公司**（2015 年退出的 27 个区间只有 6 个有价格），对无幸存者偏差回测是实质问题。
+    `data/ticker_aliases.yaml` 收录 6 个改名（FB→META 等）。Yahoo 的 Close 已按拆股调整，factor 只含分红（与 Qlib 官方 collector 口径一致）。
+  - 模块 2 任务 5–8：`news/ticker_map.py`（BRK→BRK.B 别名）、`news/align.py`（向量化分层对齐，9:00 主口径 t = prev(d)，16:00 口径 t = d，day 精度 23:59:59）、
+    `news/filters.py`（正文 100–100,000 字符；同股票 5 个交易日内词袋余弦 ≥ 0.8，去停用词 + 对数词频）、`news/build_clean.py`（→ news_clean.parquet、news_panel.parquet、报告）。
+    测试抓到 bug：day 精度的 `00:00:00 UTC` 是日历占位，不能按 UTC 瞬时转美东（会把特征日提前一天）。
+    近似重复第一版用原始词频剔了 16%，抽查一半是误杀（长正文被停用词主导）；改为去停用词 + log(tf) 后剔 5.6%，剩下的都是电讯更新版与模板文章。
+  - 全量结果（修正版）：476,895 条，有时刻 2,417，in_sp500 414,770；股票-日覆盖率 20.6%（2021 年 13.5% 最低，2019 年 27.0% 最高）；日历暂用 SPY 交易日。
+- 产出在哪：
+  - `/workspace/data/emb/{finbert,minilm,chronobert-2019123,…}/{title,body}/part-*.parquet`；`_inputs/` 下按窗口的输入表
+  - `/workspace/data/prices/*.csv`、`_manifest.json`、`_failed.csv`；`results/prices/price_coverage.{md,csv}`
+  - 修正版 news_clean / news_panel 暂在 Pod 容器盘 scratch（`/tmp/claude-0/.../scratchpad/clean_v2/`），`/workspace/data/news/` 下仍是第一版，等用户同意后替换；
+    `results/news/news_clean_report.md` 已是修正版数字
+  - `infra/make_dev_sample.py` → `/workspace/data/dev_sample.tgz`（70 MB，Mac 的 dev_data/）
+- 下一步：
+  - 替换 news_clean 为修正版（待确认）；候选集重建时带 BRK 别名并做增量嵌入（embed.py 需要支持追加分片）。
+  - 价格缺口：用 FNSPID `Stock_price/full_history.zip`（2023 年抓取，含当时的退市股）补 164 只；再 Qlib dump、Alpha158 基线（模块 1 任务 3–7）。
+  - 模块 2 任务 4：时区/日期校验（重点是仅日期记录的日期可靠性）；任务 9 其余统计。模块 3 任务 5–6：股票-日聚合、充分统计量 Ridge。
+- 遗留问题：
+  - 价格缺 164 只、集中在退市公司；嵌入缺 BRK.B 的新闻；日历暂用 SPY，最终换 Qlib `D.calendar()`。
+  - 有时刻记录只有 2,417 行，16:00 口径与主口径只差 2,328 行，精度分组分析基本不可行。
+  - GPU 热降频贯穿整晚（LLaMA3 原文 5.7k tok/s），小模型不受影响。
+
 ## 2026-10-22 · 模块 1 任务 1、模块 2 任务 1–2、嵌入候选集、LLaMA3-8B 嵌入启动
 
 - 做了什么：
