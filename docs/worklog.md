@@ -2,6 +2,27 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 3）· 模块 3 任务 5–6：聚合、滚动 Ridge、第一张文本 IC 表（LLaMA3 标题）
+
+- 做了什么：
+  - `models/labels.py`：Qlib 一次算出 6 个口径标签（主标签开盘到开盘、收盘到收盘、建仓推迟 1–4 天），成分股区间内 1,063,968 个股票-日 → `/workspace/data/labels/labels_sp500.parquet`。
+  - `models/aggregate.py`：news_clean × 嵌入分片 → (feature_day, ticker) 均值嵌入 + news_cnt/n_timed/n_body/in_sp500，按年 parquet（`/workspace/data/agg/llama3_base/title/main/`，196 秒）。
+    每年约 2.4 万–3.4 万个 in_sp500 股票-日，平均 1.7 篇新闻/股票-日。
+  - `models/ridge_suffstats.py`：按年 float64 充分统计量，一次特征分解解整条 λ 路径（15 个相对 trace(S)/P 的 λ），4+1+1 滚动，验证年按日均 Rank IC 选 λ，
+    6 个标签同时求解；输出接口文件 3 `/workspace/data/preds/llama3_base__title__main.parquet`（92,825 行，score + score_<label>）与 `results/ridge/`。全程约 2 分钟。
+  - **结果（LLaMA3-8B 标题，主口径）**：测试年 Rank IC 2020 +0.0044、2021 +0.0027、2022 −0.0115、2023 +0.0086；全测试期日均 Rank IC +0.0010，ICIR 0.008。
+    其他标签：收盘到收盘与推迟建仓的 Rank IC 也都在 ±0.02 内、符号不稳定。
+  - 链路诊断 `analysis/sanity_contemporaneous.py`：同一嵌入预测新闻当天收益 ret_t0 的样本外 Rank IC 为 +0.10 至 +0.19（ICIR 0.8–1.5，四年全正），
+    说明嵌入含有很强的情绪信息且对齐正确；t 收盘到 t+1 收盘 +0.003 至 +0.019（四年全正）> 开盘到开盘。
+    结论：**不是 bug，是信号在到达可交易的次日开盘前已基本被吸收**，与原文"大盘股新闻效应 1–2 天内吸收、市值高于中位数子样本 IC 低"一致，且比预期的 0.5–1% 更低。
+- 产出在哪：`/workspace/data/{labels,agg,preds}/`；`results/ridge/llama3_base__title__main.{md,json}`、`results/ridge/sanity_contemporaneous_llama3_base__title__main.md`。
+- 下一步：
+  - 同一流水线跑原文（body）与其他模型（FinBERT、MiniLM、ChronoBERT 滚动）填满表 A 的标题/原文列；再做 16:00 口径。
+  - 分析信号去向：按来源（Benzinga 标题 vs nasdaq.com 全文）、按新闻条数、按 ret_t0 的分位拆分 IC；考虑把"隔夜反应"作为报告中的核心发现之一。
+  - 模块 6 的五分位多空回测与成本；模块 5 的表 B。
+- 遗留问题：主标签 IC 接近 0，后续比较（文本类型、模型、时间一致性）可能都落在噪声范围内，报告要以 DM 检验和置信区间说话；
+  λ 在验证年选出的值在 0.001–1e4 之间大幅跳动，说明验证 IC 曲线很平（信号弱）。
+
 ## 2026-10-23（续 2）· Alpha158 + LightGBM 基线（模块 1 任务 7）
 
 - 做了什么：`qlib_ext/handler.py` 加 `Alpha158NoVwap`（去掉 VWAP0，我们没有 vwap 数据；默认标签改为开盘到开盘）；

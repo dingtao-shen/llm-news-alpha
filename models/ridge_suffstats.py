@@ -122,7 +122,7 @@ def run(agg_dir: Path, labels: pl.DataFrame, test_years=TEST_YEARS) -> tuple[pl.
         win["secs"] = round(time.time() - t0, 1)
         report["windows"].append(win)
         preds.append(kt.with_columns(pl.Series("score", scores[MAIN_LABEL]), *[pl.Series(f"score_{lab}", scores[lab]) for lab in labels_list if lab != MAIN_LABEL]))
-        print(f"test {ty}: n_train={n:,} n_test={len(Xt):,} λ_rel={LAMBDA_REL[k_best]:.3g} "
+        print(f"test {ty}: n_train={n:,} n_test={len(Xt):,} λ_rel={win['labels'][MAIN_LABEL]['lambda_rel']:.3g} "
               f"main val RankIC={win['labels'][MAIN_LABEL]['val_rank_ic']:+.4f} test RankIC={win['labels'][MAIN_LABEL]['test_rank_ic']:+.4f} "
               f"IC={win['labels'][MAIN_LABEL]['test_ic']:+.4f} ICIR={win['labels'][MAIN_LABEL]['test_icir']:+.3f} ({win['secs']}s)", flush=True)
         for y in [y for y in cache if y < ty - N_TRAIN - N_VAL]:   # 释放不再需要的年份
