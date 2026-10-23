@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats news-candidates embed-trial embed dev-sample
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats news-candidates embed-trial embed embed-small dev-sample
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -67,6 +67,18 @@ embed-trial:  ## [Pod] 2,000 条试跑（标题 + 原文），输出到 /tmp，�
 
 embed:  ## [Pod] 后台：先标题全集，再原文子集；已完成分片自动跳过
 	$(BG) embed-$(MODEL) bash -c '$(PY) -m text.embed --model $(MODEL) --text-type title && $(PY) -m text.embed --model $(MODEL) --text-type body'
+
+# 小模型：FinBERT、MiniLM 全集；ChronoBERT 按年滚动（测试年 Y 用 (Y-1)1231 版本，只嵌入 [Y-5, Y] 窗口）。batch 预算放大，显存仍很小。
+SMALL := --batch-tokens 131072 --max-batch 2048
+EMB   := $(PY) -m text.embed
+embed-small:  ## [Pod] 后台：FinBERT、MiniLM、ChronoBERT ×4 的标题与原文嵌入；已完成分片自动跳过
+	$(BG) embed-small bash -c '\
+	  $(EMB) --model finbert --text-type title $(SMALL) && $(EMB) --model finbert --text-type body $(SMALL) && \
+	  $(EMB) --model minilm  --text-type title $(SMALL) && $(EMB) --model minilm  --text-type body $(SMALL) && \
+	  $(EMB) --model chronobert --version 20191231 --years 2015 2020 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20191231 --years 2015 2020 --text-type body $(SMALL) && \
+	  $(EMB) --model chronobert --version 20201231 --years 2016 2021 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20201231 --years 2016 2021 --text-type body $(SMALL) && \
+	  $(EMB) --model chronobert --version 20211231 --years 2017 2022 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20211231 --years 2017 2022 --text-type body $(SMALL) && \
+	  $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type body $(SMALL)'
 
 # ---------------------------------------------------------------- 后续模块（实现时补上）
 # 模块 1：prices qlib-dump qlib-baseline market-cap

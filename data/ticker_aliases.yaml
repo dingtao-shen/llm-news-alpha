@@ -1,0 +1,11 @@
+# 价格下载用的代码映射：成分股表里的历史代码 -> yfinance 上能拿到完整历史的现用代码。
+# 只放"同一法律实体改名"的情况（Yahoo 把全部历史挂在新代码下）；被收购退市的不在此列，它们在 yfinance 上确实没有数据。
+# 以 download_prices 的 _failed.csv 为线索逐步补充；每条写明改名日期与依据。
+yfinance:
+  FB: META        # 2022-06-09 Meta Platforms 改代码
+  ANTM: ELV       # 2022-06-28 Anthem -> Elevance Health
+  FISV: FI        # 2023-07-03 Fiserv 改代码
+  FBHS: FBIN      # 2022-12-15 Fortune Brands Home & Security -> Fortune Brands Innovations
+  KORS: CPRI      # 2019-01-02 Michael Kors -> Capri Holdings
+  HRS: LHX        # 2019-06-29 Harris 与 L3 合并后改名 L3Harris（Harris 为存续实体）
+# yfinance 的记法：点号换连字符（BRK.B -> BRK-B, BF.B -> BF-B），代码里自动处理，不用列在这里。
