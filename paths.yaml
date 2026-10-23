@@ -19,6 +19,8 @@ news:
 emb_dir: /workspace/data/emb                   # 接口文件 2：按 news_id 分片的 float16 嵌入
 agg_dir: /workspace/data/agg                   # 股票-日聚合嵌入：<model>/<text_type>/<cutoff>/year=YYYY.parquet
 labels: /workspace/data/labels/labels_sp500.parquet   # Qlib 算出的各口径标签（datetime, instrument）
+market_cap: /workspace/data/market_cap/market_cap.parquet   # 近似历史市值：SEC 流通股数 × 收盘价，缺失用 20 日平均成交额代理
+sec_dir: /workspace/data/raw/sec                    # SEC companyfacts JSON 缓存、拆股事件
 pred_dir: /workspace/data/preds                # 接口文件 3：pred.parquet（datetime × instrument × score）
 suffstats_dir: /workspace/data/suffstats
 pca_dir: /workspace/data/pca
