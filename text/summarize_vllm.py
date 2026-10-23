@@ -71,9 +71,24 @@ def truncate_tokens(tok, text: str, n: int) -> str:
     return tok.decode(ids)
 
 
+def truncate_tokens_batch(tok, texts: list[str], n: int) -> list[str]:
+    """批量版（fast tokenizer 多线程），20k 篇约 10 秒；逐篇循环要几分钟。"""
+    ids = tok(texts, add_special_tokens=False, truncation=True, max_length=n)["input_ids"]
+    return tok.batch_decode(ids)
+
+
 def make_conv(prompt: str, ticker: str, title: str, body: str) -> list[dict]:
     return [{"role": "system", "content": prompt},
             {"role": "user", "content": f"Ticker: {ticker}\nHeadline: {title}\nArticle:\n{body}\n\nSummary:"}]
+
+
+def convs_to_token_prompts(tok, convs: list[list[dict]]) -> list:
+    """把对话渲染成 Llama 3 聊天模板字符串后批量分词，交给 llm.generate（绕过 vLLM 前端逐条模板渲染 + 分词的 Python 开销：
+    实测 20k 篇时主进程 110% CPU、EngineCore 只有 30%，GPU 在等前端）。"""
+    from vllm import TokensPrompt
+    texts = [tok.apply_chat_template(c, tokenize=False, add_generation_prompt=True) for c in convs]
+    ids = tok(texts, add_special_tokens=False)["input_ids"]      # 模板串已含 <|begin_of_text|>
+    return [TokensPrompt(prompt_token_ids=i) for i in ids]
 
 
 def load_llm(model_id: str):
@@ -84,10 +99,13 @@ def load_llm(model_id: str):
     return llm
 
 
-def generate(llm, convs: list[list[dict]]) -> list[tuple[str, int]]:
+def generate(llm, convs: list[list[dict]], tok=None) -> list[tuple[str, int]]:
     from vllm import SamplingParams
     sp = SamplingParams(temperature=0.0, max_tokens=MAX_TOKENS_OUT, seed=0)
-    outs = llm.chat(convs, sp, use_tqdm=False)
+    if tok is not None:
+        outs = llm.generate(convs_to_token_prompts(tok, convs), sp, use_tqdm=False)
+    else:
+        outs = llm.chat(convs, sp, use_tqdm=False)
     return [(o.outputs[0].text.strip(), len(o.outputs[0].token_ids)) for o in outs]
 
 
@@ -179,8 +197,8 @@ def run_full(paths: dict, prompt_version: str, limit: int | None) -> None:
     for k, i in enumerate(todo):
         part = df.slice(i * SHARD, SHARD)
         t0 = time.time()
-        bodies = [truncate_tokens(tok, b, BODY_TOKENS) for b in part["body"]]
-        outs = generate(llm, [make_conv(PROMPTS[prompt_version], t, h, b) for t, h, b in zip(part["ticker"], part["title"], bodies)])
+        bodies = truncate_tokens_batch(tok, [b or "" for b in part["body"]], BODY_TOKENS)
+        outs = generate(llm, [make_conv(PROMPTS[prompt_version], t, h, b) for t, h, b in zip(part["ticker"], part["title"], bodies)], tok)
         cleaned = [clean_summary(o[0], h) for o, h in zip(outs, part["title"])]
         table = pa.table({"news_id": pa.array(part["news_id"].to_list(), pa.string()),
                           "summary": pa.array([c[0] for c in cleaned], pa.string()),
