@@ -80,8 +80,12 @@ def build_inputs(candidates: Path, text_type: str, out: Path, shard_size: int, l
         sdir = Path(load_paths()["summaries_dir"]) / "llama3_instruct"
         files = sorted(_glob.glob(str(sdir / "part-*.parquet")))
         assert files, f"no summaries in {sdir}"
-        summ = pl.concat([pl.scan_parquet(f).select("news_id", "summary") for f in files])
-        lf = lf.select("news_id").join(summ, on="news_id", how="inner").select("news_id", pl.col("summary").alias("text"))
+        # summary 列按写出当时的规则后处理；这里用 summary_raw + 最新的 clean_summary 重算（拒答 → 标题），规则更新不必重写分片
+        from text.summarize_vllm import clean_summary
+        summ = pl.concat([pl.scan_parquet(f).select("news_id", "summary_raw") for f in files])
+        lf = (lf.select("news_id", "title").join(summ, on="news_id", how="inner")
+                .select("news_id", pl.struct("summary_raw", "title").map_elements(
+                    lambda s: clean_summary(s["summary_raw"], s["title"])[0], return_dtype=pl.String).alias("text")))
     else:
         raise ValueError(text_type)
     if limit:

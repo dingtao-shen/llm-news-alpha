@@ -21,3 +21,12 @@ def test_shard_ok_rejects_dead_engine_output():
     assert shard_ok([40, 55, 0, 61] + [50] * 96)            # 1% 空输出：正常
     assert not shard_ok([0] * 950 + [45] * 50)               # 95% 空输出：引擎已挂
     assert shard_ok([])
+
+
+def test_clean_summary_catches_not_mentioned_refusals():
+    assert clean_summary("Caterpillar (CAT) is not mentioned in the article. The article discusses GM and NVDA.", "3 Stocks to Trade") == ("3 Stocks to Trade", "fallback_title")
+    assert clean_summary("This article does not mention Coca-Cola (KO) or any other specific company.", "Investing 101") == ("Investing 101", "fallback_title")
+    assert clean_summary("GOOG is mentioned as a company, but it is not the main subject of the article. The article discusses TTD.", "TTD earnings") == ("TTD earnings", "fallback_title")
+    # 正文里说 "not mentioned" 的真实摘要不算拒答：只看首句
+    s = "Acme (ACME) raised guidance to $2.10. The dividend was not mentioned."
+    assert clean_summary(s, "t") == (s, "ok")

@@ -112,6 +112,9 @@ def generate(llm, convs: list[list[dict]], tok=None) -> list[tuple[str, int]]:
 # ------------------------------------------------------------------ 后处理：去元句、识别拒答
 _PREAMBLE = re.compile(r"^(?:here is|here's)[^\n:]{0,80}:\s*", re.I)
 _REFUSAL = re.compile(r"^(?:no summary|there is no|the (?:provided )?(?:article|text) (?:does not|doesn't|is not)|unfortunately|i cannot|i can't)", re.I)
+# 另一类拒答以公司名开头："Caterpillar (CAT) is not mentioned in the article. The article discusses…"（约 2%，首句说明文章与该 ticker 无关）
+_REFUSAL_SENTENCE = re.compile(r"(?:is|are) not (?:mentioned|discussed|the (?:main )?(?:subject|focus))|(?:does not|doesn't) mention|no mention of|not the main (?:subject|focus)", re.I)
+_FIRST_SENTENCE = re.compile(r"^[^.!?\n]*[.!?\n]")
 
 
 MAX_EMPTY_RATE = 0.05        # 一片里空输出占比超过它就视为引擎已挂（2026-10-23 第 3 片在引擎被杀时写出 19,067 条空摘要）
@@ -127,13 +130,17 @@ def shard_ok(n_out_tokens: list[int], max_empty_rate: float = MAX_EMPTY_RATE) ->
 def clean_summary(text: str, title: str) -> tuple[str, str]:
     """返回 (summary, flag)。flag ∈ {ok, stripped_preamble, fallback_title}。
     - 以 "Here is a summary…:" 开头 → 去掉该元句；
-    - 拒答（"No summary…"、"There is no article about X…"，多为 FNSPID 把文章挂错 ticker）→ 用标题代替，保证每条都有可嵌入的文本。"""
+    - 拒答（"No summary…"、"There is no article about X…"、首句 "X is not mentioned in the article"，多为 FNSPID 把文章挂错 ticker）→ 用标题代替，保证每条都有可嵌入的文本。
+    分片里的 summary/flag 列是写出当时的后处理结果；读取方（text/embed.py）用 summary_raw 按本函数重算，规则更新不必重写分片。"""
     t = text.strip()
     flag = "ok"
     m = _PREAMBLE.match(t)
     if m:
         t = t[m.end():].strip(); flag = "stripped_preamble"
     if not t or _REFUSAL.match(t):
+        return title.strip(), "fallback_title"
+    m = _FIRST_SENTENCE.match(t)
+    if _REFUSAL_SENTENCE.search(m.group(0) if m else t):
         return title.strip(), "fallback_title"
     return t, flag
 
