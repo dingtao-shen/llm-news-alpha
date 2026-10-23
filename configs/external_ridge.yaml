@@ -1,0 +1,76 @@
+# 模块 4 任务 5 / 模块 6 任务 3：把全维 Ridge 的样本外预测（接口文件 3）接进 Qlib 的 SigAnaRecord 与 PortAnaRecord（TopkDropout 多头回测）。
+# 用法：PRED_PATH=/workspace/data/fnspid/preds/llama3_base__body__main.parquet EXP_NAME=external_llama3_body qrun configs/external_ridge.yaml
+# Dataset 只用来提供测试段的 (datetime, instrument) 索引，所以用最轻的新闻特征 Handler。
+qlib_init:
+    provider_uri: "/workspace/qlib_data/us_sp500_news_fnspid"
+    region: us
+    exp_manager:
+        class: MLflowExpManager
+        module_path: qlib.workflow.expm
+        kwargs:
+            uri: "file:/workspace/mlruns"
+            default_exp_name: "Experiment"
+sys:
+    rel_path: [".."]
+market: &market sp500
+benchmark: &benchmark SPY
+experiment_name: "{{ EXP_NAME }}"
+port_analysis_config: &port_analysis_config
+    strategy:
+        class: TopkDropoutStrategy
+        module_path: qlib.contrib.strategy
+        kwargs:
+            signal: <PRED>
+            topk: 50
+            n_drop: 5
+    backtest:
+        start_time: 2020-01-01
+        end_time: 2023-12-31
+        account: 100000000
+        benchmark: *benchmark
+        exchange_kwargs:
+            limit_threshold: null
+            deal_price: open
+            open_cost: 0.0005
+            close_cost: 0.0005
+            min_cost: 0
+task:
+    model:
+        class: ExternalPredModel
+        module_path: qlib_ext.models
+        kwargs:
+            pred_path: "{{ PRED_PATH }}"
+    dataset:
+        class: DatasetH
+        module_path: qlib.data.dataset
+        kwargs:
+            handler:
+                class: NewsAlpha158Handler
+                module_path: qlib_ext.handler
+                kwargs:
+                    start_time: 2019-01-01
+                    end_time: 2024-01-31
+                    fit_start_time: 2019-01-01
+                    fit_end_time: 2019-12-31
+                    instruments: *market
+                    feature_set: ["news"]
+                    news_text: body
+            segments:
+                train: [2019-01-01, 2019-06-30]
+                valid: [2019-07-01, 2019-12-31]
+                test: [2020-01-01, 2023-12-31]
+    record:
+        - class: SignalRecord
+          module_path: qlib.workflow.record_temp
+          kwargs:
+            model: <MODEL>
+            dataset: <DATASET>
+        - class: SigAnaRecord
+          module_path: qlib.workflow.record_temp
+          kwargs:
+            ana_long_short: False
+            ann_scaler: 252
+        - class: PortAnaRecord
+          module_path: qlib.workflow.record_temp
+          kwargs:
+            config: *port_analysis_config
