@@ -2,6 +2,23 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 9）· 阶段 C：表 B 与增量检验（摘要仍在后台生成）
+
+- 做了什么：`qlib_ext/run_rolling.py`（81 分钟，CPU）：5 个特征集 × 4 个滚动窗口 × {Ridge（验证选 α）, LightGBM ×3 种子, MLP 2×256 ×3 种子}，
+  数据 `/workspace/qlib_data/us_sp500_news_fnspid`，样本为成分股全部股票-日（无新闻日新闻特征为 0，has_news 入特征），每窗口 RobustZScoreNorm 只在训练期拟合。
+  `analysis/incremental_test.py`：融合 − Alpha158 的日度 Rank IC 配对差（NW t）与新闻分数 / Alpha158 分数的秩相关。
+  Qlib TopkDropout 多头回测接入外部预测（`configs/external_ridge.yaml` + `ExternalPredModel`）：LLaMA3 原文在 Qlib 里算出的 IC 0.010 / Rank IC 0.008 与模块 3 一致（验收项通过）。
+- 结果（全期 Rank IC，`results/qlib/table_b.md`）：Alpha158：Ridge +0.0152、LightGBM +0.0097 ± 0.0035、MLP +0.0083 ± 0.0035；
+  纯新闻：原文 Ridge +0.0042 / LightGBM +0.0045，标题 ≈ 0.002；融合：Ridge +0.0151 / +0.0158，LightGBM +0.0129 ± 0.0006 / +0.0123 ± 0.0013，MLP +0.0107 / +0.0097。
+  增量检验（`results/qlib/incremental.md`）：融合相对 Alpha158 的提升 Ridge ≈ 0（−0.0001 / +0.0007，t −0.1 / +0.9），LightGBM +0.0031 / +0.0026（t 1.48 / 1.14），MLP +0.0024 / +0.0013（t 0.8 / 0.6）：
+  **方向为正但无一显著**。新闻分数与 Alpha158 分数的日均截面秩相关 ≤ 0.006：文本因子与量价因子几乎正交，不是反转的变形，只是太弱。
+  滚动 + 正确标准化的 Alpha158 Ridge（+0.0152）明显好于冻结基线的单次切分 LightGBM（+0.0058）。
+  Qlib 多头回测（Top-50，扣费）：LLaMA3 原文超额 −1.9%/年（IR −0.32），ChronoBERT 原文 −3.1%/年（IR −0.57）。
+- 阶段 D 已做部分见上一条；摘要放量因 GPU 热降频改为 800 token 输入重启（09:13）。
+- 产出在哪：`/workspace/data/fnspid/preds/qlib__*`、`results/qlib/{table_b,incremental}.{md,json}`、`results/baseline/external_*`。
+- 下一步：摘要 → 抽查 → 摘要嵌入 → 表 A 摘要列；文本形式对比成稿；新鲜度前向填充；阶段 E/F 成稿。
+- 遗留：表 B 的 LightGBM 种子间标准差（0.0035）与融合提升同量级，3 个种子不够下结论，报告里写区间；MLP 在 CPU 上训练、未调参。
+
 ## 2026-10-23（续 8）· 阶段 B 进行中：摘要放量、词袋基线、PCA、16:00 口径
 
 - 做了什么：
