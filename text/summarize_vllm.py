@@ -5,7 +5,7 @@
   先写 .tmp 再改名；_meta.json 记录提示词版本、解码参数、模型 commit。
 - 提示词：模块 0 的旧版（PROMPT_V0）10 条里 3 条"加料"（补后果、补动机、写"未披露"）。新版（PROMPT_V1）明确禁止推断原因 / 后果 / 动机与评价，
   禁止写"未提及 / 未披露"，限 1–2 句，附 2 个示范。放量前用 --compare N 在真实新闻上并排输出两版供人工判断加料率。
-- 解码：temperature 0（贪心）、max_tokens 96、seed 0。
+- 解码：temperature 0（贪心）、max_tokens 128、seed 0。
 
 试跑对比：bash infra/run_bg.sh summ-compare /workspace/venv-vllm/bin/python -m text.summarize_vllm --compare 50
 放量：    bash infra/run_bg.sh summarize /workspace/venv-vllm/bin/python -m text.summarize_vllm
@@ -31,7 +31,7 @@ from common import ROOT, load_paths
 
 SHARD = 20_000
 BODY_TOKENS = 1500
-MAX_TOKENS_OUT = 96
+MAX_TOKENS_OUT = 128
 
 PROMPT_V0 = (
     "You summarize financial news about one company. Use only information stated in the article. "
@@ -54,7 +54,14 @@ Example 2
 Article: Umbrella Aerospace said its chief executive will step down at the end of the year. The board has begun a search for a successor.
 Summary: Umbrella Aerospace's chief executive will step down at year-end and the board has started searching for a successor."""
 
-PROMPTS = {"v0": PROMPT_V0, "v1": PROMPT_V1}
+# v2 = v1 + 两条针对 50 条对比里暴露的问题：FNSPID 的 ticker 与文章不符时不要评论不符（5/50 条写了"There is no article about X"），
+# 以及不要以任何元句开头。
+PROMPT_V2 = PROMPT_V1.replace(
+    "5. If the article is a list or a market roundup, summarize only the part about the company named by the ticker.",
+    "5. If the article covers several companies, focus on the part about the company named by the ticker. If that company is barely or not "
+    "discussed, summarize the article's main subject instead; never remark that the company is not mentioned.\n"
+    "6. Start directly with the first fact. Never begin with phrases like \"There is no\", \"No summary\", \"The article\", or \"Here is\".")
+PROMPTS = {"v0": PROMPT_V0, "v1": PROMPT_V1, "v2": PROMPT_V2}
 MODEL_KEY = "llama3_instruct"
 
 
@@ -96,7 +103,8 @@ def extra_content_hints(summary: str, source: str) -> dict:
     return {"new_numbers": nums, "new_names": caps, "omission_phrase": bool(_OMIT.search(summary)), "sentences": len(re.findall(r"[.!?](?:\s|$)", summary))}
 
 
-def compare(n: int, paths: dict, seed: int = 0) -> None:
+def compare(n: int, paths: dict, seed: int = 0, versions: list[str] | None = None) -> None:
+    prompts = {k: PROMPTS[k] for k in (versions or list(PROMPTS))}
     from transformers import AutoTokenizer
     model_id = paths["models"]["llama3_instruct"]
     tok = AutoTokenizer.from_pretrained(model_id)
@@ -105,27 +113,27 @@ def compare(n: int, paths: dict, seed: int = 0) -> None:
     bodies = [truncate_tokens(tok, b, BODY_TOKENS) for b in df["body"]]
     llm = load_llm(model_id)
     res = {}
-    for ver, prompt in PROMPTS.items():
+    for ver, prompt in prompts.items():
         t0 = time.time()
         res[ver] = generate(llm, [make_conv(prompt, t, h, b) for t, h, b in zip(df["ticker"], df["title"], bodies)])
         print(f"{ver}: {n} summaries in {time.time() - t0:.1f}s", flush=True)
-    md = [f"# 摘要提示词对比：旧版 v0 vs 新版 v1，{n} 条真实新闻（seed {seed}）", "",
-          "自动线索只是提示：new_numbers / new_names = 摘要里出现、原文里没有的数字 / 大写词；omission = 出现"未披露"类措辞。请人工判断哪一版加料更少。", ""]
-    agg = {v: {"omission": 0, "new_numbers": 0, "new_names": 0, "avg_sentences": 0.0, "avg_tokens": 0.0} for v in PROMPTS}
+    md = [f"# 摘要提示词对比：{' vs '.join(prompts)}，{n} 条真实新闻（seed {seed}）", "",
+          "自动线索只是提示：new_numbers / new_names = 摘要里出现、原文里没有的数字 / 大写词；omission = 出现「未披露」类措辞。请人工判断哪一版加料更少。", ""]
+    agg = {v: {"omission": 0, "new_numbers": 0, "new_names": 0, "avg_sentences": 0.0, "avg_tokens": 0.0} for v in prompts}
     for i in range(n):
         r = df.row(i, named=True)
         md += [f"## {i + 1}. [{r['ticker']}] {r['title']}", f"*{r['source']}, {r['ts_et'].date()}*", "", "> " + bodies[i][:700].replace("\n", " ") + (" …" if len(bodies[i]) > 700 else ""), ""]
-        for ver in PROMPTS:
+        for ver in prompts:
             text, ntok = res[ver][i]
             h = extra_content_hints(text, r["title"] + " " + bodies[i])
             agg[ver]["omission"] += h["omission_phrase"]; agg[ver]["new_numbers"] += bool(h["new_numbers"]); agg[ver]["new_names"] += bool(h["new_names"])
             agg[ver]["avg_sentences"] += h["sentences"] / n; agg[ver]["avg_tokens"] += ntok / n
             flags = " ".join(f for f, ok in (("⚠omission", h["omission_phrase"]), (f"⚠nums{h['new_numbers']}", h["new_numbers"]), (f"⚠names{h['new_names'][:3]}", h["new_names"])) if ok)
             md += [f"**{ver}** ({ntok} tok{', ' + flags if flags else ''}): {text}", ""]
-    summary = ["## 汇总（自动线索）", "", "| 版本 | 出现\"未披露\"措辞 | 含原文没有的数字 | 含原文没有的大写词 | 平均句数 | 平均输出 token |", "| --- | ---: | ---: | ---: | ---: | ---: |"]
+    summary = ["## 汇总（自动线索）", "", "| 版本 | 出现「未披露」措辞 | 含原文没有的数字 | 含原文没有的大写词 | 平均句数 | 平均输出 token |", "| --- | ---: | ---: | ---: | ---: | ---: |"]
     summary += [f"| {v} | {a['omission']} | {a['new_numbers']} | {a['new_names']} | {a['avg_sentences']:.1f} | {a['avg_tokens']:.0f} |" for v, a in agg.items()]
     res_dir = ROOT / paths["results"] / "news"
-    (res_dir / "summary_prompt_compare.md").write_text("\n".join(md[:4] + summary + [""] + md[4:]) + "\n")
+    (res_dir / f"summary_prompt_compare_{'_'.join(prompts)}.md").write_text("\n".join(md[:4] + summary + [""] + md[4:]) + "\n")
     print("\n".join(summary))
 
 
@@ -168,13 +176,14 @@ def run_full(paths: dict, prompt_version: str, limit: int | None) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--compare", type=int, default=None, metavar="N", help="在 N 条真实新闻上并排输出两版提示词的摘要")
-    ap.add_argument("--prompt", default="v1", choices=list(PROMPTS))
+    ap.add_argument("--prompt", default="v2", choices=list(PROMPTS))
+    ap.add_argument("--versions", nargs="+", default=None, help="--compare 时只比较这些版本")
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
     paths = load_paths()
     if args.compare:
-        compare(args.compare, paths, args.seed)
+        compare(args.compare, paths, args.seed, args.versions)
     else:
         run_full(paths, args.prompt, args.limit)
 
