@@ -20,7 +20,10 @@ run() {  # run <model> [test year]
   local key="${model}__summary__main"
   if [ -f "results/ridge/${key}.json" ]; then echo "skip ${key}: done"; return; fi
   echo "== ${key} $(date -u +%H:%M:%S)"
-  [ -f "/workspace/data/fnspid/agg/${model}/summary/main/_meta.json" ] || $PY -m models.aggregate --model "$model" --text-type summary --cutoff main | tail -n 3
+  if [ ! -f "/workspace/data/fnspid/agg/${model}/summary/main/_meta.json" ]; then
+    $PY -m models.aggregate --model "$model" --text-type summary --cutoff main | tail -n 3
+    [ -f "/workspace/data/fnspid/agg/${model}/summary/main/_meta.json" ] || { echo "aggregate failed for ${key}"; return; }
+  fi
   $PY -m models.ridge_suffstats --model "$model" --text-type summary --cutoff main ${1:+--test-years "$@"} | grep -E "^test|^- 全测试期"
 }
 run llama3_base; run finbert; run minilm

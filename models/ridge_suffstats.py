@@ -83,6 +83,7 @@ def ic_summary(ic: pl.DataFrame) -> dict:
 def run(agg_dir: Path, labels: pl.DataFrame, test_years=TEST_YEARS, fixed_lambda_rel: float | None = None) -> tuple[pl.DataFrame, dict]:
     """fixed_lambda_rel 给定时不在验证年选 λ，所有窗口与标签都用该相对 λ（λ 口径敏感性分析）。"""
     years = sorted({int(p.stem.split("=")[1]) for p in agg_dir.glob("year=*.parquet")})
+    assert years, f"no aggregated years in {agg_dir} (run models.aggregate first)"
     cache: dict[int, tuple] = {}
     stats: dict[int, dict] = {}
 

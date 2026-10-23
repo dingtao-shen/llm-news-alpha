@@ -61,7 +61,8 @@ def existing_ids(out_dir: Path) -> set[str]:
 
 
 def build_inputs(candidates: Path, text_type: str, out: Path, shard_size: int, limit: int | None,
-                 years: tuple[int, int] | None = None, exclude_ids: set[str] | None = None) -> int:
+                 years: tuple[int, int] | None = None, exclude_ids: set[str] | None = None,
+                 summaries_dir: Path | None = None) -> int:
     """从候选集生成 (news_id, text) 输入表，按 news_id 排序、行组 = shard_size。返回行数。
     years=(Y0, Y1) 只取该年份区间；exclude_ids 给定时只取其外的 news_id（增量）。"""
     lf = pl.scan_parquet(str(candidates))
@@ -76,14 +77,13 @@ def build_inputs(candidates: Path, text_type: str, out: Path, shard_size: int, l
                 .select("news_id", pl.concat_str([pl.col("title"), pl.lit("\n"), pl.col("body").str.slice(0, BODY_CHARS)]).alias("text")))
     elif text_type == "summary":
         # 第三种文本：LLaMA3-8B-Instruct 生成的摘要（text/summarize_vllm.py，summaries_dir/<model>/part-*.parquet），只对有摘要的记录
-        import glob as _glob
-        sdir = Path(load_paths()["summaries_dir"]) / "llama3_instruct"
-        files = sorted(_glob.glob(str(sdir / "part-*.parquet")))
+        sdir = summaries_dir or Path(load_paths()["summaries_dir"]) / "llama3_instruct"
+        files = sorted(sdir.glob("part-*.parquet"))
         assert files, f"no summaries in {sdir}"
         # summary 列按写出当时的规则后处理；这里用 summary_raw + 最新的 clean_summary 重算（拒答 → 标题），规则更新不必重写分片
         from text.summarize_vllm import clean_summary
-        summ = pl.concat([pl.scan_parquet(f).select("news_id", "summary_raw") for f in files])
-        lf = (lf.select("news_id", "title").join(summ, on="news_id", how="inner")
+        summ = pl.concat([pl.scan_parquet(str(f)).select("news_id", "summary_raw") for f in files])
+        lf = (lf.select("news_id", "title").join(summ, on="news_id", how="inner").sort("news_id")   # join 不保序，必须重排
                 .select("news_id", pl.struct("summary_raw", "title").map_elements(
                     lambda s: clean_summary(s["summary_raw"], s["title"])[0], return_dtype=pl.String).alias("text")))
     else:
