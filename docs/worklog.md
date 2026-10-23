@@ -2,6 +2,22 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 4）· 表 A 初表：4 个模型 × 标题/原文
+
+- 做了什么：`models/run_table_a.sh`（`make table-a`）顺序跑完 LLaMA3 原文、FinBERT、MiniLM 的标题与原文、ChronoBERT 四个版本各自窗口的标题与原文
+  （`--test-years` 单测试年），`analysis/table_a.py` 汇成 `results/ridge/table_a.md`。全链 8 分钟（聚合 + Ridge；LLaMA3 原文聚合约 2 分钟）。
+- 结果（全期日均 Rank IC，2020–2023，按交易日加权）：
+  LLaMA3 标题 +0.0010 / 原文 +0.0065；ChronoBERT 标题 −0.0012 / 原文 **+0.0090**（ICIR 0.068，四年中三年为正）；FinBERT 标题 +0.0037 / 原文 −0.0004；MiniLM 标题 +0.0009 / 原文 +0.0031。
+  规律：原文普遍优于标题（FinBERT 例外）；2022 年所有组合都为负；LLaMA3 原文 2021 年 +0.0295 是单年最高；所有数字都在 0.01 量级，
+  模型之间的差异在噪声范围内（原文表 4 的结论在这里更明显），下结论要靠 DM 检验。时间一致的 ChronoBERT 原文不输 LLaMA3 原文，
+  初步支持"LLaMA3 的前视偏差影响有限"这一差异化点，但统计功效很低。
+- 产出在哪：`/workspace/data/agg/<model>/<text>/main/`、`/workspace/data/preds/<model>__<text>__main.parquet`（接口文件 3，8 个文件 + ChronoBERT 4 个版本各 1 个）、
+  `results/ridge/*.{md,json}`、`results/ridge/table_a.md`。
+- 下一步：模块 6 的五分位多空回测（等权 / 市值加权、成本、EWCT）把 Rank IC 转成夏普；DM 检验；按来源 / 新闻条数 / 当天收益分位拆分信号去向；
+  16:00 口径；AI 摘要（模块 3 任务 4）；弱文本基线（LM 词典、TF-IDF）。
+- 遗留问题：ChronoBERT 各版本用 ts_utc 年份过滤窗口，与 feature_day 年份在年末相差几十行（n_test 92,777 vs 92,825），无实质影响；
+  验证年选出的 λ 在网格两端乱跳，验证 IC 曲线平坦，λ 选择本身接近随机，可考虑固定 λ 或按多年验证平均。
+
 ## 2026-10-23（续 3）· 模块 3 任务 5–6：聚合、滚动 Ridge、第一张文本 IC 表（LLaMA3 标题）
 
 - 做了什么：
