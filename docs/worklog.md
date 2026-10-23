@@ -18,7 +18,16 @@
   - 接口：`--text-type summary` 已接入 embed / aggregate / ridge；表 A、多空、DM 加入 TF-IDF、LM 两行与摘要列。
 - 产出在哪：`/workspace/data/fnspid/summaries/llama3_instruct/`（生成中）、`/workspace/data/fnspid/pca/`、`/workspace/data/fnspid/agg/tfidf/`、preds 里的 `tfidf__*`、`lm_dict__*`；
   `results/ridge/{table_a,dm_test,pca_summary}.md`、`results/news/summary_prompt_compare_*.md`。
-- 下一步：摘要跑完 → 抽查 100 条加料比例 → 4 个模型嵌入摘要 → 聚合 + Ridge → 表 A 的摘要列；16:00 口径汇总；然后阶段 C（Qlib 融合）。
+  - 16:00 口径（`results/ridge/cutoff_1600.md`）：与主口径只差 2,310 条有时刻记录，全期 Rank IC 几乎相同（差异 ≤ 0.0016）。
+  - 阶段 C 提前铺路（GPU 被 vLLM 占用期间）：`qlib_ext/dump_news_features.py` 把价格 + LLaMA3 标题/原文 PCA-64 + news_cnt/has_news 合成 632 个 CSV，
+    dump 成独立的 `/workspace/qlib_data/us_sp500_news_fnspid`（139 字段，98 秒）；`NewsAlpha158Handler`；`qlib_ext/models.py`（RidgeModel 验证选 α、ExternalPredModel）；
+    `qlib_ext/run_rolling.py` 表 B 驱动（5 个特征集 × 4 窗口 × ridge / lgbm×3 种子 / mlp×3 种子，MLP 用 CPU），冒烟通过后后台运行中。
+  - 阶段 D 提前做的部分（`analysis/longshort.py --variants`）：市值加权五分位（原文模型毛夏普 0.6–0.9，标题模型为负或接近 0；扣费后仍全负）、
+    十分组（ChronoBERT 原文 +0.88、LLaMA3 原文 +0.61）、建仓推迟 k=0..4（k≥1 后符号随机，无"新闻动量"）；
+    信号拆分加市值三分位：原文模型的 IC 集中在 S&P 500 内的**大市值**三分位（ChronoBERT 原文 +0.0175，t 2.4；LLaMA3 原文 +0.0159，t 2.35），
+    小市值三分位 ≈ 0——与原文"小盘股更强"相反，可能因为 nasdaq.com 全文覆盖偏向大公司。
+- 下一步：摘要跑完 → 抽查 100 条加料比例 → 4 个模型嵌入摘要 → 聚合 + Ridge → 表 A 的摘要列；表 B 出来后做增量检验（文本因子与 Alpha158 相关性）；
+  阶段 D 剩余：文本形式对比成稿、否定词子样本、新鲜度前向填充、Qlib TopkDropout 多头、低换手持仓方式。
 - 遗留：LM 词典副本来自第三方包（2018 版词表），报告中注明来源与版本；TF-IDF 词表在 2015–2018 拟合、不随窗口滚动（与 PCA 同样的"早于验证期"口径）。
 
 ## 2026-10-23（续 7）· 阶段 0 完成：日期修正重跑 + 数据源无关接口
