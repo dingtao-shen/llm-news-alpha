@@ -2,6 +2,22 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续）· 价格缺口补齐、Qlib dump
+
+- 做了什么：
+  - `data/fill_prices_fnspid.py`：用 FNSPID `Stock_price/full_history.zip`（7,693 个文件）补 yfinance 缺失的价格。zip 有两个坑并已防护：
+    （1）很多文件是两次抓取拼接的，旧段止于 2020-07-02 / 2020-04-01 且没有按之后的拆股调整（AAPL 在拼接处有 4 倍断点）；
+    （2）同一文件可能拼接了先后使用同一代码的不同公司（FI = Frank's International → Fiserv，46 倍断点；CTRA = Contura → Coterra；PLL 是 Piedmont Lithium，ALTR 是 Altair）。
+    对策：只取成分股窗口（前推 120 天、后推 10 天）内的行；拼接处断点 > 40% 则丢弃前段；末行离群值丢弃；乒乓错行置 NaN；不用别名。
+    结果 79 只补入，85 只两边都没有；价格覆盖 631/716 只、592/723 个区间。
+  - `make qlib-dump`：632 个 CSV → `/workspace/qlib_data/us_sp500`（9 秒）。校验见 `results/prices/qlib_dump_check.md`：日历与 SPY 完全一致，
+    成分股区间内股票-日有价格 93.2%（2015 年 85.2% → 2023 年 98.3%），标签表达式可算，28 条 |收益| > 50% 均为真实事件。
+  - 价格元数据移到 `/workspace/data/prices/_meta/`（dump_bin 会把同级 *.csv 都当成股票）。
+- 产出在哪：`/workspace/data/prices/*.csv`（+ `_meta/{manifest,failed,sources,fnspid_fill}.json|csv`）、`/workspace/qlib_data/us_sp500/{calendars,features,instruments}`、
+  `results/prices/{price_coverage.md,price_coverage.csv,qlib_dump_check.md}`。
+- 下一步：模块 1 任务 7 Alpha158 + LightGBM 基线（`configs/baseline_alpha158.yaml`，`qrun`）；模块 1 任务 6 市值；模块 3 任务 5–6 聚合与 Ridge。
+- 遗留问题：85 只早年退市公司没有价格（2015–2017 股票池偏向幸存者，报告中要写明）；WBD 两边都没有；KSU 等 FNSPID 旧抓取只到 2020-07 的区间后半段缺失。
+
 ## 2026-10-23 · 小模型嵌入、价格下载、模块 2 任务 5–8（Pod 上继续开发）
 
 - 做了什么：
