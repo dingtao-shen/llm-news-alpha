@@ -463,8 +463,11 @@ llm-news-alpha/
 │   ├── parse_fnspid.py         # 全字符串读取、正规 CSV 解析、news_id、语言过滤
 │   ├── source_stats.py         # 来源 / 精度 / 正文可用率统计
 │   ├── validate_timezone.py    # 抽样抓 URL 校验时区与日期约定
-│   ├── filters.py              # 单一股票、长度、近似重复
-│   └── align.py                # 分层对齐（9:00 主口径、16:00 稳健口径）
+│   ├── filters.py              # 长度、近似重复
+│   ├── align.py                # 分层对齐（9:00 主口径、16:00 稳健口径）
+│   ├── build_clean.py          # 标准新闻表 → 日期修正 → 对齐 → 过滤 → news_clean.parquet
+│   ├── candidates.py / ticker_map.py / news_id.py / schema.py
+│   └── sources/                # 数据源适配器（fnspid.py；以后 alpaca.py）
 ├── text/                       # 模块 3
 │   ├── benchmark.py            # 各模型吞吐实测
 │   ├── embed.py                # LLaMA3-8B / ChronoBERT / FinBERT / MiniLM 均值池化嵌入
@@ -640,6 +643,37 @@ backtest:
 7. 时区校验未通过的来源，其时刻全部作废，降级为仅日期处理。
 8. 充分统计量 Ridge：用中心化后的统计量求解，截距单独还原；累加一律用 float64，避免数值误差。
 9. 每个滚动窗口的 λ 只在该窗口的验证年上选，测试年只评估一次。
+
+## 6.1 数据源无关的接口约定（2026-10-23 增补）
+
+决定：先用 FNSPID 把整条流水线跑通并出报告，换数据源留作后续迭代。为此把"数据源特定"的部分压缩到一个适配器里：
+
+- **接口文件 0：标准新闻表** `embed_candidates.parquet`（`news/schema.py` 的 `STANDARD_NEWS`）：news_id、ticker、ts_utc、has_time、title、body、has_body、url、source、dataset。
+  任何新闻源的适配器（`news/sources/<src>.py`）只负责产出它；FNSPID 的适配器是 `news/sources/fnspid.py`（解析 + 低成本过滤）。
+- 之后的 嵌入（`text/embed.py`）、日期修正与对齐（`news/build_clean.py`）、聚合（`models/aggregate.py`）、Ridge、回测 全部只读接口文件，不碰任何源特定字段。
+- 嵌入分片支持增量：`text/embed.py --delta <tag>` 只嵌入目录里尚无嵌入的 news_id，写 `delta-<tag>-part-*.parquet`；读取方按 `*part-*.parquet` 读全部。
+  换源后或补 ticker 别名后只需嵌新来的新闻（2026-10-23 用它补了 BRK.B 的 1,680 条）。
+- 带 `{dataset}` 的路径按数据集分目录（`paths.yaml` 的 `dataset`，环境变量 `DATASET` 覆盖）：`/workspace/data/<dataset>/{news,emb,agg,preds}`；价格、Qlib、标签、市值与数据集无关。
+- `make downstream`：从 news_clean 重跑 聚合 → Ridge → 表 A → 多空 → DM → 信号拆分 → λ 敏感性，换源后一条命令。
+- `tests/test_interfaces.py` 对三个接口文件与标准新闻表做 schema 断言（有 dev 样本时对真实样本检查）。
+
+**FNSPID 日期修正**（`news/build_clean.py` 的 `DATE_FIXES`，依据 `results/news/tz_check_conclusions.md`）：Benzinga 有时刻记录的时间戳是 UTC−8，统一 +8 小时；
+nasdaq.com 的全部有时刻记录（都标 2023-12-16，实为抓取时间）与 2023-11-30..12-16 的抓取期打标记录剔除；nasdaq.com 日期取 FNSPID 与 URL 日期中较晚者。
+
+## 6.2 阶段计划（2026-10-23 起）
+
+| 阶段 | 内容 | 产出 |
+| --- | --- | --- |
+| 0 收口与接口维护（完成） | 日期修正并重跑下游；6.1 节的接口约定；BRK.B 增量嵌入 | 修正后的表 A、多空表；可换源的接口 |
+| B 补齐表 A | AI 摘要（改提示词 → 50 条对比 → 放量 → 100 条抽查 → 4 个模型嵌入）；LM 词典 + TF-IDF 基线；PCA-256/64；16:00 口径 | 表 A 完整版（含 DM 检验） |
+| C Qlib 融合（模块 4–5） | PCA-64 入库、`NewsAlpha158Handler`、滚动 segments、外部预测封装；表 B：{Alpha158, 新闻, 融合} × {Ridge, LightGBM, MLP}；克制调参；反转单因子对照 | 表 B、增量检验 |
+| D 模块 6 其余 | 市值加权、十分组、建仓推迟衰减、规模分组、文本形式、否定词、新鲜度、Qlib 多头、低换手持仓 | 图 1–4、稳健性表 |
+| E 模块 7 | 时间一致性对照成稿；"隔夜兑现"分解为核心发现；不做 ChatGPT 嵌入与 Llama-3.2 梯度 | 差异化点正式结果 |
+| F 模块 8 | README 报告、make 入口核对、dev 样本、备份、删卷 | 公开仓库与报告 |
+| G（以后）换源 | 新写 `news/sources/<src>.py`，`DATASET=<src> make downstream` | 对照实验 |
+
+实测修正预期：纯文本信号的日均 Rank IC 在 0.000–0.010，低于原先预期的 0.5–1%；嵌入含强情绪信息（对新闻当天收益 Rank IC 0.10–0.19），
+但反应在隔夜兑现（主口径分数对隔夜收益 t 3.4–3.9），到可交易的次日开盘几乎不剩；等权多空毛夏普 0.3–0.9、扣费后为负。报告以此为核心实证结果。
 
 ## 7. 风险、常见坑与应对
 
