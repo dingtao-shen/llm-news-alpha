@@ -80,7 +80,8 @@ def ic_summary(ic: pl.DataFrame) -> dict:
 
 
 # ------------------------------------------------------------------ 主流程
-def run(agg_dir: Path, labels: pl.DataFrame, test_years=TEST_YEARS) -> tuple[pl.DataFrame, dict]:
+def run(agg_dir: Path, labels: pl.DataFrame, test_years=TEST_YEARS, fixed_lambda_rel: float | None = None) -> tuple[pl.DataFrame, dict]:
+    """fixed_lambda_rel 给定时不在验证年选 λ，所有窗口与标签都用该相对 λ（λ 口径敏感性分析）。"""
     years = sorted({int(p.stem.split("=")[1]) for p in agg_dir.glob("year=*.parquet")})
     cache: dict[int, tuple] = {}
     stats: dict[int, dict] = {}
@@ -114,7 +115,7 @@ def run(agg_dir: Path, labels: pl.DataFrame, test_years=TEST_YEARS) -> tuple[pl.
         scores = {}
         for li, lab in enumerate(labels_list):
             val_ic = [ic_summary(daily_ic(kv, predict(Xv, betas[k, :, li], intercepts[k, li]), Yv[:, li]))["mean"] for k in range(len(lambdas))]
-            k_best = int(np.nanargmax(val_ic))
+            k_best = int(np.nanargmax(val_ic)) if fixed_lambda_rel is None else int(np.argmin(np.abs(LAMBDA_REL - fixed_lambda_rel)))
             s_test = predict(Xt, betas[k_best, :, li], intercepts[k_best, li])
             scores[lab] = s_test
             rank = ic_summary(daily_ic(kt, s_test, Yt[:, li])); pear = ic_summary(daily_ic(kt, s_test, Yt[:, li], "pearson"))
@@ -165,15 +166,16 @@ def main() -> None:
     ap.add_argument("--cutoff", choices=["main", "1600"], default="main")
     ap.add_argument("--test-years", type=int, nargs="+", default=TEST_YEARS,
                     help="只跑这些测试年（ChronoBERT 每个版本只覆盖自己的 6 年窗口：--model chronobert-20191231 --test-years 2020）")
+    ap.add_argument("--lambda-rel", type=float, default=None, help="固定相对 λ（不在验证年选），输出键加后缀 __lam<值>")
     args = ap.parse_args()
     paths = load_paths()
-    key = f"{args.model}__{args.text_type}__{args.cutoff}"
+    key = f"{args.model}__{args.text_type}__{args.cutoff}" + (f"__lam{args.lambda_rel:g}" if args.lambda_rel is not None else "")
     agg_dir = Path(paths["agg_dir"]) / args.model / args.text_type / args.cutoff
     labels = pl.read_parquet(paths["labels"])
-    pred, report = run(agg_dir, labels, args.test_years)
+    pred, report = run(agg_dir, labels, args.test_years, args.lambda_rel)
     out = Path(paths["pred_dir"]); out.mkdir(parents=True, exist_ok=True)
     pred.write_parquet(out / f"{key}.parquet", compression="zstd")
-    report.update(model=args.model, text_type=args.text_type, cutoff=args.cutoff, pred=str(out / f"{key}.parquet"), n_pred=len(pred))
+    report.update(model=args.model, text_type=args.text_type, cutoff=args.cutoff, fixed_lambda_rel=args.lambda_rel, pred=str(out / f"{key}.parquet"), n_pred=len(pred))
     write_report(report, key, ROOT / paths["results"] / "ridge")
 
 
