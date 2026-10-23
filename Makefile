@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small dev-sample
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small labels aggregate ridge dev-sample
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -96,9 +96,21 @@ embed-small:  ## [Pod] 后台：FinBERT、MiniLM、ChronoBERT ×4 的标题与�
 	  $(EMB) --model chronobert --version 20211231 --years 2017 2022 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20211231 --years 2017 2022 --text-type body $(SMALL) && \
 	  $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type body $(SMALL)'
 
+# ---------------------------------------------------------------- 模块 3：聚合与 Ridge
+TEXT   ?= title
+CUTOFF ?= main
+labels:  ## [Pod] Qlib 算所有口径的标签 → /workspace/data/labels/labels_sp500.parquet
+	$(PY) -m models.labels
+
+aggregate:  ## [Pod] 股票-日聚合嵌入：make aggregate MODEL=llama3_base TEXT=title CUTOFF=main
+	$(PY) -m models.aggregate --model $(MODEL) --text-type $(TEXT) --cutoff $(CUTOFF)
+
+ridge:  ## [Pod] 年度滚动充分统计量 Ridge → pred.parquet + results/ridge/：make ridge MODEL=llama3_base TEXT=title CUTOFF=main
+	$(BG) ridge-$(MODEL)-$(TEXT)-$(CUTOFF) $(PY) -m models.ridge_suffstats --model $(MODEL) --text-type $(TEXT) --cutoff $(CUTOFF)
+
 # ---------------------------------------------------------------- 后续模块（实现时补上）
 # 模块 1：market-cap
 # 模块 2：news-sample news-tz
-# 模块 3：benchmark summarize bow ridge pca
+# 模块 3：benchmark summarize bow pca
 # 模块 4–6：qlib-news qlib-fusion analyze
 # 模块 8：backup
