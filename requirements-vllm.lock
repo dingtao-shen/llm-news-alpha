@@ -129,6 +129,8 @@ packaging==26.3
 pandas==3.0.6
 partial-json-parser==0.2.1.1.post7
 pillow==13.0.0
+polars==2.0.0
+polars-runtime-32==2.0.0
 prometheus-fastapi-instrumentator==8.1.0
 prometheus_client==0.26.0
 propcache==0.5.4
