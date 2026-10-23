@@ -14,3 +14,10 @@ def test_hints_and_conv():
     assert h["new_numbers"] == [] and "Jane" in h["new_names"] and not h["omission_phrase"]
     conv = make_conv("SYS", "AAPL", "Apple beats", "body text")
     assert conv[0]["role"] == "system" and conv[1]["content"].startswith("Ticker: AAPL\nHeadline: Apple beats")
+
+
+def test_shard_ok_rejects_dead_engine_output():
+    from text.summarize_vllm import shard_ok
+    assert shard_ok([40, 55, 0, 61] + [50] * 96)            # 1% 空输出：正常
+    assert not shard_ok([0] * 950 + [45] * 50)               # 95% 空输出：引擎已挂
+    assert shard_ok([])

@@ -114,6 +114,16 @@ _PREAMBLE = re.compile(r"^(?:here is|here's)[^\n:]{0,80}:\s*", re.I)
 _REFUSAL = re.compile(r"^(?:no summary|there is no|the (?:provided )?(?:article|text) (?:does not|doesn't|is not)|unfortunately|i cannot|i can't)", re.I)
 
 
+MAX_EMPTY_RATE = 0.05        # 一片里空输出占比超过它就视为引擎已挂（2026-10-23 第 3 片在引擎被杀时写出 19,067 条空摘要）
+
+
+def shard_ok(n_out_tokens: list[int], max_empty_rate: float = MAX_EMPTY_RATE) -> bool:
+    """空输出（0 个 token）比例不超过阈值才允许落盘；否则抛错，让断点续跑重做这一片。"""
+    if not n_out_tokens:
+        return True
+    return sum(n == 0 for n in n_out_tokens) / len(n_out_tokens) <= max_empty_rate
+
+
 def clean_summary(text: str, title: str) -> tuple[str, str]:
     """返回 (summary, flag)。flag ∈ {ok, stripped_preamble, fallback_title}。
     - 以 "Here is a summary…:" 开头 → 去掉该元句；
@@ -200,6 +210,8 @@ def run_full(paths: dict, prompt_version: str, limit: int | None) -> None:
         bodies = truncate_tokens_batch(tok, [b or "" for b in part["body"]], BODY_TOKENS)
         outs = generate(llm, [make_conv(PROMPTS[prompt_version], t, h, b) for t, h, b in zip(part["ticker"], part["title"], bodies)], tok)
         cleaned = [clean_summary(o[0], h) for o, h in zip(outs, part["title"])]
+        if not shard_ok([o[1] for o in outs]):
+            raise RuntimeError(f"shard {i + 1}: {sum(o[1] == 0 for o in outs)} empty generations out of {len(outs)}; engine probably dead, not writing")
         table = pa.table({"news_id": pa.array(part["news_id"].to_list(), pa.string()),
                           "summary": pa.array([c[0] for c in cleaned], pa.string()),
                           "summary_raw": pa.array([o[0] for o in outs], pa.string()),
