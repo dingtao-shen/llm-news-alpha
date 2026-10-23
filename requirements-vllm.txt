@@ -4,3 +4,5 @@ huggingface_hub
 pandas
 pyarrow
 tqdm
+polars
+pyyaml
