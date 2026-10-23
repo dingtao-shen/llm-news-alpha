@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe news-download news-parse news-stats news-candidates embed-trial embed embed-small dev-sample
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small dev-sample
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -46,6 +46,9 @@ dev-sample:  ## [Pod] 生成约 100 MB 开发样本并打包到 /workspace/data/
 universe:  ## [Pod] 时点成分股 → qlib instruments/sp500.txt + results/universe/
 	$(PY) -m data.build_universe
 
+prices:  ## [Pod] 后台 yfinance 下载成分股全集 + SPY 到 /workspace/data/prices，并写覆盖率报告
+	$(BG) prices $(PY) -m data.download_prices
+
 # ---------------------------------------------------------------- 模块 2：新闻
 news-download:  ## [Pod] 后台下载 FNSPID 两个 CSV 到 /workspace/data/raw/fnspid
 	$(BG) fnspid-download $(PY) -m news.download_fnspid
@@ -58,6 +61,9 @@ news-stats:  ## [Pod] 来源 × 年份 × 时刻/正文可用率 → results/new
 
 news-candidates:  ## [Pod] 后台生成嵌入候选集 embed_candidates.parquet + GPU 时间估算
 	$(BG) news-candidates $(PY) -m news.candidates
+
+news-clean:  ## [Pod] 候选集 → news_clean.parquet（对齐、长度、近似重复）+ news_panel.parquet + results/news/ 报告
+	$(BG) news-clean $(PY) -m news.build_clean
 
 # ---------------------------------------------------------------- 模块 3：嵌入
 MODEL ?= llama3_base
@@ -81,8 +87,8 @@ embed-small:  ## [Pod] 后台：FinBERT、MiniLM、ChronoBERT ×4 的标题与�
 	  $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type title $(SMALL) && $(EMB) --model chronobert --version 20221231 --years 2018 2023 --text-type body $(SMALL)'
 
 # ---------------------------------------------------------------- 后续模块（实现时补上）
-# 模块 1：prices qlib-dump qlib-baseline market-cap
-# 模块 2：news-sample news-tz news-clean
+# 模块 1：qlib-dump qlib-baseline market-cap
+# 模块 2：news-sample news-tz
 # 模块 3：benchmark summarize bow ridge pca
 # 模块 4–6：qlib-news qlib-fusion analyze
 # 模块 8：backup

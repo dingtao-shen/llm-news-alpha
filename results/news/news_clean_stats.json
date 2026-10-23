@@ -1,0 +1,220 @@
+{
+  "stats": {
+    "funnel": {
+      "candidates": 505147,
+      "after_calendar_range": 505147,
+      "after_length": 505119,
+      "after_near_dup": 424125
+    },
+    "out_of_calendar": 0,
+    "near_dup_removed": 80994,
+    "dedup_secs": 9.8,
+    "secs": 11.2
+  },
+  "describe": {
+    "by_precision": [
+      {
+        "time_precision": "day",
+        "len": 421739
+      },
+      {
+        "time_precision": "second",
+        "len": 2386
+      }
+    ],
+    "by_year": [
+      {
+        "year": 2014,
+        "n": 96,
+        "n_body": 39,
+        "n_timed": 0,
+        "n_in_sp500": 0
+      },
+      {
+        "year": 2015,
+        "n": 47770,
+        "n_body": 11484,
+        "n_timed": 32,
+        "n_in_sp500": 39704
+      },
+      {
+        "year": 2016,
+        "n": 50380,
+        "n_body": 13174,
+        "n_timed": 35,
+        "n_in_sp500": 43271
+      },
+      {
+        "year": 2017,
+        "n": 44311,
+        "n_body": 15945,
+        "n_timed": 36,
+        "n_in_sp500": 38234
+      },
+      {
+        "year": 2018,
+        "n": 62293,
+        "n_body": 16879,
+        "n_timed": 58,
+        "n_in_sp500": 53205
+      },
+      {
+        "year": 2019,
+        "n": 73609,
+        "n_body": 17134,
+        "n_timed": 60,
+        "n_in_sp500": 62004
+      },
+      {
+        "year": 2020,
+        "n": 46412,
+        "n_body": 20003,
+        "n_timed": 2076,
+        "n_in_sp500": 40666
+      },
+      {
+        "year": 2021,
+        "n": 25955,
+        "n_body": 25955,
+        "n_timed": 0,
+        "n_in_sp500": 22968
+      },
+      {
+        "year": 2022,
+        "n": 32271,
+        "n_body": 32271,
+        "n_timed": 0,
+        "n_in_sp500": 28941
+      },
+      {
+        "year": 2023,
+        "n": 41007,
+        "n_body": 41007,
+        "n_timed": 89,
+        "n_in_sp500": 37277
+      },
+      {
+        "year": 2024,
+        "n": 21,
+        "n_body": 21,
+        "n_timed": 0,
+        "n_in_sp500": 0
+      }
+    ],
+    "in_sp500": {
+      "true": 366270,
+      "false": 57855
+    },
+    "feature_day_minus_pub_date_days": [
+      {
+        "d": -4,
+        "len": 46
+      },
+      {
+        "d": -3,
+        "len": 2358
+      },
+      {
+        "d": -2,
+        "len": 7462
+      },
+      {
+        "d": -1,
+        "len": 8856
+      },
+      {
+        "d": 0,
+        "len": 405403
+      }
+    ],
+    "cutoff_1600_differs": 2328,
+    "per_ticker": {
+      "n_tickers": 646,
+      "median": 524.5,
+      "p10": 187.0,
+      "p90": 1289.0,
+      "max": 3199
+    },
+    "stock_days": {
+      "total": 1141896,
+      "with_news": 220316,
+      "share": 0.1929
+    },
+    "stock_days_by_year": [
+      {
+        "year": 2015,
+        "stock_days": 126147,
+        "with_news": 23076,
+        "share": 0.1829
+      },
+      {
+        "year": 2016,
+        "stock_days": 127356,
+        "with_news": 24792,
+        "share": 0.1947
+      },
+      {
+        "year": 2017,
+        "stock_days": 126995,
+        "with_news": 23902,
+        "share": 0.1882
+      },
+      {
+        "year": 2018,
+        "stock_days": 126917,
+        "with_news": 29997,
+        "share": 0.2364
+      },
+      {
+        "year": 2019,
+        "stock_days": 127260,
+        "with_news": 33344,
+        "share": 0.262
+      },
+      {
+        "year": 2020,
+        "stock_days": 127768,
+        "with_news": 23658,
+        "share": 0.1852
+      },
+      {
+        "year": 2021,
+        "stock_days": 127261,
+        "with_news": 16164,
+        "share": 0.127
+      },
+      {
+        "year": 2022,
+        "stock_days": 126440,
+        "with_news": 20187,
+        "share": 0.1597
+      },
+      {
+        "year": 2023,
+        "stock_days": 125752,
+        "with_news": 25196,
+        "share": 0.2004
+      }
+    ]
+  },
+  "meta": {
+    "out": "/workspace/data/news/news_clean.parquet",
+    "panel": "/workspace/data/news/news_panel.parquet",
+    "calendar": "/workspace/data/prices/SPY.csv",
+    "calendar_days": 2433,
+    "calendar_range": [
+      "2014-06-02",
+      "2024-01-30"
+    ],
+    "created_at": "2026-10-23T02:42:21+00:00",
+    "rules": {
+      "cutoff_main": "09:00 ET, day precision -> 23:59:59",
+      "cutoff_robust": "16:00 ET",
+      "min_chars": 100,
+      "max_chars": 100000,
+      "near_dup_threshold": 0.8,
+      "near_dup_window_days": 5
+    },
+    "timezone_note": "ts_utc 按数据卡当作 UTC 转美东；时区校验（模块 2 任务 4）未做，second 精度只有 0.5%"
+  }
+}
