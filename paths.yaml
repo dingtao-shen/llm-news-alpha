@@ -12,6 +12,8 @@ raw:
   lm_dictionary: /workspace/data/raw/lm/LM.csv   # Loughran-McDonald 主词典（取自 pysentiment2 0.1.1 的随包副本，学术用途）
 
 qlib_dir: /workspace/qlib_data/us_sp500
+qlib_news_dir: /workspace/qlib_data/us_sp500_news_{dataset}   # 模块 4 方式 A：价格 + PCA-64 新闻特征 + news_cnt/has_news 一起 dump
+qlib_news_csv: /workspace/data/{dataset}/qlib_csv            # dump 前的每只一个 CSV
 
 news:
   parquet_dir: /workspace/data/news/fnspid_parquet   # 模块 2 任务 1：原始 CSV 的全字符串 parquet（<source>/data_*.parquet）
