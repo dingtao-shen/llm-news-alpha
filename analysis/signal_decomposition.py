@@ -9,7 +9,8 @@
   按来源：该股票-日新闻中 Benzinga（只有标题）的占比 = 0 / (0,1) / 1；
   按新闻条数：1 / 2–3 / ≥4；
   按当天收益幅度 |same_day| 的日内三分位（反应大的新闻日是否还有残余）；
-  按市值日内三分位（原文的核心机制：信号在小盘股更强；S&P 500 内部按 SEC 市值分组，缺市值的股票不入分组）。
+  按市值日内三分位（原文的核心机制：信号在小盘股更强；S&P 500 内部按 SEC 市值分组，缺市值的股票不入分组）；
+  按标题是否含否定词（not / no / never / neither / nor / without / cannot / n't；全文几乎都含 not，所以只看标题；原文：LLM 相对词袋的优势在含否定的文本上最明显）。
 运行：python -m analysis.signal_decomposition → results/ridge/signal_decomposition.md
 """
 from __future__ import annotations
@@ -47,7 +48,8 @@ def source_share(paths: dict) -> pd.DataFrame:
     q = f"""
       WITH h AS (SELECT DISTINCT news_id, url_host FROM read_parquet('{paths["news"]["parquet_dir"]}/nasdaq/*.parquet'))
       SELECT c.feature_day AS datetime, c.ticker AS instrument, count(*) AS news_cnt,
-             avg((h.url_host = 'benzinga.com')::INT) AS benzinga_share
+             avg((h.url_host = 'benzinga.com')::INT) AS benzinga_share,
+             avg(regexp_matches(lower(coalesce(c.title, '')), '(\\b(not|no|never|neither|nor|without|cannot)\\b|n''t\\b)')::INT) AS negation_share
       FROM read_parquet('{paths["news"]["clean"]}') c LEFT JOIN h USING (news_id)
       WHERE c.in_sp500 GROUP BY 1, 2"""
     df = con.execute(q).df()
@@ -88,7 +90,9 @@ def main() -> None:
         df["abs_same"] = df["same_day"].abs()
         df["move_group"] = df.groupby("datetime")["abs_same"].transform(lambda x: pd.qcut(x.rank(method="first"), 3, labels=["小", "中", "大"]) if len(x) >= 6 else pd.Series(index=x.index, dtype=object))
         df["size_group"] = df.groupby("datetime")["mcap"].transform(lambda x: pd.qcut(x.rank(method="first"), 3, labels=["小", "中", "大"]) if x.notna().sum() >= 6 else pd.Series(index=x.index, dtype=object))
-        for gname, gcol in [("按来源", "src_group"), ("按新闻条数", "cnt_group"), ("按当天 |收益| 三分位（日内）", "move_group"), ("按市值三分位（日内，S&P 500 内部）", "size_group")]:
+        df["neg_group"] = np.where(df["negation_share"].fillna(0) > 0, "标题含否定词", "不含")
+        for gname, gcol in [("按来源", "src_group"), ("按新闻条数", "cnt_group"), ("按当天 |收益| 三分位（日内）", "move_group"),
+                            ("按市值三分位（日内，S&P 500 内部）", "size_group"), ("按标题是否含否定词", "neg_group")]:
             md += ["", f"### {gname}（主标签）", "", "| 子样本 | 股票-日 | 交易日 | Rank IC | t |", "| --- | ---: | ---: | ---: | ---: |"]
             for _, r in ic_by_group(df.dropna(subset=[gcol, "main_oo"]), "score", "main_oo", gcol).iterrows():
                 md.append(f"| {r.group} | {r.n_obs:,} | {r.days} | {r.rank_ic:+.4f} | {r.t:+.2f} |")

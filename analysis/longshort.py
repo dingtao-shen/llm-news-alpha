@@ -174,6 +174,26 @@ def write_report(results: dict, daily: pd.DataFrame, res: Path, variant: str = "
     print("\n".join(md))
 
 
+def hold_table(preds: dict[str, pd.DataFrame], R: pd.DataFrame, res: Path, horizons=(1, 2, 3, 5, 10)) -> None:
+    """低换手持仓方式：持有 H 天的重叠组合（w_t = 最近 H 天目标权重的平均，每天只调整 1/H 的仓位）。
+    换手约为每日完全换仓的 1/H；收益仍按逐日 ret_oo 结算。报告毛夏普 / 净夏普@10 bps / 日均换手。"""
+    keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body", "summary") if f"{m}__{t}" in preds]
+    label = lambda k: f"{NAMES[k.split('__')[0]]} / {TEXT[k.split('__')[1]]}"
+    md = ["# 持有 H 天的重叠组合（等权五分位；毛夏普 / 净夏普@10 bps（日均换手））", "",
+          "H=1 为每日完全换仓；H 天重叠组合每天只用 1/H 的资金按新信号建仓，其余持仓沿用前几天的信号。", "",
+          "| 模型 / 文本 | " + " | ".join(f"H={h}" for h in horizons) + " |", "| --- |" + " ---: |" * len(horizons)]
+    for key in keys:
+        S = preds[key].reindex(index=R.index)
+        Wt = quintile_weights(S.reindex(columns=R.columns))
+        cells = []
+        for h in horizons:
+            W = Wt.rolling(h, min_periods=1).mean()
+            ps = portfolio_series(W, R); g, n = summarize(ps, 0), summarize(ps, 10)
+            cells.append(f"{g['sharpe_gross']:+.2f} / {n['sharpe_net']:+.2f} ({g['turnover_daily']:.2f})")
+        md.append(f"| {label(key)} | " + " | ".join(cells) + " |")
+    (res / "hold_table.md").write_text("\n".join(md) + "\n"); print("\n".join(md))
+
+
 def delay_table(preds: dict[str, pd.DataFrame], paths: dict, start: str, end: str, res: Path) -> None:
     """新闻动量衰减（原文表 18）：建仓推迟 k 天（k=0..4）的等权五分位多空毛夏普与年化收益。"""
     keys = [f"{m}__{t}" for m in ORDER for t in ("title", "body", "summary") if f"{m}__{t}" in preds]
@@ -197,7 +217,7 @@ def delay_table(preds: dict[str, pd.DataFrame], paths: dict, start: str, end: st
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", default="2020-01-01"); ap.add_argument("--end", default="2023-12-31")
-    ap.add_argument("--variants", nargs="+", default=["ew", "vw", "decile", "delay"], help="ew 等权五分位 | vw 市值加权五分位 | decile 等权十分组 | delay 建仓推迟表")
+    ap.add_argument("--variants", nargs="+", default=["ew", "vw", "decile", "delay", "hold"], help="ew 等权五分位 | vw 市值加权五分位 | decile 等权十分组 | delay 建仓推迟表 | hold 持有 H 天重叠组合")
     args = ap.parse_args()
     paths = load_paths()
     res = ROOT / paths["results"] / "longshort"
@@ -213,6 +233,8 @@ def main() -> None:
         results, daily = run_all(preds, R, n_groups=10); write_report(results, daily, res, "_decile", "十分组多空（等权）")
     if "delay" in args.variants:
         delay_table(preds, paths, args.start, args.end, res)
+    if "hold" in args.variants:
+        hold_table(preds, R, res)
 
 
 if __name__ == "__main__":
