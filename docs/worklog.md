@@ -2,6 +2,25 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-23（续 7）· 阶段 0 完成：日期修正重跑 + 数据源无关接口
+
+- 做了什么（代码）：`{dataset}` 路径模板（`/workspace/data/fnspid/{news,emb,agg,preds}`，环境变量 DATASET 可换）；标准新闻表 schema（`news/schema.py`，
+  接口文件 0，含 url / source / dataset）；`news/sources/` 适配器约定；候选集带 BRK→BRK.B 别名（+1,680 条，全部有正文）；`text/embed.py --delta <tag>` 增量分片
+  （BRK.B 用 7 个模型补嵌，LLaMA3 这次 10.3k tok/s，GPU 不再热降频）；`build_clean` 的 DATE_FIXES 直接读标准表的 url/source；news_clean 新增
+  body_chars / url / source / dataset / date_fix；`make downstream` 一条链重跑全部下游；`tests/test_interfaces.py`；dev 样本含 news_clean；CLAUDE.md 接口表与 plan.md 6.1/6.2 更新。
+- 数据：news_clean v2 477,082 行（v1 476,895）：剔除 nasdaq.com 有时刻 150、抓取期打标 1,855；Benzinga 有时刻 2,362 行 +8h；1,569 行日期改为 URL 日期；2023 年有时刻记录归零。
+  v1 文件保留为 `/workspace/data/fnspid/news/*.v1.parquet`。
+- 结果变化（验证选 λ，全期 Rank IC，v1 → v2）：LLaMA3 标题 +0.0010 → −0.0005、原文 +0.0065 → **+0.0080**；ChronoBERT 标题 −0.0012 → −0.0001、原文 +0.0090 → +0.0045；
+  FinBERT 标题 +0.0037 → +0.0029、原文 −0.0004 → +0.0042；MiniLM 标题 +0.0009 → −0.0011、原文 +0.0031 → +0.0028。
+  ChronoBERT 原文的下降几乎全来自 2020 窗口 λ 选择翻转（验证 IC 为负时选了 λ_rel=0.01，测试 +0.0098 → −0.0053）；固定 λ_rel=10 下它仍是 +0.0095、LLaMA3 原文 +0.0076。
+  DM：单模型无一显著（LLaMA3 原文 t 1.69 最高），28 对里 0 对显著（v1 为 2 对）。等权多空毛夏普：LLaMA3 原文 0.53 → 0.71，ChronoBERT 原文 0.90 → 0.25，其余 0.1–0.3；扣费后全部为负。
+  信号拆分：LLaMA3 原文对隔夜收益 +0.0232（t 4.34）稳健；ChronoBERT 原文的隔夜 IC 降到 +0.0055。
+- 结论：0.5% 量级的数据改动能让单个组合的全期 Rank IC 变动 0.005，再次说明模型间比较在噪声里；只有"原文优于标题"和"信号在隔夜兑现、次日开盘后几乎不剩"两条在两版里都成立。
+  报告以固定 λ 口径为主表、验证选 λ 为稳健性。
+- 产出在哪：`/workspace/data/fnspid/`（news、emb 11 GB、agg、preds 28 个文件）、`/workspace/data/dev_sample.tgz`（74.8 MB，新 schema）、`results/{ridge,longshort,news}/`。
+- 下一步：阶段 B（AI 摘要：改提示词 → 50 条对比 → 放量 → 抽查 → 嵌入；词袋基线；PCA；16:00 口径）。
+- 遗留：固定 λ 值是事后选的，正式报告要么预先声明 λ_rel=10、要么改用多年验证平均；Wayback 校验覆盖差，仅日期新闻的发布时刻分布仍未知。
+
 ## 2026-10-23（续 6）· Phase A 收口：日期校验、市值、DM 检验、信号拆分、λ 口径
 
 - 做了什么：

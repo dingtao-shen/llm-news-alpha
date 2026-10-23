@@ -16,4 +16,5 @@ $PY -m analysis.longshort | grep -E "^\| LLaMA3-8B / 标题|^\| ChronoBERT.*原�
 $PY -m analysis.dm_test | grep -E "显著优于"
 $PY -m analysis.signal_decomposition | grep -E "^## |overnight|main_oo" | head -12
 bash models/run_lambda_sensitivity.sh 10 | tail -n 1
+$PY -m analysis.lambda_sensitivity --lam 10 | tail -n 2
 echo "downstream done $(date -u +%H:%M:%S)"
