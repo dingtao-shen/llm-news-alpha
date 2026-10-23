@@ -148,9 +148,13 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--calendar-csv", default=None, help="默认 paths.raw.prices_csv/SPY.csv")
     ap.add_argument("--workers", type=int, default=None)
+    ap.add_argument("--out-dir", default=None, help="把 news_clean / news_panel / meta 写到别的目录（对比实验用），默认 paths.news.*")
     args = ap.parse_args()
     paths = load_paths()
-    out, panel_path = Path(paths["news"]["clean"]), Path(paths["news"]["panel"])
+    if args.out_dir:
+        out, panel_path = Path(args.out_dir) / "news_clean.parquet", Path(args.out_dir) / "news_panel.parquet"
+    else:
+        out, panel_path = Path(paths["news"]["clean"]), Path(paths["news"]["panel"])
     if out.exists():
         raise SystemExit(f"{out} exists; delete it first (CLAUDE.md: ask the user before overwriting /workspace/data)")
     cal_csv = Path(args.calendar_csv or Path(paths["raw"]["prices_csv"]) / "SPY.csv")
@@ -166,7 +170,8 @@ def main() -> None:
                       "max_chars": MAX_CHARS, "near_dup_threshold": THRESHOLD, "near_dup_window_days": WINDOW},
             "timezone_note": "ts_utc 按数据卡当作 UTC 转美东；时区校验（模块 2 任务 4）未做，second 精度只有 0.5%"}
     (out.parent / "news_clean_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
-    write_report(stats, describe(df, panel, membership, cal), meta, ROOT / paths["results"] / "news")
+    write_report(stats, describe(df, panel, membership, cal), meta,
+                 Path(args.out_dir) if args.out_dir else ROOT / paths["results"] / "news")
 
 
 if __name__ == "__main__":

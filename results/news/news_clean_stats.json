@@ -4,106 +4,106 @@
       "candidates": 505147,
       "after_calendar_range": 505147,
       "after_length": 505119,
-      "after_near_dup": 424125
+      "after_near_dup": 476895
     },
     "out_of_calendar": 0,
-    "near_dup_removed": 80994,
-    "dedup_secs": 9.8,
-    "secs": 11.2
+    "near_dup_removed": 28224,
+    "dedup_secs": 11.2,
+    "secs": 12.1
   },
   "describe": {
     "by_precision": [
       {
         "time_precision": "day",
-        "len": 421739
+        "len": 474478
       },
       {
         "time_precision": "second",
-        "len": 2386
+        "len": 2417
       }
     ],
     "by_year": [
       {
         "year": 2014,
-        "n": 96,
-        "n_body": 39,
+        "n": 98,
+        "n_body": 41,
         "n_timed": 0,
         "n_in_sp500": 0
       },
       {
         "year": 2015,
-        "n": 47770,
-        "n_body": 11484,
+        "n": 51474,
+        "n_body": 15094,
         "n_timed": 32,
-        "n_in_sp500": 39704
+        "n_in_sp500": 42917
       },
       {
         "year": 2016,
-        "n": 50380,
-        "n_body": 13174,
+        "n": 54796,
+        "n_body": 17618,
         "n_timed": 35,
-        "n_in_sp500": 43271
+        "n_in_sp500": 47256
       },
       {
         "year": 2017,
-        "n": 44311,
-        "n_body": 15945,
+        "n": 49775,
+        "n_body": 21417,
         "n_timed": 36,
-        "n_in_sp500": 38234
+        "n_in_sp500": 43209
       },
       {
         "year": 2018,
-        "n": 62293,
-        "n_body": 16879,
+        "n": 67536,
+        "n_body": 22238,
         "n_timed": 58,
-        "n_in_sp500": 53205
+        "n_in_sp500": 58052
       },
       {
         "year": 2019,
-        "n": 73609,
-        "n_body": 17134,
+        "n": 77819,
+        "n_body": 21255,
         "n_timed": 60,
-        "n_in_sp500": 62004
+        "n_in_sp500": 65942
       },
       {
         "year": 2020,
-        "n": 46412,
-        "n_body": 20003,
-        "n_timed": 2076,
-        "n_in_sp500": 40666
+        "n": 51604,
+        "n_body": 24942,
+        "n_timed": 2100,
+        "n_in_sp500": 45572
       },
       {
         "year": 2021,
-        "n": 25955,
-        "n_body": 25955,
+        "n": 29906,
+        "n_body": 29906,
         "n_timed": 0,
-        "n_in_sp500": 22968
+        "n_in_sp500": 26458
       },
       {
         "year": 2022,
-        "n": 32271,
-        "n_body": 32271,
+        "n": 41653,
+        "n_body": 41653,
         "n_timed": 0,
-        "n_in_sp500": 28941
+        "n_in_sp500": 37570
       },
       {
         "year": 2023,
-        "n": 41007,
-        "n_body": 41007,
-        "n_timed": 89,
-        "n_in_sp500": 37277
+        "n": 52178,
+        "n_body": 52178,
+        "n_timed": 96,
+        "n_in_sp500": 47794
       },
       {
         "year": 2024,
-        "n": 21,
-        "n_body": 21,
+        "n": 56,
+        "n_body": 56,
         "n_timed": 0,
         "n_in_sp500": 0
       }
     ],
     "in_sp500": {
-      "true": 366270,
-      "false": 57855
+      "true": 414770,
+      "false": 62125
     },
     "feature_day_minus_pub_date_days": [
       {
@@ -112,101 +112,101 @@
       },
       {
         "d": -3,
-        "len": 2358
+        "len": 2836
       },
       {
         "d": -2,
-        "len": 7462
+        "len": 9690
       },
       {
         "d": -1,
-        "len": 8856
+        "len": 11304
       },
       {
         "d": 0,
-        "len": 405403
+        "len": 453019
       }
     ],
-    "cutoff_1600_differs": 2328,
+    "cutoff_1600_differs": 2359,
     "per_ticker": {
       "n_tickers": 646,
-      "median": 524.5,
-      "p10": 187.0,
-      "p90": 1289.0,
-      "max": 3199
+      "median": 553.0,
+      "p10": 188.0,
+      "p90": 1483.0,
+      "max": 4396
     },
     "stock_days": {
       "total": 1141896,
-      "with_news": 220316,
-      "share": 0.1929
+      "with_news": 235267,
+      "share": 0.206
     },
     "stock_days_by_year": [
       {
         "year": 2015,
         "stock_days": 126147,
-        "with_news": 23076,
-        "share": 0.1829
+        "with_news": 24288,
+        "share": 0.1925
       },
       {
         "year": 2016,
         "stock_days": 127356,
-        "with_news": 24792,
-        "share": 0.1947
+        "with_news": 26230,
+        "share": 0.206
       },
       {
         "year": 2017,
         "stock_days": 126995,
-        "with_news": 23902,
-        "share": 0.1882
+        "with_news": 25689,
+        "share": 0.2023
       },
       {
         "year": 2018,
         "stock_days": 126917,
-        "with_news": 29997,
-        "share": 0.2364
+        "with_news": 31573,
+        "share": 0.2488
       },
       {
         "year": 2019,
         "stock_days": 127260,
-        "with_news": 33344,
-        "share": 0.262
+        "with_news": 34302,
+        "share": 0.2695
       },
       {
         "year": 2020,
         "stock_days": 127768,
-        "with_news": 23658,
-        "share": 0.1852
+        "with_news": 24770,
+        "share": 0.1939
       },
       {
         "year": 2021,
         "stock_days": 127261,
-        "with_news": 16164,
-        "share": 0.127
+        "with_news": 17134,
+        "share": 0.1346
       },
       {
         "year": 2022,
         "stock_days": 126440,
-        "with_news": 20187,
-        "share": 0.1597
+        "with_news": 23108,
+        "share": 0.1828
       },
       {
         "year": 2023,
         "stock_days": 125752,
-        "with_news": 25196,
-        "share": 0.2004
+        "with_news": 28173,
+        "share": 0.224
       }
     ]
   },
   "meta": {
-    "out": "/workspace/data/news/news_clean.parquet",
-    "panel": "/workspace/data/news/news_panel.parquet",
+    "out": "/tmp/claude-0/-workspace-repo/285edadc-055c-4ef6-985b-015eea06fc93/scratchpad/clean_v2/news_clean.parquet",
+    "panel": "/tmp/claude-0/-workspace-repo/285edadc-055c-4ef6-985b-015eea06fc93/scratchpad/clean_v2/news_panel.parquet",
     "calendar": "/workspace/data/prices/SPY.csv",
     "calendar_days": 2433,
     "calendar_range": [
       "2014-06-02",
       "2024-01-30"
     ],
-    "created_at": "2026-10-23T02:42:21+00:00",
+    "created_at": "2026-10-23T02:46:05+00:00",
     "rules": {
       "cutoff_main": "09:00 ET, day precision -> 23:59:59",
       "cutoff_robust": "16:00 ET",

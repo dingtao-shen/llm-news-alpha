@@ -11,6 +11,14 @@ def test_cosine():
     a, b = bow("Apple beats estimates on strong iPhone sales"), bow("Apple beats estimates on strong iPhone sales!")
     assert abs(cosine(a, b) - 1.0) < 1e-9
     assert cosine(bow("apple apple"), bow("banana")) == 0.0
+    # 停用词不参与；词频取对数，重复 100 次的词不会压过其他词
+    assert bow("the of and to")[0] == {}
+    d, _ = bow("apple " * 100 + "banana")
+    assert d["banana"] == 1.0 and d["apple"] < 6
+    # 两篇不同文章只因共享 the/of/to 等词不应判为重复
+    x = bow("the company said that the results of the quarter were in line with the expectations of the market and the analysts")
+    y = bow("the board of the company announced that the dividend will be paid to the holders of the shares in the market")
+    assert cosine(x, y) < 0.8
 
 
 def test_near_duplicates_window_and_order():
