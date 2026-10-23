@@ -1,6 +1,6 @@
 """模块 3 任务 4：LLaMA3-8B-Instruct + vLLM 批量生成新闻摘要（第三种文本）。venv-vllm 运行。
 
-- 输入：news_clean（接口文件 1）里有正文的记录；正文按分词器截到前 BODY_TOKENS 个 token 再喂模型（模板 + 输出留余量，max_model_len 4096）。
+- 输入：news_clean（接口文件 1）里有正文的记录；正文按分词器截到前 BODY_TOKENS=800 个 token 再喂模型（与 512 token 的原文嵌入窗口接近；max_model_len 4096）。
 - 输出：paths.summaries_dir/<model>/part-NNNNN.parquet（news_id, summary, summary_raw, flag, n_out_tokens），按 news_id 排序、每片 SHARD 条，已存在的分片跳过，
   先写 .tmp 再改名；_meta.json 记录提示词版本、解码参数、模型 commit。
 - 提示词：模块 0 的旧版（PROMPT_V0）10 条里 3 条"加料"（补后果、补动机、写"未披露"）。新版（PROMPT_V1）明确禁止推断原因 / 后果 / 动机与评价，
@@ -31,7 +31,7 @@ import pyarrow.parquet as pq
 from common import ROOT, load_paths
 
 SHARD = 20_000
-BODY_TOKENS = 1500
+BODY_TOKENS = 800            # 原文前 800 token（与 512 token 的原文嵌入窗口接近；1,500 时在热降频的 GPU 上 20k 篇一片要 40 分钟以上）
 MAX_TOKENS_OUT = 128
 
 PROMPT_V0 = (
