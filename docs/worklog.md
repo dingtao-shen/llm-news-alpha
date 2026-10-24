@@ -2,6 +2,24 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-24（续 12，Mac）· 阶段 E：时间一致性对照与隔夜兑现两个正式结论成稿
+
+- 做了什么（纯写作，只读 `results/`，Pod 已 Terminate、网络卷保留）：
+  - `results/ridge/time_consistency.md`：ChronoBERT（按年滚动，`manelalab/chrono-bert-v1-<Y−1>1231`）vs LLaMA3-8B（截止 2023-03）的正式对照。
+    可交易主标签上三种文本的 DM t 在 −1.0 到 +0.1；市值加权与十分组多空 ChronoBERT 原文更高；固定 λ_rel=10 下 ChronoBERT 原文全期 +0.0095 > LLaMA3 +0.0076；
+    按年拆分看不到"语料覆盖年份领先、截止后落后"的泄漏形态（2023 年反而 ChronoBERT 领先），年份效应是四个模型共有的。
+    唯一显著的差距在不可交易的隔夜窗口（LLaMA3 原文 +0.0232 t 4.3 vs ChronoBERT +0.0055），且掺着 2020 年窗口 λ 翻转的噪声。
+    结论：前视偏差对可交易信号的影响有限，但统计功效低，只能排除"靠记忆测试期拿到明显更强信号"。
+  - `results/ridge/overnight_realization.md`：信号去向的证据链——当天 Rank IC 0.10–0.19（链路正确）→ 隔夜 +0.023（t 4.3）→ 次日日内 ≈ 0 → 主标签 0.000–0.009（t ≤ 1.7）；
+    建仓推迟、持有期、新鲜度都显示 t+1 开盘后无残余无持续；多空扣费后全负、EWCT 救不回、Qlib 多头跑输 SPY。
+    结论：差距由数据决定（99.5% 仅日期记录必须按 23:59 对齐，放弃了隔夜窗口；放松会引入已被校验证实的前视偏差），不是模型或流水线。
+  - 图 4（`analysis/fig_time_consistency.py`，Mac 可跑，只读 `results/ridge/*.json`）：按测试年拆分的 Rank IC，2×2（原文/标题 × 验证选 λ/固定 λ），
+    输出 `results/ridge/fig4_time_consistency.{png,md}`。
+  - `.gitignore` 加 `dev_sample.tgz`。
+- 产出在哪：`results/ridge/{time_consistency,overnight_realization,fig4_time_consistency}.md`、`fig4_time_consistency.png`、`analysis/fig_time_consistency.py`。
+- 下一步：阶段 F 的 README 研究报告（按 `docs/plan.md` 第 8 节产出清单组织，主线是五条实证结论）；报告定稿后决定删卷。
+- 遗留：固定 λ 分数的窗口分解与多空表未重算（需挂卷开 Pod，约 10 分钟）；LLaMA3 知识截止后的样本外检验需要把测试期延长到 2024–2026（阶段 G，Alpaca）。
+
 ## 2026-10-24（续 11）· 阶段 F 的 Pod 侧收尾：make 入口核对、dev 样本、备份
 
 - 做了什么：

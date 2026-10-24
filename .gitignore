@@ -31,3 +31,6 @@ venv*/
 
 # results/ 下的小表格例外（CLAUDE.md：只有 results/ 下的小表格与图提交）
 !results/**/*.csv
+
+# 从 Pod 拉下来的 dev 样本包（解包到 dev_data/）
+dev_sample.tgz
