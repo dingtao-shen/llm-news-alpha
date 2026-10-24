@@ -319,7 +319,7 @@ S&P 500 成分股基本都在 NYSE 市值中位数之上，相当于原文"市�
 **模块 8：报告、仓库与简历**
 
 - README 结构：动机与论文摘要 → 数据实况与对齐规则（含时区校验记录、精度分布）→ 方法与配置 → 算力与成本 → 主结果表 → 核心分析 → 扩展实验 → 局限性与下一步 → 复现步骤。
-- 复现性：`make` 入口覆盖全流程（模块 0 已有 `make check-env`、`make verify-llama`、`make smoke`、`make lock`、`make test`；后续补 `make universe`、`make prices`、`make qlib-baseline`、`make news-sample`、`make news-clean`、`make benchmark`、`make embed`、`make summarize`、`make ridge`、`make export`、`make qlib-fusion`、`make analyze`、`make backup`）；固定随机种子；`requirements-main.txt` 与 `requirements-vllm.txt` 各一份锁定版本。
+- 复现性：`make` 入口覆盖全流程（模块 0 已有 `make check-env`、`make verify-llama`、`make smoke`、`make lock`、`make test`；2026-10-24 起 `make help` 列出全部 47 个目标，覆盖模块 1–8：`universe`/`prices`/`market-cap`、`news-*`/`tz-check`、`embed*`/`summarize`/`bow`/`pca`、`labels`/`aggregate`/`ridge`/`table-a`/`downstream`、`qlib-news-dump`/`table-b`/`incremental`/`external-backtests`、`longshort`/`dm-test`/`decomposition`/`freshness`/`analyze`、`dev-sample`/`backup`）；固定随机种子；`requirements-main.txt` 与 `requirements-vllm.txt` 各一份锁定版本。
 - 数据归档：分析阶段结束前，把全维嵌入、摘要与 Ridge 统计量用 rclone 备份到对象存储（Backblaze B2 / Cloudflare R2 之类），之后删除网络存储卷。
 - 合规：FNSPID 的两种许可表述都写明；仓库只放处理脚本与结果，不重新分发原始新闻与摘要全文；LLaMA3 的使用遵守 Meta Llama 3 社区许可。
 - 简历条目按第 8 节模板填数字。

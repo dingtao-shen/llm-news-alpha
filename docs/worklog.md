@@ -2,6 +2,20 @@
 
 新条目写在最上面。每条：做了什么 / 产出在哪 / 下一步 / 遗留问题。
 
+## 2026-10-24（续 11）· 阶段 F 的 Pod 侧收尾：make 入口核对、dev 样本、备份
+
+- 做了什么：
+  - Makefile 补齐后期模块的入口（`market-cap`、`tz-check`、`summarize-compare`、`summarize`、`bow`、`pca`、`cutoff-1600`、`lambda-sens`、
+    `qlib-news-dump`、`table-b`、`incremental`、`external-backtests`、`dm-test`、`decomposition`、`freshness`、`analyze`、`backup`），
+    核对 Makefile 与 run_*.sh 引用的 27 个模块可导入、10 个脚本存在，`make -n` 全部目标通过。
+  - dev 样本刷新（`make dev-sample`，75.1 MB）：新增 `summaries/llama3_instruct/part-00000.parquet`（样本中 2,497 条有正文记录的摘要，含 summary_raw）。
+  - 备份（`infra/backup.sh`，`make backup`）：`/workspace/backup/` 下三个 tgz + SHA256SUMS：小产物 805 MB（summaries、preds、pca、agg/_meta、labels、market_cap、news 元数据）、
+    news_clean + embed_candidates 732 MB、dev 样本 75 MB。rclone 未配置 remote，只在卷上；`make backup BACKUP_REMOTE=<remote:bucket>` 可上传。
+    全维嵌入 15 GB 与聚合 14 GB 不备份：`make embed`/`embed-small`/`downstream` 可重算（约 1 天 GPU）。
+- 产出在哪：`Makefile`、`infra/backup.sh`、`/workspace/backup/*_20261024.tgz`、`/workspace/data/dev_sample.tgz`。
+- 下一步（Mac 即可）：阶段 E 成稿（时间一致性、隔夜兑现）、README 报告；报告定稿后再决定删卷。重算需要时从模板开 Pod 挂卷即可。
+- 遗留：对象存储备份未做（无凭据）；若删卷前仍未配置，至少把 `/workspace/backup/` 拉到本地（1.6 GB）。
+
 ## 2026-10-23（续 10）· 阶段 B 收尾：摘要全量完成、抽查、摘要嵌入与表 A 摘要列
 
 - 做了什么：

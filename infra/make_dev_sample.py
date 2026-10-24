@@ -7,6 +7,7 @@
 - emb/llama3_base/title/part-00000.parquet   与上面 5,000 行一一对应的标题嵌入
 - emb/llama3_base/body/part-00000.parquet    其中有正文的记录的原文嵌入
 - emb/llama3_base/{title,body}/_meta.json    原样拷贝
+- summaries/llama3_instruct/part-00000.parquet  样本中有正文记录的 AI 摘要（summary_raw 可用最新 clean_summary 重算）
 - universe/instruments_sp500.txt、universe/sp500_membership.parquet
 - tz_check_urls.csv             时区 / 日期校验抽样：有时刻 × 仅日期 × Benzinga × nasdaq.com 各 100 条
 - _manifest.json、README.md
@@ -81,6 +82,14 @@ def main() -> None:
     clean = pl.scan_parquet(paths["news"]["clean"]).filter(pl.col("news_id").is_in(list(ids))).collect()
     clean.write_parquet(out / "news_clean_sample.parquet")
     manifest["news_clean_rows"] = len(clean)
+    # 2b. 摘要（第三种文本）：样本里有正文记录的 LLaMA3-8B-Instruct 摘要（news_id, summary, summary_raw, flag, n_out_tokens）
+    sdir = Path(paths["summaries_dir"]) / "llama3_instruct"
+    if sdir.exists():
+        (out / "summaries" / "llama3_instruct").mkdir(parents=True)
+        summ = pl.scan_parquet(str(sdir / "part-*.parquet")).filter(pl.col("news_id").is_in(list(ids))).sort("news_id").collect()
+        summ.write_parquet(out / "summaries" / "llama3_instruct" / "part-00000.parquet")
+        shutil.copy(sdir / "_meta.json", out / "summaries" / "llama3_instruct" / "_meta.json")
+        manifest["summary_rows"] = len(summ)
 
     # 3. 股票池
     shutil.copy(Path(paths["qlib_dir"]) / "instruments" / "sp500.txt", out / "universe" / "instruments_sp500.txt")

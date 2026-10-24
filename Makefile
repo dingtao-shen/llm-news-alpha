@@ -7,7 +7,7 @@ VLLM_PY ?= /workspace/venv-vllm/bin/python
 # 长任务一律用 $(BG) 启动：脱离会话后台运行，日志写到 /workspace/logs/
 BG := bash infra/run_bg.sh
 
-.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small labels aggregate ridge table-a longshort delta-embed downstream summary-downstream dev-sample
+.PHONY: help bootstrap check-env verify-llama smoke-embed smoke-vllm smoke lock test universe prices prices-fill qlib-dump qlib-baseline news-download news-parse news-stats news-candidates news-clean embed-trial embed embed-small labels aggregate ridge table-a longshort delta-embed downstream summary-downstream dev-sample market-cap tz-check summarize-compare summarize bow pca cutoff-1600 lambda-sens qlib-news-dump table-b incremental external-backtests dm-test decomposition freshness analyze backup
 
 help:  ## 列出所有目标
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -125,9 +125,51 @@ downstream:  ## [Pod] 后台：从 news_clean 重跑 聚合 → Ridge → 表 A 
 longshort:  ## [Pod/Mac] preds 里每个 模型×文本 的五分位多空（等权）、成本、EWCT → results/longshort/
 	$(PY) -m analysis.longshort
 
-# ---------------------------------------------------------------- 后续模块（实现时补上）
-# 模块 1：market-cap
-# 模块 2：news-sample news-tz
-# 模块 3：benchmark summarize bow pca
-# 模块 4–6：qlib-news qlib-fusion analyze（其余）
-# 模块 8：backup
+# ---------------------------------------------------------------- 模块 1 补充：市值
+market-cap:  ## [Pod] 后台：SEC companyfacts 股本 × 价格 → 市值与成交额代理 → /workspace/data/market_cap
+	$(BG) market-cap $(PY) -m data.market_cap
+
+# ---------------------------------------------------------------- 模块 2 补充：时区校验
+tz-check:  ## [Pod] 后台：Wayback 快照核对 Benzinga / nasdaq 时间戳的时区 → results/news/tz_check*.md
+	$(BG) tz-check $(PY) -m news.validate_timezone
+
+# ---------------------------------------------------------------- 模块 3 补充：摘要、词袋、PCA、口径与 λ 敏感性
+summarize-compare:  ## [Pod] venv-vllm：50 条真实新闻上并排比较提示词版本 → results/news/summary_prompt_compare_*.md
+	$(BG) summ-compare $(VLLM_PY) text/summarize_vllm.py --compare 50
+summarize:  ## [Pod] 后台 venv-vllm：全部有正文记录的 AI 摘要（2 万篇一片，断点续跑）→ summaries_dir/llama3_instruct/
+	$(BG) summarize $(VLLM_PY) -m text.summarize_vllm --prompt v2
+bow:  ## [Pod] LM 词典情绪分 + TF-IDF(5,000, 2015–2018 拟合) 基线，标题与原文 → preds 里的 lm_dict__*、tfidf__*
+	$(PY) -m text.bow_baseline --text-type title && $(PY) -m text.bow_baseline --text-type body
+pca:  ## [Pod] 只在 2015–2018 拟合的 PCA-256/64 导出：make pca MODEL=llama3_base TEXT=body
+	$(PY) -m models.pca_export --model $(MODEL) --text-type $(TEXT) --cutoff $(CUTOFF)
+cutoff-1600:  ## [Pod] 后台：全部 模型×文本 的 16:00 ET 口径聚合 + Ridge → results/ridge/cutoff_1600.md
+	$(BG) cutoff1600 bash models/run_cutoff_1600.sh
+LAM ?= 10
+lambda-sens:  ## [Pod] 后台：固定相对 λ 重跑滚动 Ridge（make lambda-sens LAM=10）→ results/ridge/lambda_sensitivity.md
+	$(BG) lambda-sens bash models/run_lambda_sensitivity.sh $(LAM)
+
+# ---------------------------------------------------------------- 模块 4–5：Qlib 新闻数据集、表 B、增量检验、外部预测回测
+qlib-news-dump:  ## [Pod] 价格 + PCA-64 新闻特征 + news_cnt/has_news → /workspace/qlib_data/us_sp500_news_{dataset}
+	$(PY) -m qlib_ext.dump_news_features --model $(MODEL)
+table-b:  ## [Pod] 后台（CPU，约 80 分钟）：{Alpha158, 新闻, 融合} × {Ridge, LightGBM, MLP} 滚动 → results/qlib/table_b.md
+	$(BG) table-b $(PY) -m qlib_ext.run_rolling --gpu -1
+incremental:  ## [Pod] 融合 − Alpha158 的日度 Rank IC 配对检验与分数秩相关 → results/qlib/incremental.md
+	$(PY) -m analysis.incremental_test
+KEYS ?= llama3_base__body__main chronobert__body__main
+external-backtests:  ## [Pod] 后台：Qlib TopkDropout 多头回测外部 Ridge 预测（make external-backtests KEYS="..."）→ results/baseline/external_*
+	$(BG) ext-bt bash models/run_external_backtests.sh $(KEYS)
+
+# ---------------------------------------------------------------- 模块 6 补充：检验与分解（CPU，preds + labels 即可）
+dm-test:  ## [Pod/Mac] 模型×文本两两的 Diebold–Mariano 型检验 → results/ridge/dm_test.md
+	$(PY) -m analysis.dm_test
+decomposition:  ## [Pod] 信号分解：同日/隔夜/日内、来源、条数、涨跌幅、规模、否定词 → results/ridge/signal_decomposition.md
+	$(PY) -m analysis.signal_decomposition
+freshness:  ## [Pod] 新鲜度：按距最近新闻天数前向填充的分数 → results/ridge/freshness.md
+	$(PY) -m analysis.freshness
+analyze: longshort dm-test decomposition freshness incremental  ## [Pod] 模块 6 全部分析（preds 已有时几分钟）
+	$(PY) -m analysis.table_a
+
+# ---------------------------------------------------------------- 模块 8：备份
+BACKUP_REMOTE ?=
+backup:  ## [Pod] 小产物打包到 /workspace/backup/（summaries、preds、pca、agg/_meta、labels、market_cap、results）；设 BACKUP_REMOTE=<rclone remote:bucket> 则再 rclone copy
+	bash infra/backup.sh $(BACKUP_REMOTE)
