@@ -5,6 +5,8 @@ polars
 duckdb
 pyarrow
 pyyaml
+scipy          # text/bow_baseline 的稀疏 TF-IDF 矩阵
+requests       # data/build_universe 下载时点成分股 YAML
 pytest
 matplotlib
 jupyter
