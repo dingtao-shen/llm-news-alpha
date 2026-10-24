@@ -6,6 +6,7 @@ duckdb
 pyarrow
 pyyaml
 scipy          # text/bow_baseline 的稀疏 TF-IDF 矩阵
+scikit-learn   # models/pca_export 的 randomized_svd
 requests       # data/build_universe 下载时点成分股 YAML
 pytest
 matplotlib
